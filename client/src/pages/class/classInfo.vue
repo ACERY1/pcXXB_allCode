@@ -1,0 +1,324 @@
+<template>
+	<div class="course">
+		<div class="course-info">
+			<div class="course-info-header">
+				<div class="trigger" @click="goMain">
+					<img src="../../../static/icons/back.png" alt="">
+				</div>
+				<p>待上课程/课程详情</p>
+			</div>
+			<div class="course-info-item">
+				<div class="course-info-item-title">辅导</div>
+				<div class="course-info-item-cont">上课时间：</div>
+				<div class="course-info-item-cont">年级科目：{{info.gradeName}}</div>
+				<div class="course-info-item-cont">教材课本：{{info.bookVersionName}}</div>
+				<div class="course-info-item-cont">课程状态：{{courseSt}}</div>
+
+			</div>
+			<div class="course-info-item">
+				<div class="course-info-item-title">课件</div>
+				<div class="course-info-item-cont">上课课件：
+					<div class="course-info-item-cont-btn" v-if="!ware">制作</div>
+					<div class="course-info-item-cont-btn" v-if="ware">查看</div>
+					<div class="course-info-item-cont-time" v-if="ware">发布于 {{info.coursewareCreateTime}}</div>
+				</div>
+				<div class="course-info-item-cont">知 识 点：
+					<p v-if="!ware">请在课件制作后查看</p>
+					<div class="course-info-item-cont-btn" v-if="ware">查看</div>
+				</div>
+			</div>
+			<div class="course-info-item">
+				<div class="course-info-item-title">上课</div>
+				<div class="course-info-item-cont">上课报告：
+					<div class="course-info-item-cont-btn" v-if="!report">填写</div>
+					<div class="course-info-item-cont-btn" v-if="report">查看</div>
+					<div class="course-info-item-cont-time" v-if="report">发布于 {{info.courseReportCreateTime}}</div>
+				</div>
+			</div>
+		</div>
+		<div class="course-stu">
+			<div class="course-stu-info">
+				<div class="usrPic">
+					<img :src="info.profile_image_url" alt="">
+				</div>
+				<div class="usrName">
+					<span>{{info.name}}</span>
+					<img src="../../../static/icons/male.png" alt="" v-if="info.gender===1">
+					<img src="../../../static/icons/female.png" alt="" v-if="info.gender ===2">
+				</div>
+				<p class="school">
+					{{info.school}}
+				</p>
+			</div>
+			<div class="course-stu-item">
+				<div class="course-stu-item-cont">
+					<img src="../../../static/icons/people.png" alt="">
+					<p>已辅导：{{info.alreadyConsumeCourse}}节</p>
+				</div>
+				<div class="course-stu-item-cont">
+					<img src="../../../static/icons/bell.png" alt="">
+					<p>待辅导：{{info.leftCourse}}节</p>
+				</div>
+			</div>
+			<div class="course-stu-item">
+				<p class="course-stu-item-title">学管提示：</p>
+				<div class="course-stu-item-cont">
+					<img src="../../../static/icons/hat.png" alt="">
+					<p>学生分数：{{info.score}}/100</p>
+				</div>
+				<div class="course-stu-item-cont">
+					<img src="../../../static/icons/pc.png" alt="">
+					<p>上课内容：18节</p>
+				</div>
+
+			</div>
+			<div class="course-stu-item" v-if="messaged">
+				<p class="course-stu-item-title">学生留言：</p>
+				<p class="course-stu-item-txt">{{hasMessage}}</p>
+			</div>
+			<div class="course-stu-item">
+				<p class="course-stu-item-title">上课备注：</p>
+				<p class="course-stu-item-txt">{{hasNote}}</p>
+				<p class="add" v-if="!noted">添加</p>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script>
+	import {courseStatus} from '../../common/scripts/filters'
+	export default {
+		name: "classInfo",
+		components: {},
+		data () {
+			return {
+				noted: false, // 是否写备注
+				messaged: false, // 是否留言了
+				ware:false, // 是否有课件
+				report:false // 是否有上课报告
+			}
+		},
+		props: {
+			info: {
+				type: Object,
+				default: () => {
+					return {
+						"coursewareCreateTime": "2017-06-17 09:55",
+						"note": {},
+						"evluate": {},
+						"courseReportCreateTime": "2017-06-27 19:26",
+						"gender": 1,
+						"subject": 1,
+						"teacherIn": 0,
+						"alreadyConsumeCourse": 74,
+						"type": 1,
+						"studentId": "595356950eda8a7280ccb99e",
+						"score": "70",
+						"school": "前黄高级中学国际分校",
+						"knowlegeList": [
+							{
+								"knowleageName": "多项式乘多项式"
+							},
+							{
+								"knowleageName": "单项式乘多项式"
+							},
+							{
+								"knowleageName": "单项式乘单项式"
+							},
+							{
+								"knowleageName": "幂的乘方与积的乘方"
+							}
+						],
+						"courseware": 0,
+						"subjectName": "数学",
+						"courseware_id": 11044,
+						"gradeName": "高二",
+						"star": 0,
+						"course_name": "一对一直播课",
+						"teacherReply": {},
+						"generateReport": 1,
+						"bookVersionName": "人教版",
+						"profile_image_url": "http://q.qlogo.cn/qqapp/1105221050/A2028337875E9D64CF8FAD5C58466FC0/100",
+						"message": {'note': "老师给我重点讲一下三角函数的内容喔", "time": 12312},
+						"leftCourse": 0,
+						"teacherId": "b496b9ef-fcb0-459b-847a-c8e257ee8543",
+						"coursewareUrl": "https://webcast.91xuexibao.com/static/broadcast/dist/courseware/static/preview.html?11044",
+						"classContent": "完型，阅读讲解",
+						"grade": 11,
+						"name": "pipixia",
+						"time": {
+							"end": 1499432100000,
+							"begin": 1499428800000
+						},
+						"courseStatus": 7
+					}
+				}
+			}
+		},
+		computed: {
+			hasNote(){
+				if (this.info.note.note === undefined) {
+					return "您暂时还没有添加上课备注哦~"
+				} else {
+					return this.info.note.note
+				}
+			},
+			hasMessage(){
+				if (this.info.message.note === undefined) {
+				} else {
+					return this.info.message.note
+				}
+			},
+			courseSt(){
+				return courseStatus(this.info.courseStatus)
+			},
+		},
+		created () {
+			this._checkData()
+		},
+		mounted () {
+		},
+		methods: {
+			/*检查并判断数据*/
+			_checkData(){
+				this.info.message.note === undefined ? this.messaged = false : this.messaged = true
+				this.info.note.note === undefined ? this.noted = false : this.noted = true
+				if(this.info.courseware_id != 0){
+					this.ware = true
+				}
+				if(this.info.generateReport ===1){
+					this.report = true
+				}
+			},
+		  goMain(){
+				this.$router.push('main')
+		  }
+		}
+	}
+</script>
+
+<style lang="scss" rel="stylesheet/scss" scoped>
+	@import "../../common/styles/mixin";
+
+	.course {
+		@include rowBox();
+		box-sizing: border-box;
+		padding: 20px;
+		/*width: 1000px;*/
+		background: #ffffff;
+		&-info {
+			width: 680px;
+			margin-right: 20px;
+			//			@include underDashBorder();
+			&-header {
+				@include underDashBorder();
+				@include rowBox();
+				@include pdtb(30px, 30px);
+				@include fontSizeColor(18px, $fontClr_1st);
+				align-items: center;
+				.trigger {
+					cursor: pointer;
+					height: 20px;
+					width: 20px;
+					margin-right: 15px;
+				}
+				img {
+					@include wh(8px, 15px);
+				}
+			}
+			&-item {
+				@include pdtb(30px, 30px);
+				@include underDashBorder();
+				&-title {
+					@include fontSizeColor(18px, $fontClr_main);
+					font-weight: bold;
+					margin-bottom: 10px;
+				}
+				&-cont {
+					position: relative;
+					margin-top: 10px;
+					@include rowBox();
+					@include fontSizeColor(12px,$fontClr_main);
+					&-btn {
+						@include fontSizeColor(12px,$fontClr_ble);
+						cursor: pointer;
+					}
+					&-time {
+						@include fontSizeColor(12px,$fontClr_3rd);
+						position: absolute;
+						right: 20px;
+					}
+				}
+
+			}
+
+		}
+		&-stu {
+			width: 300px;
+			border: solid;
+			box-sizing: border-box;
+			padding: 20px;
+			border-color: $orange $border $border $border;
+			border-width: 2px 1px 1px 1px;
+			&-info {
+				box-sizing: border-box;
+				padding: 20px;
+				@include allMidBox();
+				.usrPic {
+					@include wh(80px, 80px);
+					border-radius: 100%;
+					overflow: hidden;
+					img {
+						width: 100%;
+						height: 100%;
+					}
+				}
+				.usrName {
+					display: flex;
+					align-items: center;
+					margin-top: 20px;
+					@include fontSizeColor(20px, $fontClr_main);
+					img {
+						margin-left: 10px;
+					}
+				}
+				.school {
+					margin-top: 10px;
+					@include fontSizeColor(14px, $fontClr_2nd);
+				}
+			}
+			&-item {
+				position: relative;
+				box-sizing: border-box;
+				padding: 20px 0 20px 0;
+				border: dashed $border;
+				border-width: 1px 0 0 0;
+				&-title {
+					@include fontSizeColor(14px, $fontClr_main);
+					font-weight: bold;
+					margin-bottom: 20px;
+				}
+				&-cont {
+					@include rowBox();
+					margin-top: 10px;
+					@include fontSizeColor(12px, $fontClr_main)
+					img {
+						padding-top: 3px;
+						@include wh(15px, 15px);
+						margin-right: 20px;
+					}
+				}
+				&-txt {
+					@include fontSizeColor(12px, $fontClr_2nd);
+				}
+				.add {
+					position: absolute;
+					@include fontSizeColor(12px, $fontClr_ble);
+					top: 22px;
+					right: 0;
+					cursor: pointer;
+				}
+			}
+		}
+	}
+</style>

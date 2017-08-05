@@ -1,12 +1,16 @@
 var path = require('path')
 var webpack = require('webpack')
+var ExtractTextPlugin = require('extract-text-webpack-plugin')
+var isPro = process.env.NODE_ENV === 'production';
 
 module.exports = {
   entry: './src/main.js',
   output: {
     path: path.resolve(__dirname, './dist'),
-    publicPath: '/dist/',
-    filename: 'build.js'
+    publicPath: isPro ?
+			path.resolve(__dirname, './dist') : //发布引用路径
+			'/dist/',
+		filename: 'build.js'
   },
   module: {
     rules: [
@@ -35,21 +39,29 @@ module.exports = {
         options: {
           name: '[name].[ext]?[hash]'
         }
-      }
+      },
+			{
+				test: /\.css$/,
+				loader: 'style-loader!css-loader'
+			},
+			{
+				test: /\.(eot|svg|ttf|woff|woff2)(\?\S*)?$/,
+				loader: 'file-loader'
+			},
     ]
   },
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue.esm.js'
+      'vue$': 'vue/dist/vue.esm.js' // 支持运行时构建
     }
   },
   devServer: {
     historyApiFallback: true,
     noInfo: true
   },
-  performance: {
-    hints: false
-  },
+  // performance: {
+  //   hints: false
+  // },
   devtool: '#eval-source-map'
 }
 
@@ -63,13 +75,13 @@ if (process.env.NODE_ENV === 'production') {
       }
     }),
     new webpack.optimize.UglifyJsPlugin({
-      sourceMap: true,
+      // sourceMap: true,
       compress: {
         warnings: false
       }
     }),
-    new webpack.LoaderOptionsPlugin({
-      minimize: true
-    })
+    // new webpack.LoaderOptionsPlugin({
+    //   minimize: true
+    // })
   ])
 }

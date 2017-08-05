@@ -1,0 +1,200 @@
+<template>
+	<div class="topBar">
+		<div class="topBar-logo">
+			<img src=../../../static/logos/top.png alt="">
+		</div>
+		<p class="topBar-title">学习宝教师端</p>
+		<div class="topBar-usr">
+			<div class="topBar-usr-pic" @click="goLogin">
+				<img :src="avatar" alt="">
+			</div>
+			<p>{{name}}</p>
+			<div class="topBar-usr-drop" @click="showMenu">
+				<img src="../../../static/icons/topBar/pullDown.png" alt="">
+			</div>
+		</div>
+		<div class="topBar-btns">
+			<img src="../../../static/icons/topBar/minimize.png" alt="">
+			<img src="../../../static/icons/topBar/square.png" alt="">
+			<img src="../../../static/icons/topBar/close.png" alt="">
+		</div>
+
+
+		<transition name="fade">
+			<div class="topBar-menu" v-show="isShowMenu">
+				<div class="topBar-menu-item" @click="itemOne">
+					<img src="../../../static/icons/people.png" alt="">
+					<p>设备检测</p>
+				</div>
+				<div class="topBar-menu-item" @click="itemTwo">
+					<img src="../../../static/icons/people.png" alt="">
+					<p>关于我们</p>
+				</div>
+				<div class="topBar-menu-item" @click="itemThree">
+					<img src="../../../static/icons/people.png" alt="">
+					<p>退出登录</p>
+				</div>
+			</div>
+		</transition>
+
+	</div>
+</template>
+
+<script>
+	import confD from '../../components/dialogs/configDialog.vue'
+	export default {
+		name: "",
+		components: {},
+		data () {
+			return {
+				/*显示下拉菜单*/
+				isShowMenu: false
+			}
+		},
+		props: {
+			avatar: {
+				default: '../../../static/icons/topBar/indexPic.png'
+			},
+			name: {
+				default: "皮皮虾"
+			}
+		},
+		computed: {
+
+		},
+		created () {
+		},
+		mounted () {
+		},
+		methods: {
+			goLogin(){
+				if (!this.$store.state.isLogin) {
+					this.$router.push('/static/login')
+				} else {
+					this.$router.push('/static/main')
+				}
+			},
+		/*设备检测*/
+			itemOne(){
+				this.isShowMenu = !this.isShowMenu
+				this.$store.commit('UPDATE_SHOW_SETTING')
+			},
+		/*关于我们*/
+			itemTwo(){
+				this.isShowMenu = !this.isShowMenu
+				this.$router.push('about')
+			},
+		/*退出登录*/
+			itemThree(){
+				this.$store.commit('CLEAR_TEACHER_INFO')
+				this.isShowMenu = !this.isShowMenu
+			  	this.goLogin()
+			},
+			showMenu(){
+				this.isShowMenu = !this.isShowMenu
+			}
+		}
+	}
+</script>
+
+<style lang="scss" rel="stylesheet/scss" scoped>
+	@import "../../common/styles/mixin";
+
+	.fade-enter-active, .fade-leave-active {
+		transition: transform .3s;
+
+	}
+
+	.fade-enter, .fade-leave-to /* .fade-leave-active in below version 2.1.8 */
+	{
+		transform: translateY(-10px);
+		opacity: 0
+	}
+
+	.topBar {
+		position: fixed;
+		z-index: 2048;
+		width: 100%;
+		@include rowBox();
+		align-items: center;
+		background: $bg_gry;
+		height: 50px;
+		/*width: 1000px;*/
+		&-logo {
+			@include allMidBox();
+			margin-left: 10px;
+			margin-right: 10px;
+		}
+		&-title {
+			@include fontSizeColor(14px, $bg_wht)
+		}
+		&-usr {
+			p {
+				cursor: default;
+				@include fontSizeColor(12px, #b9b9ba)
+			}
+			position: absolute;
+			right: 140px;
+			@include rowBox();
+			align-items: center;
+			&-pic {
+				img {
+					overflow: hidden;
+					border-radius: 100%;
+					@include wh(30px, 30px)
+				}
+				cursor: pointer;
+				margin-right: 10px;
+			}
+			&-drop {
+				cursor: pointer;
+				margin-top: -3px;
+				margin-left: 10px;
+			}
+		}
+		&-btns {
+			right: 20px;
+			top: 15px;
+			position: absolute;
+			align-items: center;
+			@include rowBox();
+			img:first-child {
+				padding-top: 8px;
+				padding-bottom: 8px;
+				@include wh(12px, 2px)
+			}
+			img {
+				cursor: pointer;
+			}
+			img:not(:first-child) {
+				margin-left: 15px;
+				@include wh(12px, 12px)
+			}
+		}
+		&-menu {
+			border-radius: 0 0 4px 4px;
+			box-shadow: 0px 0px 6px $fontClr_2nd;
+			top: 52px;
+			right: 100px;
+			position: absolute;
+			z-index: inherit;
+			background: #ffffff;
+			width: 150px;
+			&-item {
+				cursor: pointer;
+				margin-bottom: 10px;
+				@include fontSizeColor(14px, $fontClr_1st);
+				img {
+					@include wh(14px, 14px);
+					margin-left: 20px;
+					margin-right: 20px;
+				}
+				@include rowBox();
+				align-items: center;
+			}
+			&-item:first-child {
+				margin-top: 10px !important;
+			}
+		}
+	}
+</style>

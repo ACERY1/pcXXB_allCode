@@ -1,61 +1,113 @@
 <template>
-  <div id="app">
-
-    <img src="./assets/logo.png">
-    <h1>{{ msg }}</h1>
-    <h2>Essential Links</h2>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank">Forum</a></li>
-      <li><a href="https://gitter.im/vuejs/vue" target="_blank">Gitter Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank">Twitter</a></li>
-    </ul>
-    <h2>Ecosystem</h2>
-    <ul>
-      <li><a href="http://router.vuejs.org/" target="_blank">vue-router</a></li>
-      <li><a href="http://vuex.vuejs.org/" target="_blank">vuex</a></li>
-      <li><a href="http://vue-loader.vuejs.org/" target="_blank">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank">awesome-vue</a></li>
-    </ul>
-  </div>
+	<div id="app">
+		<router-view></router-view>
+	</div>
 </template>
 
 <script>
-export default {
-  name: 'app',
-  data () {
-    return {
-      msg: 'Welcome to Your Vue.js App'
-    }
-  }
-}
+	export default {
+		name: 'app',
+		data () {
+			return {}
+		},
+		created(){
+			if (!this.$store.state.isLogin) {
+				/*TODO:这里以后做刷新不登录跳转*/
+				this.$router.push('/static/login')
+			} else {
+				this.$router.push('/static/main')
+			}
+		}
+	}
 </script>
 
-<style lang="scss">
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style lang="scss" rel="stylesheet/scss">
+	@import "./common/styles/common.scss";
+	@import "./common/styles/mixin.scss";
 
-h1, h2 {
-  font-weight: normal;
-}
 
-ul {
-  list-style-type: none;
-  padding: 0;
-}
 
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
+	.el-menu-item.is-active{
 
-a {
-  color: #42b983;
-}
+		border-bottom: 2px solid #f4a100!important;
+	}
+	#app {
+		height: 100%;
+	}
+
+	.el-progress-bar__inner {
+		background-color: $orange !important;
+	}
+
+	.el-progress-bar__outer {
+		background-color: $pre2 !important;
+	}
+
+	.el-dialog--large {
+
+		height: 545px !important;
+		width: 450px !important;
+	}
+
+	.el-dialog--small {
+
+		height: 200px !important;
+		width: 450px !important;
+	}
+
+	.el-dialog {
+		border-radius: 5px !important;
+	}
+
+	.el-dialog__close {
+		font-size: 12px;
+		color: $fontClr_2nd;
+		display: none!important;
+	}
+
+	.el-dialog__close:hover {
+		color: $orange !important;
+	}
+
+	.el-dialog__header {
+		border-radius: 5px !important;
+		height: 55px !important;
+		background: $bg_wht !important;
+	}
+
+	.el-dialog__body {
+		padding: 0 0px 0 0px !important;
+	}
+
+	.el-slider__button {
+		background-color: $orange !important;
+	}
+
+	.el-slider__bar {
+		background-color: $orange !important;
+	}
+
+	.el-progress__text {
+		display: none !important;
+	}
+
+	.el-message {
+		margin-top: 40%;
+		border-radius: 5px !important;
+		background: rgba(0, 0, 0, .6) !important;
+		img {
+			display: none !important;
+		}
+	}
+
+	.el-message__group {
+		margin-left: 0 !important;
+		display: flex !important;
+		justify-content: center !important;
+		p {
+			margin: 0 !important;
+			color: #ffffff !important;
+			font-size: 14px !important;
+		}
+	}
 </style>

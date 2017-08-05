@@ -1,5 +1,5 @@
 <template>
-	<div class="setting">
+	<div class="setting" >
 		<el-dialog title="设备检测" v-model="show" size="large" :show-close="false">
 			<el-menu class="el-menu-demo" mode="horizontal" :default-active="focusItem" @select="change">
 				<el-menu-item index="mic">麦克风</el-menu-item>
@@ -158,7 +158,7 @@
 
 			},
 			unShow(){
-							this.$store.commit('UPDATE_SHOW_SETTING')
+			  this.$store.commit('UPDATE_SHOW_SETTING')
 			}
 		}
 	}

@@ -24,6 +24,7 @@
 				<span class="classItem-info-class-start">{{stuTime.hour}}</span>
 				<span>:</span>
 				<span class="classItem-info-class-start">{{stuTime.minute}}</span>
+				<span>--</span>
 				<span class="classItem-info-class-end">{{endTime.hour}}</span>
 				<span>:</span>
 				<span class="classItem-info-class-end">{{endTime.minute}}</span>
@@ -32,8 +33,8 @@
 			</div>
 		</div>
 		<div class="classItem-btn" @click="goInfo">
-			<my-btn :styles="'orange'" :height="25" :width="80" :size="12" v-if="isOnClass === 1" ></my-btn>
-			<my-btn :styles="'grey_d'" :height="25" :width="80" :size="12" v-if="isOnClass === 0"></my-btn>
+			<my-btn :styles="'orange'" :height="25" :width="80" :size="12" v-if="isOnClass == 1" ></my-btn>
+			<my-btn :styles="'grey_d'" :height="25" :width="80" :size="12" v-if="isOnClass == 0"></my-btn>
 		</div>
 	</div>
 </template>
@@ -119,6 +120,8 @@
 
 		},
 		created () {
+//		  console.log(this.courseInfo.begin_time+'****'+ +new Date())
+//		  console.log(this.courseInfo.begin_time <= +new Date() && this.courseInfo.end_time >= +new Date())
 		},
 		mounted () {
 		},
@@ -144,6 +147,7 @@
 		&-headPic {
 			@include wh(66px, 66px);
 			margin-right: 20px;
+			margin-left: 20px;
 			margin-top: 28px;
 			border-radius: 100%;
 			overflow: hidden;

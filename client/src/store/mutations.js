@@ -5,7 +5,8 @@ import {
 	RECORD_TEACHER_INFO,
 	RECORD_IS_LOGIN,
 	UPDATE_SHOW_SETTING,
-	CLEAR_TEACHER_INFO
+	UPDATE_SHOW_ABOUT,
+	CLEAR_TEACHER_INFO,
 } from './mutation_types'
 
 export default {
@@ -25,6 +26,9 @@ export default {
 	/*标记是否打开设置*/
 	[UPDATE_SHOW_SETTING](state){
 		state.showSetting = !state.showSetting
+	},
+	[UPDATE_SHOW_ABOUT](state){
+		state.showAbout= !state.showAbout
 	},
 	/*清除登录数据*/
 	[CLEAR_TEACHER_INFO](state){

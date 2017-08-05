@@ -1,5 +1,5 @@
 <template>
-	<div class="clsBtn">
+	<div class="clsBtn" @click="close">
 		<img src="../../../static/icons/close_0.png" alt="" v-if=" on === false" class="item">
 		<img src="../../../static/icons/close_1.png" alt="" v-if=" on === true" class="item">
 	</div>
@@ -15,6 +15,12 @@
 		props: {
 			on: {
 				default: true
+			},
+			close: {
+				type: Function,
+				default: () => {
+					console.log('close!')
+				}
 			}
 		},
 		computed: {},

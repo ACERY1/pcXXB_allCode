@@ -5,25 +5,28 @@
 			<router-view></router-view>
 		</div>
 		<config-dialog></config-dialog>
+		<about-dialog :close="showAbout"></about-dialog>
 	</div>
 </template>
 
 <script>
 	import topBar from '../components/bars/topBar.vue'
 	import configDialog from '../components/dialogs/configDialog.vue'
+	import aboutDialog from '../components/dialogs/aboutDialog.vue'
 
 	export default {
 		name: "mainContainer",
 		components: {
 			topBar,
-			configDialog
+			configDialog,
+			aboutDialog
 		},
 		data () {
 			return {
 				//顶部信息
 //				top_avatar: this.$store.state.teacherInfo.avatar,
 //				top_username: this.$store.state.teacherInfo.name,
-
+				isShowAbout: true
 			}
 		},
 		props: {},
@@ -41,7 +44,11 @@
 		mounted () {
 
 		},
-		methods: {}
+		methods: {
+			showAbout(){
+				this.$store.commit('UPDATE_SHOW_ABOUT')
+			}
+		}
 	}
 </script>
 

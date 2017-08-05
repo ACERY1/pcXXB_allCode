@@ -66,6 +66,11 @@
 	}
 
 	.chooseBar {
+		box-shadow: 0 2px 6px $fontClr_3rd;
+		width: 100%;
+		z-index: 1024;
+		top:50px;
+		position: fixed;
 		background: #ffffff;
 		/*width: 1000px;*/
 	}

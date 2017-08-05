@@ -19,7 +19,8 @@ const state = {
 		star: ''
 	},// 教师登录信息
 	isLogin:false, // 判断是否登录
-	showSetting:false // 判断显示设备检测
+	showSetting:false, // 判断显示设备检测
+	showAbout:false // 判断显示关于弹窗
 }
 export default new Vuex.Store({
 	state,

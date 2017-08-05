@@ -44,7 +44,7 @@
 	}
 
 	.el-dialog--large {
-
+		top:10%!important;
 		height: 545px !important;
 		width: 450px !important;
 	}
@@ -62,7 +62,6 @@
 	.el-dialog__close {
 		font-size: 12px;
 		color: $fontClr_2nd;
-		display: none!important;
 	}
 
 	.el-dialog__close:hover {

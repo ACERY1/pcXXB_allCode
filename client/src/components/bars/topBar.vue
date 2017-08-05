@@ -47,7 +47,7 @@
 		components: {},
 		data () {
 			return {
-				/*显示下拉菜单*/
+		  /*显示下拉菜单*/
 				isShowMenu: false
 			}
 		},
@@ -57,11 +57,12 @@
 			},
 			name: {
 				default: "皮皮虾"
-			}
+			},
+//			itemTwo: {
+//				type: Function,
+//			}
 		},
-		computed: {
-
-		},
+		computed: {},
 		created () {
 		},
 		mounted () {
@@ -82,15 +83,17 @@
 		/*关于我们*/
 			itemTwo(){
 				this.isShowMenu = !this.isShowMenu
-				this.$router.push('about')
+				this.$store.commit('UPDATE_SHOW_ABOUT')
 			},
 		/*退出登录*/
 			itemThree(){
-				this.$store.commit('CLEAR_TEACHER_INFO')
+				this.$store.commit('CLEAR_TEACHER_INFO') // 清除登录信息
 				this.isShowMenu = !this.isShowMenu
-			  	this.goLogin()
+				this.goLogin()
 			},
 			showMenu(){
+				this.$store.state.showSetting = false
+				this.$store.state.showAbout = false
 				this.isShowMenu = !this.isShowMenu
 			}
 		}

@@ -6,7 +6,6 @@ const home = r => require.ensure([], () => r(require('../pages/homepage.vue')), 
 const guide = r => require.ensure([], () => r(require('../pages/indexContainer.vue')), 'guide'); // 引导
 const install = r => require.ensure([], () => r(require('../pages/install/install.vue')), 'install'); // 安装
 const update = r => require.ensure([], () => r(require('../pages/install/update.vue')), 'update'); // 安装
-const about = r => require.ensure([], () => r(require('../pages/install/about.vue')), 'about'); // 关于
 const login = r => require.ensure([], () => r(require('../pages/login/login.vue')), 'login'); // 安装&注册
 const classInfo = r => require.ensure([], () => r(require('../pages/class/classInfo.vue')), 'classInfo'); // 的
 const mainContainer = r => require.ensure([], () => r(require('../pages/mainContainer.vue')), 'mainContainer.vue'); // 的
@@ -15,8 +14,9 @@ const mainContainer = r => require.ensure([], () => r(require('../pages/mainCont
 export default [
 	{
 		path: '',
-		redirect: '/static/home'
+		redirect: '/static/home' // 重定向
 	},
+	/*安装 登录 卸载  更新进程页面 */
 	{
 		path:'/static/guide',
 		name:'guide',
@@ -31,14 +31,10 @@ export default [
 				path:'/static/login',
 				name:'login',
 				component:login,
-			},
-			{
-				path:'/static/about',
-				name:'about',
-				component:about,
 			}
 		]
 	},
+	/*首页及其子页面*/
 	{
 		path:'/static/home',
 		name:'home',
@@ -56,6 +52,8 @@ export default [
 			},
 		]
 	},
+	
+	/*提示更新页面*/
 	{
 		path:'/static/update',
 		name:'update',

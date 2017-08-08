@@ -12,8 +12,9 @@
 		},
 		created(){
 			if (!this.$store.state.isLogin) {
-				/*TODO:这里以后做刷新不登录跳转*/
-				this.$router.push('/static/login')
+		  /*TODO:这里以后做刷新不登录跳转*/
+				this.$router.push('/static/main')
+//				this.$router.push('/static/login')
 			} else {
 				this.$router.push('/static/main')
 			}
@@ -25,12 +26,11 @@
 	@import "./common/styles/common.scss";
 	@import "./common/styles/mixin.scss";
 
+	.el-menu-item.is-active {
 
-
-	.el-menu-item.is-active{
-
-		border-bottom: 2px solid #f4a100!important;
+		border-bottom: 2px solid #f4a100 !important;
 	}
+
 	#app {
 		height: 100%;
 	}
@@ -44,7 +44,7 @@
 	}
 
 	.el-dialog--large {
-		top:10%!important;
+		top: 10% !important;
 		height: 545px !important;
 		width: 450px !important;
 	}

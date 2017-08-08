@@ -6,6 +6,7 @@
 </template>
 
 <script>
+	/*登录/更新/安装的容器*/
 	import clsBtn from '../components/buttons/closeBtn.vue'
 	export default {
 		name: "",

@@ -1,5 +1,5 @@
 <template>
-	<div class="indexCnt">
+	<div class="">
 		<el-dialog title="关于我们" v-model="show" size="tiny">
 			<cls-btn :on="isOn" class="indexCnt-clsBtn" :close="close"></cls-btn>
 			<div class="about">
@@ -22,11 +22,11 @@
 				</div>
 			</div>
 		</el-dialog>
-
 	</div>
 </template>
 
 <script>
+	/*TODO:以后写拿最新版本号的请求*/
 	import clsBtn from '../../components/buttons/closeBtn.vue'
 	export default {
 		name: "",
@@ -80,14 +80,7 @@
 	}
 
 	.indexCnt {
-		/*width: 800px;*/
 		position: relative;
-		box-sizing: border-box;
-		padding: 20px;
-		height: 100%;
-		/*width: 800px;*/
-		background: $bg_wht;
-		box-shadow: rgba(0, 0, 0, .15) 0 3px 7px;
 		&-clsBtn {
 			position: absolute;
 			top: 20px;

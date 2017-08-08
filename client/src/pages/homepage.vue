@@ -1,8 +1,8 @@
 <template>
 	<div class="home">
-		<choose-bar></choose-bar>
+		<choose-bar :fresh="reFresh" :itemOne="nowCourse" :itemTwo="historyCourse"></choose-bar>
 		<el-row type="flex" justify="center">
-			<el-col :span="24" >
+			<el-col :span="24">
 				<class-item v-for="item in courseInfo" :key="item.courseId" :courseInfo="item"></class-item>
 			</el-col>
 		</el-row>
@@ -26,6 +26,7 @@
 		props: {},
 		computed: {},
 		created () {
+		/*请求数据*/
 			this.getCourseList()
 		},
 		mounted () {
@@ -41,13 +42,25 @@
 						this.$message(_data.msg)
 						return false
 					} else {
-						/*数组赋值*/
+			  /*数组赋值*/
 						this.courseInfo = _data.courses
 					}
 
 				}).catch((err) => {
 					this.$message(err)
 				})
+			},
+			reFresh(){
+				this.courseInfo = []
+				this.getCourseList()
+			},
+			nowCourse(){
+				this.courseInfo = []
+				this.getCourseList()
+			},
+			historyCourse(){
+				this.courseInfo = []
+				this.getCourseList()
 			}
 
 		}
@@ -55,7 +68,7 @@
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
-	.home{
+	.home {
 		padding-top: 80px;
 	}
 </style>

@@ -97,12 +97,76 @@ const randomNum = (fromNum, toNum) => {
 const verifyVal = (...values) => {
 	// console.log(values)
 	for (let i of values) {
-		if (i==''||i==null || i==undefined){
+		if (i == '' || i == null || i == undefined) {
 			return 1
 		}
 	}
 	return 0
 }
 
+/**
+ * 获取设备音视频
+ * @param hasAudio
+ * @param hasVideo
+ * @returns {*}
+ */
+const setMediaStream = (hasAudio, hasVideo) => {
+	let constraint = {
+		audio: hasAudio,
+		video: hasVideo
+	}
+	return navigator.mediaDevices.getUserMedia(constraint)
+}
 
-export {countFn, parseTime, judgeTime, randomNum,verifyVal}
+/**
+ * 获取一个接入了分析器的audioBox
+ * @param stream
+ * @param fftSize
+ * @returns {*}
+ */
+const outputAudioData = (stream, fftSize) => {
+	let audioCtx = new AudioContext();
+	let gainNode = audioCtx.createGain();
+	let source = audioCtx.createMediaStreamSource(stream);
+	let analyser = audioCtx.createAnalyser()
+	source.connect(gainNode)
+	source.connect(analyser)
+	analyser.fftSize = fftSize
+	return {analyser, gainNode,audioCtx}
+}
+
+/**
+ * 输入频域数据（数组元素为0~255int 的数组），得到一个整数音量值，fold用于调节输出整数的大小
+ * @param array
+ * @param fold
+ * @returns {Number}
+ */
+const computeVolume = (array, fold) => {
+	/*array is 32 length*/
+	let _result = 0
+	array.forEach((item) => {
+		_result += item
+	})
+	return parseInt(_result / fold)
+}
+
+/**
+ * 拿到音频的src，输出傅里叶变换之后的频域图 和分析器 以及audioCtx
+ * @param audioSrc
+ * @param ffSize 快速傅里叶变换的横坐标
+ */
+const readAudioTo_HZ_Array = (audioSrc, ffSize) => {
+	let audio = new Audio();
+	audio.src = audioSrc;
+	let audioBox = new AudioContext(); // 申请一个音频容器，可以对数据进行解码
+	let analyser = audioBox.createAnalyser();
+	let source = audioBox.createMediaElementSource(audio);
+	source.connect(analyser)
+	analyser.connect(audioBox.destination)
+	analyser.fftSize = ffSize
+	return { array:new Uint8Array(analyser.frequencyBinCount),analyser,audio,audioBox}
+}
+export {
+	countFn, parseTime, judgeTime, randomNum, verifyVal, setMediaStream, outputAudioData, computeVolume,
+	readAudioTo_HZ_Array
+}

@@ -7,6 +7,8 @@ import routes from './router/index' // 导入路由路径配置
 import  api from './config/api'
 import  utils from './config/utilConf'
 import store from './store/'
+import $ from 'jquery'
+
 // register vueRouter
 Vue.use(VueRouter)
 

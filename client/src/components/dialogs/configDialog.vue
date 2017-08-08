@@ -1,18 +1,19 @@
 <template>
-	<div class="setting" >
+	<div class="setting" ref="test">
 		<el-dialog title="设备检测" v-model="show" size="large" :show-close="false">
 			<el-menu class="el-menu-demo" mode="horizontal" :default-active="focusItem" @select="change">
-				<el-menu-item index="mic">麦克风</el-menu-item>
-				<el-menu-item index="voice">扬声器</el-menu-item>
-				<el-menu-item index="camera">摄像头</el-menu-item>
+				<el-menu-item index="mic" @click="showMic">麦克风</el-menu-item>
+				<el-menu-item index="voice" @click="showVoice">扬声器</el-menu-item>
+				<el-menu-item index="camera" @click="showVideo">摄像头</el-menu-item>
 			</el-menu>
-			<div class="setting-mic" v-if="focusItem === 'mic'">
+			<div class="setting-mic" v-show="focusItem === 'mic'">
 				<p class="setting-mic-title">麦克风音量</p>
 				<div class="setting-mic-bar " style="margin-top: 20px;margin-bottom: 20px">
-					<img src="../../../static/icons/voice.png" alt="" style="height: 23px;width: 18px">
+					<img src="../../../static/icons/mic.png" alt="" style="height: 23px;width: 18px">
 					<ul>
 						<li v-for="i,index in 9" :class="{org:(index+1)<= testMicVal}"></li>
 					</ul>
+					<audio :src="audioURL" autoplay id="micAudio"></audio>
 				</div>
 				<p class="setting-mic-title">调整麦克风音量</p>
 				<div class="setting-mic-bar">
@@ -35,7 +36,7 @@
 				</div>
 				<p class="setting-mic-add">如说话无反应，请尝试更换麦克风设备</p>
 			</div>
-			<div class="setting-voice" v-if="focusItem === 'voice'">
+			<div class="setting-voice" v-show="focusItem === 'voice'">
 				<p class="setting-mic-title">点击测试按钮，播放声音</p>
 				<div class="setting-mic-bar " style="margin-top: 20px;margin-bottom: 20px">
 					<img src="../../../static/icons/voice.png" alt="" style="height: 23px;width: 18px">
@@ -68,7 +69,7 @@
 			<div class="setting-camera" v-if="focusItem === 'camera'">
 				<div class="videoBox">
 					<p>预览</p>
-					<video src="" class="videoScreen"></video>
+					<video class="videoScreen" autoplay="autoplay" muted :src="videoURL"></video>
 				</div>
 				<div class="setting-mic-choose">
 					<el-dropdown trigger="click">
@@ -97,18 +98,31 @@
 </template>
 
 <script>
-	import {randomNum, countFn} from '../../common/scripts/util'
+	import {
+		randomNum, countFn, setMediaStream, outputAudioData, computeVolume, readAudioTo_HZ_Array
+	} from '../../common/scripts/util'
 	export default {
 		name: "",
 		components: {},
 		data () {
 			return {
-//				show: true,
-				micVal: 50, // 麦克风音量进度条
-				voiceVal: 60, // 扬声器音量进度条
+				videoURL: '', // 视频流输入入口
+				videoStream: '', // 保存视频流对象
+				audioURL: '', // 麦克风音频流入口
+				audioStream: '', //麦克风音频流对象
+				voiceURL: '../../../static/audios/demo.mov', // 样本音频路径
+				audioObj: null, // 用于保存扬声器设置下建立的音频对象
+				isPlayVoice: false, //是否正在播放音频
+				micVal: 50, // 麦克风音量进度条(0-100)
+				voiceVal: 60, // 扬声器音量进度条(0-100)
 				volVal: 0, // 播放声音的值
 				testMicVal: 0, // 当前麦克风音量
-				focusItem: 'mic'
+				focusItem: 'mic', // 当前选中的设置页
+				mediaStreams: [], // 保存所有媒体流，用于最后清除
+				audioContexts: [], //保存
+				animationId: '',
+				gainNode: '',
+				openCount: 0 //用于计数，防止多次setStream造成消耗
 			}
 		},
 		props: {
@@ -128,37 +142,134 @@
 					return false
 				}
 			},
-//			show(){
-//				return this.$store.state.showSetting
-//			}
+
 		},
 		created () {
-//			this.testMic()
+			this.showMic()
 		},
 		mounted () {
 		},
 		methods: {
+			_closeStream(){
+				for (let i = 0; i < this.mediaStreams.length; i++) {
+					this.mediaStreams[i].getTracks()[0].stop()
+				}
+				for (let i = 0; i < this.audioContexts.length; ++i) {
+					this.audioContexts[i].close()
+				}
+				this.audioContexts = []
+				this.isPlayVoice = false
+				this.audioObj = null
+				this.volVal = 0
+				this.testMicVal = 0
+				if (this.animationId != '') {
+					window.cancelAnimationFrame(this.animationId)
+				}
+				if (this.audioObj != null) {
+					this.audioObj.pause()
+				}
+
+			},
+			//监听头部栏改变时间
 			change(index){
 				this.focusItem = index
 			},
+			// 测试声音
 			testVol(){
-				countFn(40, 50, () => {
-					this.volVal = randomNum(1, 9);
-				}, () => {
-					this.volVal = 0;
-				})
+				if (this.isPlayVoice) {
+					this.audioObj.pause()
+					this.isPlayVoice = false
+				} else {
+					if (this.audioObj != null) {
+						//说明被初始化了
+						this.audioObj.play()
+						this.isPlayVoice = true
+					} else {
+						//将音频导入分析器*/
+						let audioCtx = readAudioTo_HZ_Array(this.voiceURL, 32)
+						let hzArray = audioCtx.array
+						let analyser = audioCtx.analyser
+						this.audioContexts.push(audioCtx.audioBox)
+						this.audioObj = audioCtx.audio
+						//播放音频
+						this.audioObj.volume = 0.5
+						this.audioObj.play()
+						this.isPlayVoice = true
+						// 动画
+						let _ani = () => {
+							analyser.getByteFrequencyData(hzArray);
+							//TODO 600-x*6 是取样函数 x值越大 计算出来的值就越大*/
+							this.volVal = computeVolume(hzArray, 300);
+							if(this.audioObj==null){
+								return false
+							}
+							this.audioObj.volume = this.voiceVal / 100	// 拿到麦克风音量
+							requestAnimationFrame(_ani)
+						}
+						requestAnimationFrame(_ani)
+					}
+				}
 
 			},
-			testMic(){
-				countFn(40, 100, () => {
-					this.testMicVal = randomNum(1, 9);
-				}, () => {
-					this.testMicVal = 0;
-				})
-
-			},
+			// 退出显示
 			unShow(){
-			  this.$store.commit('UPDATE_SHOW_SETTING')
+				this._closeStream()
+				this.$store.commit('UPDATE_SHOW_SETTING')
+			},
+			// 显示视频
+			showVideo(){
+				if (this.openCount > 6) {
+					this.unShow()
+				}
+				this._closeStream()
+				setMediaStream(false, true).then((stream) => {
+					this.videoURL = window.URL.createObjectURL(stream)
+					this.videoStream = stream
+					this.mediaStreams.push(stream)
+					this.openCount++
+//					console.log(this.mediaStreams)
+				})
+			},
+			//显示麦克风
+			showMic(){
+				if (this.openCount > 6) {
+					this.unShow()
+				}
+				this._closeStream()
+				setMediaStream(true, false).then((stream) => {
+					this.audioStream = stream
+					this.audioURL = window.URL.createObjectURL(stream)
+					this.mediaStreams.push(stream)
+					let audio = outputAudioData(stream, 32)
+
+					this.audioContexts.push(audio.audioCtx)
+
+					let _analyser = audio.analyser
+					let array = new Uint8Array(_analyser.frequencyBinCount) // array长度和frequencyBinCount长度相等
+					let _ani = () => {
+						_analyser.getByteFrequencyData(array);
+						//TODO 600-x*6 是取样函数 x值越大 计算出来的值就越大*/
+						this.testMicVal = computeVolume(array, this.micVal > 0 ? 800 - this.micVal * 8 + 100 : 10000);
+						if(document.querySelector('#micAudio')==null){
+							return false
+						}
+						document.querySelector('#micAudio').volume = this.micVal / 100	// 拿到麦克风音量
+						requestAnimationFrame(_ani)
+					}
+
+					this.openCount++
+					this.animationId = requestAnimationFrame(_ani)
+				})
+			},
+			// 显示扬声器
+			showVoice(){
+
+				if (this.openCount > 6) {
+					this.unShow()
+				}
+				this._closeStream()
+				console.log()
+				this.openCount++
 			}
 		}
 	}
@@ -223,6 +334,10 @@
 					margin-top: 30px;
 					margin-bottom: 10px;
 				}
+				p:not(:first-child) {
+					cursor: pointer;
+					position: absolute;
+				}
 				video {
 					height: 150px;
 					width: 200px;
@@ -280,7 +395,7 @@
 
 	.el-dropdown {
 		position: relative;
-		@include fontSizeColor(14px, $fontClr_2nd)
+		@include fontSizeColor(14px, $fontClr_2nd);
 		display: flex;
 		align-items: center;
 		width: 350px;

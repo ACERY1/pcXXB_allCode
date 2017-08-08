@@ -1,10 +1,12 @@
 <template>
 	<div class="m">
+		<!--<video class="videoScreen" autoplay="autoplay" muted id="videoBox2" height="100" width="100" style="position: absolute;background-color: #3b3b3b;z-index: 99999"></video>-->
+
 		<top-bar :avatar="top_avatar" :name="top_username"></top-bar>
 		<div class="mainContainer">
 			<router-view></router-view>
 		</div>
-		<config-dialog></config-dialog>
+		<config-dialog v-if="isShowDialog"></config-dialog>
 		<about-dialog :close="showAbout"></about-dialog>
 	</div>
 </template>
@@ -26,7 +28,7 @@
 				//顶部信息
 //				top_avatar: this.$store.state.teacherInfo.avatar,
 //				top_username: this.$store.state.teacherInfo.name,
-				isShowAbout: true
+				isShowAbout: true,
 			}
 		},
 		props: {},
@@ -36,13 +38,15 @@
 			},
 			top_username(){
 				return this.$store.state.teacherInfo.name
+			},
+			isShowDialog(){
+				return this.$store.state.showSetting
 			}
 		},
 		created () {
 			this.$router.push('main')
 		},
 		mounted () {
-
 		},
 		methods: {
 			showAbout(){

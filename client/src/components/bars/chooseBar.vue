@@ -1,9 +1,9 @@
 <template>
 	<div class="chooseBar">
 		<el-menu class="el-menu-demo" mode="horizontal" default-active="1">
-			<el-menu-item index="1"><p>待上课程</p></el-menu-item>
-			<el-menu-item index="2"><p>历史课程</p></el-menu-item>
-			<freshBtn class="freshBtn"></freshBtn>
+			<el-menu-item index="1" @click="itemOne"><p>待上课程</p></el-menu-item>
+			<el-menu-item index="2" @click="itemTwo"><p>历史课程</p></el-menu-item>
+			<freshBtn class="freshBtn" v-on:click.native="fresh"></freshBtn>
 		</el-menu>
 	</div>
 </template>
@@ -16,17 +16,34 @@
 			freshBtn
 		},
 		data () {
-			return {
+			return {}
+		},
+		props: {
+			fresh: {
+				type: Function,
+				default: () => {
+					console.log('fresh it!')
+				}
+			},
+			itemOne: {
+				type: Function,
+				default: () => {
+					console.log('click item1 !')
+				}
+			},
+			itemTwo: {
+				type: Function,
+				default: () => {
+					console.log('click item2 !')
+				}
 			}
 		},
-		props: {},
 		computed: {},
 		created () {
 		},
 		mounted () {
 		},
-		methods: {
-		}
+		methods: {}
 	}
 </script>
 
@@ -69,7 +86,7 @@
 		box-shadow: 0 2px 6px $fontClr_3rd;
 		width: 100%;
 		z-index: 1024;
-		top:50px;
+		top: 50px;
 		position: fixed;
 		background: #ffffff;
 		/*width: 1000px;*/

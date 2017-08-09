@@ -1,9 +1,9 @@
 <template>
-	<div class="classItem">
-		<div class="classItem-headPic">
+	<div class="classItem" >
+		<div class="classItem-headPic" @click="goInfo">
 			<img :src="courseInfo.profile_image_url" alt="">
 		</div>
-		<div class="classItem-info">
+		<div class="classItem-info" @click="goInfo">
 			<div class="classItem-info-usr">
 				<span class="classItem-info-usr-name">
 					{{courseInfo.name}}
@@ -32,8 +32,9 @@
 				<span class="classItem-info-class-grade">{{courseInfo.edu_grade}}</span>
 			</div>
 		</div>
-		<div class="classItem-btn" @click="goInfo">
-			<my-btn :styles="'orange'" :height="25" :width="80" :size="12" v-if="isOnClass == 1" ></my-btn>
+		<div class="clickArea" @click="goInfo"></div>
+		<div class="classItem-btn" @click="goClass">
+			<my-btn :styles="'orange'" :height="25" :width="80" :size="12" v-if="isOnClass == 1"></my-btn>
 			<my-btn :styles="'grey_d'" :height="25" :width="80" :size="12" v-if="isOnClass == 0"></my-btn>
 		</div>
 	</div>
@@ -44,43 +45,43 @@
 	 * 接口详情
 	 * 1.courseInfo (Object)
 	 * */
-	import myBtn from '../../components/buttons/basicButtons.vue'
-	import {judgeTime, parseTime} from '../../common/scripts/util'
-	export default {
-		name: "",
-		components: {
-			myBtn
-		},
-		data () {
-			return {
-				isOnClass: (this.courseInfo.begin_time <= +new Date() && this.courseInfo.end_time >= +new Date()) ? 1 : 0
-			}
-		},
-		props: {
-			courseInfo: {
-				type: Object,
-				default: () => {
-					return {
-						"courseware_id": 36,
-						"gender": 2,
-						"edu_grade": "高三",
-						"subject": "数学",
-						"end_time": 1485820500000,
-						"student_id": "540ab33670616000000000e7",
-						"begin_time": 1485817200000,
-						"profile_image_url": "http://simg.91xuexibao.com/public/user_data/images/20150228/profile/1668966142!",
-						"message": 0,
-						"courseName": "一对一直播课",
-						"edu_school": "扎赉特旗音德尔第一中学",
-						"price": "88",
-						"grade": "六年级",
-						"name": "小燕子",
-						"courseId": "11346",
-						"courseware": 0,
-						"status": 1
+		import myBtn from '../../components/buttons/basicButtons.vue'
+		import {judgeTime, parseTime} from '../../common/scripts/util'
+		export default {
+			name: "",
+			components: {
+				myBtn
+			},
+			data () {
+				return {
+					isOnClass: (this.courseInfo.begin_time <= +new Date() && this.courseInfo.end_time >= +new Date()) ? 1 : 0
+				}
+			},
+			props: {
+				courseInfo: {
+					type: Object,
+					default: () => {
+						return {
+							"courseware_id": 36,
+							"gender": 2,
+							"edu_grade": "高三",
+							"subject": "数学",
+							"end_time": 1485820500000,
+							"student_id": "540ab33670616000000000e7",
+							"begin_time": 1485817200000,
+							"profile_image_url": "http://simg.91xuexibao.com/public/user_data/images/20150228/profile/1668966142!",
+							"message": 0,
+							"courseName": "一对一直播课",
+							"edu_school": "扎赉特旗音德尔第一中学",
+							"price": "88",
+							"grade": "六年级",
+							"name": "小燕子",
+							"courseId": "11346",
+							"courseware": 0,
+							"status": 1
+						}
 					}
 				}
-			}
 //		"courseware_id": 36,
 //			"gender": 2,
 //			"edu_grade": "高三",
@@ -98,45 +99,64 @@
 //			"courseId": "11346",
 //			"courseware": 0,
 //			"status": 7
-		},
-		computed: {
-			stuDate(){
-				if (judgeTime(this.courseInfo.end_time) == 0) {
-					return "今天"
-				}
-				if (judgeTime(this.courseInfo.end_time) === 1) {
-					return "明天"
-				} else {
-					let _tempDate = new Date(this.courseInfo.end_time);
-					return `${_tempDate.getMonth() + 1}月${_tempDate.getDate()}日`
-				}
 			},
-			stuTime(){
-				return parseTime(this.courseInfo.begin_time)
-			},
-			endTime(){
-				return parseTime(this.courseInfo.end_time)
-			},
+			computed: {
+				stuDate(){
+					if (judgeTime(this.courseInfo.end_time) == 0) {
+						return "今天"
+					}
+					if (judgeTime(this.courseInfo.end_time) === 1) {
+						return "明天"
+					} else {
+						let _tempDate = new Date(this.courseInfo.end_time);
+						return `${_tempDate.getMonth() + 1}月${_tempDate.getDate()}日`
+					}
+				},
+				stuTime(){
+					return parseTime(this.courseInfo.begin_time)
+				},
+				endTime(){
+					return parseTime(this.courseInfo.end_time)
+				},
 
-		},
-		created () {
+			},
+			created () {
 //		  console.log(this.courseInfo.begin_time+'****'+ +new Date())
 //		  console.log(this.courseInfo.begin_time <= +new Date() && this.courseInfo.end_time >= +new Date())
-		},
-		mounted () {
-		},
-		methods: {
-					goInfo(){
-						this.$router.push('classInfo')
-					}
+			},
+			mounted () {
+			},
+			methods: {
+				goInfo(){
+					/*保存课程ID*/
+					this.$store.commit("UPDATE_COURSE_ID",this.courseInfo.courseId)
+					this.$router.push('/static/classInfo')
+
+				},
+				goClass(){
+					this.$router.push('/static/onclass')
+				}
+			}
 		}
-	}
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
+
+	.clickArea{
+		position: absolute;
+		right: 16%;
+		height: 130px;
+		width: 46%;
+	}
 	@import "../../common/styles/mixin";
 
+	.classItem:hover {
+		cursor: pointer;
+		background: $border;
+	}
+
 	.classItem {
+
 		background: #ffffff;
 		position: relative;
 		display: flex;

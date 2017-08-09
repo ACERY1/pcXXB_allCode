@@ -3,7 +3,7 @@
  */
 /* 常用工具函数
  * @author Acery
- * @version 0.0.2
+ * @version 0.0.3
  */
 
 /**
@@ -132,7 +132,7 @@ const outputAudioData = (stream, fftSize) => {
 	source.connect(gainNode)
 	source.connect(analyser)
 	analyser.fftSize = fftSize
-	return {analyser, gainNode,audioCtx}
+	return {analyser, gainNode, audioCtx}
 }
 
 /**
@@ -164,9 +164,154 @@ const readAudioTo_HZ_Array = (audioSrc, ffSize) => {
 	source.connect(analyser)
 	analyser.connect(audioBox.destination)
 	analyser.fftSize = ffSize
-	return { array:new Uint8Array(analyser.frequencyBinCount),analyser,audio,audioBox}
+	return {array: new Uint8Array(analyser.frequencyBinCount), analyser, audio, audioBox}
 }
+
+/**
+ *  存储本地STORE
+ * @param name
+ * @param content
+ */
+const setStore = (name, content) => {
+	if (!name) return;
+	if (typeof content !== 'string') {
+		content = JSON.stringify(content);
+	}
+	window.localStorage.setItem(name, content);
+}
+
+/**
+ * 获取本地STORE
+ * @param name 存贮的名字
+ */
+const getStore = name => {
+	if (!name) return;
+	return window.localStorage.getItem(name);
+}
+
+/**
+ * 删除本地STORE
+ * @param name
+ */
+const removeStore = name => {
+	if (!name) return;
+	window.localStorage.removeItem(name);
+}
+
+/**
+ * 页面到达底部，加载更多
+ */
+const loadMore = (element, callback) => {
+	let windowHeight = window.screen.height;
+	let height;
+	let setTop;
+	let paddingBottom;
+	let marginBottom;
+	let requestFram;
+	let oldScrollTop;
+	
+	document.body.addEventListener('scroll', () => {
+		loadMore();
+	}, false)
+	//运动开始时获取元素 高度 和 offseTop, pading, margin
+	element.addEventListener('touchstart', () => {
+		height = element.offsetHeight;
+		setTop = element.offsetTop;
+		paddingBottom = getStyle(element, 'paddingBottom');
+		marginBottom = getStyle(element, 'marginBottom');
+	}, {passive: true})
+	
+	//运动过程中保持监听 scrollTop 的值判断是否到达底部
+	element.addEventListener('touchmove', () => {
+		loadMore();
+	}, {passive: true})
+	
+	//运动结束时判断是否有惯性运动，惯性运动结束判断是非到达底部
+	element.addEventListener('touchend', () => {
+		oldScrollTop = document.body.scrollTop;
+		moveEnd();
+	}, {passive: true})
+	
+	const moveEnd = () => {
+		requestFram = requestAnimationFrame(() => {
+			if (document.body.scrollTop != oldScrollTop) {
+				oldScrollTop = document.body.scrollTop;
+				loadMore();
+				moveEnd();
+			} else {
+				cancelAnimationFrame(requestFram);
+				//为了防止鼠标抬起时已经渲染好数据从而导致重获取数据，应该重新获取dom高度
+				height = element.offsetHeight;
+				loadMore();
+			}
+		})
+	}
+	
+	const loadMore = () => {
+		if (document.body.scrollTop + windowHeight >= height + setTop + paddingBottom + marginBottom) {
+			callback();
+		}
+	}
+}
+
+/**
+ * 遍历一个对象，并设置localStorage
+ * @param info
+ */
+const setUserInfoInLocal = (info) => {
+	for (let i = 0; i < Object.keys(info).length; ++i) {
+		setStore(Object.keys(info)[i], Object.values(info)[i])
+		// console.log(window.localStorage)
+	}
+}
+
+/**
+ * 判断某个时间是否过期，如果过期 return 1
+ * @param Expires
+ * @returns {number} 1 过期 0 没过期
+ */
+const judgeOutDate = (Expires) => {
+	let nowDate = +new Date()
+	let expTime = +new Date(Expires)
+	if (expTime - nowDate > 0) {
+		/*没过期*/
+		return 0
+	} else {
+		return 1
+	}
+}
+
+const getCookie = (name) => {
+	let arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+	
+	if (arr = document.cookie.match(reg))
+		
+		return (arr[2]);
+	else
+		return null;
+}
+
+const delCookie = (name) => {
+	let exp = new Date();
+	exp.setTime(exp.getTime() - 1);
+	let cval = getCookie(name);
+	if (cval != null)
+		document.cookie = name + "=" + cval + ";expires=" + exp.toGMTString();
+}
+
+const delAllCookie = () => {
+	var myDate = new Date();
+	myDate.setTime(-1000);//设置时间
+	var data = document.cookie;
+	var dataArray = data.split("; ");
+	for (var i = 0; i < dataArray.length; i++) {
+		var varName = dataArray[i].split("=");
+		document.cookie = varName[0] + "=''; expires=" + myDate.toGMTString();
+	}
+}
+
 export {
 	countFn, parseTime, judgeTime, randomNum, verifyVal, setMediaStream, outputAudioData, computeVolume,
-	readAudioTo_HZ_Array
+	readAudioTo_HZ_Array, getStore, removeStore, loadMore, setStore, setUserInfoInLocal, judgeOutDate, getCookie,
+	delCookie,delAllCookie
 }

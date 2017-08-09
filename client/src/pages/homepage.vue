@@ -47,18 +47,37 @@
 					}
 
 				}).catch((err) => {
-					this.$message(err)
+					if (err.toString().indexOf('403') != -1) {
+						this.$message({
+							message: "没有认证！",
+						  	duration:1500
+						})
+						setTimeout(() => {
+							this.$router.push('/static/login')
+						}, 1500)
+					}
+					else {
+						this.$message(
+						  {
+						  	message:err
+						  }
+						)
+					}
 				})
 			},
 			reFresh(){
 				this.courseInfo = []
+				this.$store.commit('UN_SHOW_MENU')
 				this.getCourseList()
+
 			},
 			nowCourse(){
 				this.courseInfo = []
+				this.$store.commit('UN_SHOW_MENU')
 				this.getCourseList()
 			},
 			historyCourse(){
+				this.$store.commit('UN_SHOW_MENU')
 				this.courseInfo = []
 				this.getCourseList()
 			}

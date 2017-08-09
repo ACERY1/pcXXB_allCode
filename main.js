@@ -22,13 +22,17 @@ let mainParams = {
 	show: true,
 	frame: false,
 	transparent:false,
-	resize:false
+	resizable: false,
 };
 
 let mainWindow;
 
 function createWindow() {
 	mainWindow = new BrowserWindow(mainParams);
+	mainWindow.setMovable=false
+	mainWindow.isResizable(false)
+	mainWindow.isMovable=false
+	
 	// mainWindow.setTitle("test")
 	// if (process.env.NODE_ENV === 'development') {
 		console.log('develop');

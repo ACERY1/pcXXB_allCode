@@ -113,25 +113,26 @@
 				voiceURL: '../../../static/audios/demo.mov', // 样本音频路径
 				audioObj: null, // 用于保存扬声器设置下建立的音频对象
 				isPlayVoice: false, //是否正在播放音频
-				micVal: 50, // 麦克风音量进度条(0-100)
-				voiceVal: 60, // 扬声器音量进度条(0-100)
+				temp_micVal: 0, // 麦克风音量进度条(0-100) 中间数据
+				temp_voiceVal: 0, // 扬声器音量进度条(0-100) 中间数据
 				volVal: 0, // 播放声音的值
 				testMicVal: 0, // 当前麦克风音量
 				focusItem: 'mic', // 当前选中的设置页
 				mediaStreams: [], // 保存所有媒体流，用于最后清除
-				audioContexts: [], //保存
+				audioContexts: [], //保存生成的音频盒子 用于最后清楚
 				animationId: '',
 				gainNode: '',
 				openCount: 0 //用于计数，防止多次setStream造成消耗
 			}
 		},
 		props: {
-			select: {
-				type: Function,
-				default: () => {
-					console.log('selected')
-				}
-			}
+//			select: {
+//				type: Function,
+//				default: () => {
+//					console.log('selected')
+//					this.$store.commit('UPDATE_SHOW_SETTING')
+//				}
+//			}
 		},
 		computed: {
 			show: {
@@ -142,14 +143,41 @@
 					return false
 				}
 			},
+			micVal: {
+				get(){
+					return this.$store.state.setting.micVal // 麦克风音量进度条(0-100)
+				},
+				set(data){
+//					this.temp_micVal = data // 当前值
+					this.$store.state.setting.micVal = data
+				}
+
+			},
+			voiceVal: {
+				get (){
+					return this.$store.state.setting.voiceVal // 扬声器音量进度条(0-100)
+				},
+				set(data){
+//					this.temp_voiceVal = data // 当前值
+					this.$store.state.setting.voiceVal = data
+				}
+
+			}
 
 		},
 		created () {
 			this.showMic()
+			this.temp_micVal = this.$store.state.setting.micVal
+			this.temp_voiceVal = this.$store.state.setting.voiceVal
 		},
 		mounted () {
 		},
 		methods: {
+			select () {
+				console.log('selected')
+				this._closeStream()
+				this.$store.commit('UPDATE_SHOW_SETTING')
+			},
 			_closeStream(){
 				for (let i = 0; i < this.mediaStreams.length; i++) {
 					this.mediaStreams[i].getTracks()[0].stop()
@@ -200,7 +228,7 @@
 							analyser.getByteFrequencyData(hzArray);
 							//TODO 600-x*6 是取样函数 x值越大 计算出来的值就越大*/
 							this.volVal = computeVolume(hzArray, 300);
-							if(this.audioObj==null){
+							if (this.audioObj == null) {
 								return false
 							}
 							this.audioObj.volume = this.voiceVal / 100	// 拿到麦克风音量
@@ -215,6 +243,7 @@
 			unShow(){
 				this._closeStream()
 				this.$store.commit('UPDATE_SHOW_SETTING')
+				this.$store.commit('REVERT_SETTING_DATA', {voice: this.temp_voiceVal, mic: this.temp_micVal})
 			},
 			// 显示视频
 			showVideo(){
@@ -250,7 +279,7 @@
 						_analyser.getByteFrequencyData(array);
 						//TODO 600-x*6 是取样函数 x值越大 计算出来的值就越大*/
 						this.testMicVal = computeVolume(array, this.micVal > 0 ? 800 - this.micVal * 8 + 100 : 10000);
-						if(document.querySelector('#micAudio')==null){
+						if (document.querySelector('#micAudio') == null) {
 							return false
 						}
 						document.querySelector('#micAudio').volume = this.micVal / 100	// 拿到麦克风音量

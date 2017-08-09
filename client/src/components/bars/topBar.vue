@@ -48,7 +48,7 @@
 		data () {
 			return {
 		  /*显示下拉菜单*/
-				isShowMenu: false
+
 			}
 		},
 		props: {
@@ -62,14 +62,19 @@
 //				type: Function,
 //			}
 		},
-		computed: {},
+		computed: {
+			isShowMenu(){
+				return this.$store.state.showMenu
+			}
+		},
 		created () {
 		},
 		mounted () {
 		},
 		methods: {
 			goLogin(){
-				if (!this.$store.state.isLogin) {
+				/*TODO:这个判断有问题 */
+				if (document.cookie.indexOf("x_token")==-1) {
 					this.$router.push('/static/login')
 				} else {
 					this.$router.push('/static/main')
@@ -77,24 +82,25 @@
 			},
 		/*设备检测*/
 			itemOne(){
-				this.isShowMenu = !this.isShowMenu
+				this.$store.commit('UN_SHOW_MENU')
 				this.$store.commit('UPDATE_SHOW_SETTING')
 			},
 		/*关于我们*/
 			itemTwo(){
-				this.isShowMenu = !this.isShowMenu
+				this.$store.commit('UN_SHOW_MENU')
 				this.$store.commit('UPDATE_SHOW_ABOUT')
 			},
 		/*退出登录*/
 			itemThree(){
 				this.$store.commit('CLEAR_TEACHER_INFO') // 清除登录信息
-				this.isShowMenu = !this.isShowMenu
+				this.$store.commit('UN_SHOW_MENU')
 				this.goLogin()
 			},
 			showMenu(){
 				this.$store.state.showSetting = false
 				this.$store.state.showAbout = false
-				this.isShowMenu = !this.isShowMenu
+							this.$store.commit('UPDATE_SHOW_MENU')
+
 			}
 		}
 	}

@@ -2,14 +2,14 @@
 	<div class="onClass">
 		<div class="onClass-infoBar" v-if="isShowMtBar">
 			<p>距离开课还有五分钟</p>
-			<img src="../../../static/icons/live/close.png" alt="" @click="_showMtBar">
+			<img src="../../../static/icons/live/closeBtn.png" alt="" @click="_showMtBar">
 		</div>
 		<div class="onClass-main">
 			<div class="onClass-main-box"></div>
 			<div class="onClass-main-video">
 				<div class="onClass-main-video-item">
 					<div class="videoBox">
-						<img src="../../../static/icons/live/close.png" alt="" class="video_clsBtn">
+						<img src="../../../static/icons/live/closeBtn.png" alt="" class="video_clsBtn">
 					</div>
 					<div class="signalBar">
 						<span>周老师</span>
@@ -23,7 +23,7 @@
 				</div>
 				<div class="onClass-main-video-item">
 					<div class="videoBox">
-						<img src="../../../static/icons/live/close.png" alt="" class="video_clsBtn">
+						<img src="../../../static/icons/live/closeBtn.png" alt="" class="video_clsBtn">
 					</div>
 					<div class="signalBar">
 						<span>我</span>

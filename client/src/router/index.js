@@ -9,6 +9,7 @@ const update = r => require.ensure([], () => r(require('../pages/install/update.
 const login = r => require.ensure([], () => r(require('../pages/login/login.vue')), 'login'); // 安装&注册
 const classInfo = r => require.ensure([], () => r(require('../pages/class/classInfo.vue')), 'classInfo'); // 的
 const mainContainer = r => require.ensure([], () => r(require('../pages/mainContainer.vue')), 'mainContainer.vue'); // 的
+const onClass= r => require.ensure([], () => r(require('../pages/class/onClass.vue')), 'onclass'); // 的
 
 
 export default [
@@ -49,6 +50,11 @@ export default [
 				path:'/static/classInfo',
 				name:'classInfo',
 				component:classInfo, // 课程详情页
+			},
+			{
+				path:'/static/onclass',
+				name:'onclass',
+				component:onClass, // 首页
 			},
 		]
 	},

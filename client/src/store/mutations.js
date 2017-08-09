@@ -7,6 +7,10 @@ import {
 	UPDATE_SHOW_SETTING,
 	UPDATE_SHOW_ABOUT,
 	CLEAR_TEACHER_INFO,
+	UPDATE_SHOW_MENU,
+	UN_SHOW_MENU,
+	REVERT_SETTING_DATA,
+	UPDATE_COURSE_ID
 } from './mutation_types'
 
 export default {
@@ -27,6 +31,15 @@ export default {
 	[UPDATE_SHOW_SETTING](state){
 		state.showSetting = !state.showSetting
 	},
+	/*标记是否显示下拉菜单*/
+	[UPDATE_SHOW_MENU](state){
+		state.showMenu = !state.showMenu
+	},
+	/*关闭下拉菜单*/
+	[UN_SHOW_MENU](state){
+		state.showMenu = false
+	},
+	/*更新关于弹框显示状态*/
 	[UPDATE_SHOW_ABOUT](state){
 		state.showAbout= !state.showAbout
 	},
@@ -41,5 +54,14 @@ export default {
 			star: ''
 		}
 		state.isLogin = false
+	},
+	/*重置设置数据*/
+	[REVERT_SETTING_DATA](state,data){
+		state.setting.micVal= data.mic
+		state.setting.voiceVal = data.voice
+	},
+	/*更新courseId*/
+	[UPDATE_COURSE_ID](state,data){
+		state.courseId = data
 	}
 }

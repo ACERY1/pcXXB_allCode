@@ -15,7 +15,7 @@
 	import topBar from '../components/bars/topBar.vue'
 	import configDialog from '../components/dialogs/configDialog.vue'
 	import aboutDialog from '../components/dialogs/aboutDialog.vue'
-
+	import {getStore} from '../common/scripts/util'
 	export default {
 		name: "mainContainer",
 		components: {
@@ -34,9 +34,15 @@
 		props: {},
 		computed: {
 			top_avatar(){
+				if(!this.$store.state.isLogin){
+					return getStore("avatar")
+				}
 				return this.$store.state.teacherInfo.avatar
 			},
 			top_username(){
+				if(!this.$store.state.isLogin){
+					return getStore("name")
+				}
 				return this.$store.state.teacherInfo.name
 			},
 			isShowDialog(){

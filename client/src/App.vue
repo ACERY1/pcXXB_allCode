@@ -5,16 +5,18 @@
 </template>
 
 <script>
+	import {getCookie,delCookie,delAllCookie} from './common/scripts/util'
 	export default {
 		name: 'app',
 		data () {
 			return {}
 		},
 		created(){
-			if (!this.$store.state.isLogin) {
-		  /*TODO:这里以后做刷新不登录跳转*/
-				this.$router.push('/static/main')
-//				this.$router.push('/static/login')
+			delAllCookie()
+			console.log(getCookie("x_token"));
+			if (getCookie("x_token")) {
+		  /*TODO:这个判断有问题*/
+				this.$router.push('/static/login')
 			} else {
 				this.$router.push('/static/main')
 			}

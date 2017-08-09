@@ -22,7 +22,7 @@
 </template>
 
 <script>
-	import {countFn} from '../../common/scripts/util'
+	import {countFn, setUserInfoInLocal,getCookie} from '../../common/scripts/util'
 	import myBtn from '../../components/buttons/basicButtons.vue'
 
 	export default {
@@ -80,6 +80,8 @@
 					if (_data.status == '0') {
 						//登录成功*/
 						//教师端 15711370918 123456
+//						console.log(_data.teacherInfo)
+						setUserInfoInLocal(_data.teacherInfo)
 						this.$store.commit('RECORD_TEACHER_INFO', _data.teacherInfo) // 保存数据
 						this.$store.commit('RECORD_IS_LOGIN') // 提交登录状态
 						this.$message({message: "登录成功！", type: 'success', duration: 1000})

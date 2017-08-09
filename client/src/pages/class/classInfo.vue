@@ -94,66 +94,98 @@
 			return {
 				noted: false, // 是否写备注
 				messaged: false, // 是否留言了
-				ware:false, // 是否有课件
-				report:false // 是否有上课报告
+				ware: false, // 是否有课件
+				report: false,// 是否有上课报告
+				info: {
+					alreadyConsumeCourse: 0,
+					bookVersionName: "",
+					classContent: "",
+					courseReportCreateTime: "",
+					courseStatus: 0,
+					course_name: "",
+					courseware: 0,
+					courseware_id: 0,
+					evluate: {},
+					full_marks: "",
+					gender: 0,
+					generateReport: 0,
+					grade: 0,
+					gradeName: "",
+					leftCourse: 0,
+					message: {},
+					name: "",
+					note: {},
+					profile_image_url: "",
+					school: "",
+					score: "",
+					star: 0,
+					studentId: "",
+					subject: 0,
+					subjectName: "",
+					teacherId: "",
+					teacherIn: 0,
+					teacherReply: {},
+					time: {end: 0, begin: 0},
+					type: 0
+				}
 			}
 		},
 		props: {
-			info: {
-				type: Object,
-				default: () => {
-					return {
-						"coursewareCreateTime": "2017-06-17 09:55",
-						"note": {},
-						"evluate": {},
-						"courseReportCreateTime": "2017-06-27 19:26",
-						"gender": 1,
-						"subject": 1,
-						"teacherIn": 0,
-						"alreadyConsumeCourse": 74,
-						"type": 1,
-						"studentId": "595356950eda8a7280ccb99e",
-						"score": "70",
-						"school": "前黄高级中学国际分校",
-						"knowlegeList": [
-							{
-								"knowleageName": "多项式乘多项式"
-							},
-							{
-								"knowleageName": "单项式乘多项式"
-							},
-							{
-								"knowleageName": "单项式乘单项式"
-							},
-							{
-								"knowleageName": "幂的乘方与积的乘方"
-							}
-						],
-						"courseware": 0,
-						"subjectName": "数学",
-						"courseware_id": 11044,
-						"gradeName": "高二",
-						"star": 0,
-						"course_name": "一对一直播课",
-						"teacherReply": {},
-						"generateReport": 1,
-						"bookVersionName": "人教版",
-						"profile_image_url": "http://q.qlogo.cn/qqapp/1105221050/A2028337875E9D64CF8FAD5C58466FC0/100",
-						"message": {'note': "老师给我重点讲一下三角函数的内容喔", "time": 12312},
-						"leftCourse": 0,
-						"teacherId": "b496b9ef-fcb0-459b-847a-c8e257ee8543",
-						"coursewareUrl": "https://webcast.91xuexibao.com/static/broadcast/dist/courseware/static/preview.html?11044",
-						"classContent": "完型，阅读讲解",
-						"grade": 11,
-						"name": "pipixia",
-						"time": {
-							"end": 1499432100000,
-							"begin": 1499428800000
-						},
-						"courseStatus": 7
-					}
-				}
-			}
+//			info: {
+//				type: Object,
+//				default: () => {
+//					return {
+//						"coursewareCreateTime": "2017-06-17 09:55",
+//						"note": {},
+//						"evluate": {},
+//						"courseReportCreateTime": "2017-06-27 19:26",
+//						"gender": 1,
+//						"subject": 1,
+//						"teacherIn": 0,
+//						"alreadyConsumeCourse": 74,
+//						"type": 1,
+//						"studentId": "595356950eda8a7280ccb99e",
+//						"score": "70",
+//						"school": "前黄高级中学国际分校",
+//						"knowlegeList": [
+//							{
+//								"knowleageName": "多项式乘多项式"
+//							},
+//							{
+//								"knowleageName": "单项式乘多项式"
+//							},
+//							{
+//								"knowleageName": "单项式乘单项式"
+//							},
+//							{
+//								"knowleageName": "幂的乘方与积的乘方"
+//							}
+//						],
+//						"courseware": 0,
+//						"subjectName": "数学",
+//						"courseware_id": 11044,
+//						"gradeName": "高二",
+//						"star": 0,
+//						"course_name": "一对一直播课",
+//						"teacherReply": {},
+//						"generateReport": 1,
+//						"bookVersionName": "人教版",
+//						"profile_image_url": "http://q.qlogo.cn/qqapp/1105221050/A2028337875E9D64CF8FAD5C58466FC0/100",
+//						"message": {'note': "老师给我重点讲一下三角函数的内容喔", "time": 12312},
+//						"leftCourse": 0,
+//						"teacherId": "b496b9ef-fcb0-459b-847a-c8e257ee8543",
+//						"coursewareUrl": "https://webcast.91xuexibao.com/static/broadcast/dist/courseware/static/preview.html?11044",
+//						"classContent": "完型，阅读讲解",
+//						"grade": 11,
+//						"name": "pipixia",
+//						"time": {
+//							"end": 1499432100000,
+//							"begin": 1499428800000
+//						},
+//						"courseStatus": 7
+//					}
+//				}
+//			}
 		},
 		computed: {
 			hasNote(){
@@ -175,24 +207,50 @@
 		},
 		created () {
 			this._checkData()
+			this.$api.getCourseDetail('', this.$store.state.courseId).then((res) => {
+				let _data = res.data
+				if (_data.status == '-1') {
+					this.$message(_data.msg)
+				}
+				if (_data.status) {
+					this.$message(_data.msg)
+				} else {
+			/*TODO:对接数据*/
+					this.info = _data.detail
+				}
+
+			}).catch((err) => {
+				if (err.toString().indexOf('403') != -1) {
+					this.$message({
+						message: "没有认证！",
+					  	duration:1500
+					})
+					setTimeout(() => {
+						this.$router.push('/static/login')
+					}, 1500)
+				}
+				else {
+					this.$message(err)
+				}
+			})
 		},
 		mounted () {
 		},
 		methods: {
-			/*检查并判断数据*/
+		/*检查并判断数据*/
 			_checkData(){
 				this.info.message.note === undefined ? this.messaged = false : this.messaged = true
 				this.info.note.note === undefined ? this.noted = false : this.noted = true
-				if(this.info.courseware_id != 0){
+				if (this.info.courseware_id != 0) {
 					this.ware = true
 				}
-				if(this.info.generateReport ===1){
+				if (this.info.generateReport === 1) {
 					this.report = true
 				}
 			},
-		  goMain(){
+			goMain(){
 				this.$router.push('main')
-		  }
+			}
 		}
 	}
 </script>
@@ -238,13 +296,13 @@
 					position: relative;
 					margin-top: 10px;
 					@include rowBox();
-					@include fontSizeColor(12px,$fontClr_main);
+					@include fontSizeColor(12px, $fontClr_main);
 					&-btn {
-						@include fontSizeColor(12px,$fontClr_ble);
+						@include fontSizeColor(12px, $fontClr_ble);
 						cursor: pointer;
 					}
 					&-time {
-						@include fontSizeColor(12px,$fontClr_3rd);
+						@include fontSizeColor(12px, $fontClr_3rd);
 						position: absolute;
 						right: 20px;
 					}

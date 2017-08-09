@@ -22,7 +22,7 @@ let mainParams = {
 	show: true,
 	frame: false,
 	transparent:false,
-	resizable: false,
+	// resizable: false,
 };
 
 let mainWindow;

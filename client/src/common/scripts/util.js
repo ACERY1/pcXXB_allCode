@@ -266,6 +266,15 @@ const setUserInfoInLocal = (info) => {
 }
 
 /**
+ * 清除所有的localStorage
+ */
+const removeAllStore = () => {
+	for (let i of Object.keys(window.localStorage)) {
+		window.localStorage.removeItem(i)
+	}
+}
+
+/**
  * 判断某个时间是否过期，如果过期 return 1
  * @param Expires
  * @returns {number} 1 过期 0 没过期
@@ -295,8 +304,10 @@ const delCookie = (name) => {
 	let exp = new Date();
 	exp.setTime(exp.getTime() - 1);
 	let cval = getCookie(name);
-	if (cval != null)
+	if (cval != null) {
 		document.cookie = name + "=" + cval + ";expires=" + exp.toGMTString();
+	}
+	
 }
 
 const delAllCookie = () => {
@@ -310,8 +321,20 @@ const delAllCookie = () => {
 	}
 }
 
+const setCookie = (name, value, seconds) => {
+	seconds = seconds || 0; //seconds有值就直接赋值，没有为0，这个根php不一样。
+	let expires = "";
+	if (seconds != 0) { //设置cookie生存时间
+		let date = new Date();
+		date.setTime(date.getTime() + (seconds * 1000));
+		expires = "; expires=" + date.toGMTString();
+	}
+	document.cookie = name + "=" + value.toString() + expires + "; path=/";
+	
+}
+
 export {
 	countFn, parseTime, judgeTime, randomNum, verifyVal, setMediaStream, outputAudioData, computeVolume,
 	readAudioTo_HZ_Array, getStore, removeStore, loadMore, setStore, setUserInfoInLocal, judgeOutDate, getCookie,
-	delCookie,delAllCookie
+	delCookie, delAllCookie, setCookie, removeAllStore
 }

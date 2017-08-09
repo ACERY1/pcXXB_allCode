@@ -10,7 +10,8 @@ import {
 	UPDATE_SHOW_MENU,
 	UN_SHOW_MENU,
 	REVERT_SETTING_DATA,
-	UPDATE_COURSE_ID
+	UPDATE_COURSE_ID,
+	RECORD_IS_LOGOUT
 } from './mutation_types'
 
 export default {
@@ -27,6 +28,10 @@ export default {
 	[RECORD_IS_LOGIN](state){
 		state.isLogin = true
 	},
+	/*标记退出登录*/
+	[RECORD_IS_LOGOUT](state){
+		state.isLogin = false
+	},
 	/*标记是否打开设置*/
 	[UPDATE_SHOW_SETTING](state){
 		state.showSetting = !state.showSetting
@@ -41,7 +46,7 @@ export default {
 	},
 	/*更新关于弹框显示状态*/
 	[UPDATE_SHOW_ABOUT](state){
-		state.showAbout= !state.showAbout
+		state.showAbout = !state.showAbout
 	},
 	/*清除登录数据*/
 	[CLEAR_TEACHER_INFO](state){
@@ -56,12 +61,12 @@ export default {
 		state.isLogin = false
 	},
 	/*重置设置数据*/
-	[REVERT_SETTING_DATA](state,data){
-		state.setting.micVal= data.mic
+	[REVERT_SETTING_DATA](state, data){
+		state.setting.micVal = data.mic
 		state.setting.voiceVal = data.voice
 	},
 	/*更新courseId*/
-	[UPDATE_COURSE_ID](state,data){
+	[UPDATE_COURSE_ID](state, data){
 		state.courseId = data
 	}
 }

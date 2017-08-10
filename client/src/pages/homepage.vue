@@ -1,9 +1,16 @@
 <template>
-	<div class="home">
+	<div class="home" ref="mainBox">
 		<choose-bar :fresh="reFresh" :itemOne="nowCourse" :itemTwo="historyCourse"></choose-bar>
-		<el-row type="flex" justify="center">
+		<el-row type="flex" justify="center" id="mainList" class="test">
 			<el-col :span="24">
-				<class-item v-for="item in courseInfo" :key="item.courseId" :courseInfo="item"></class-item>
+				<div v-infinite-scroll="loadFn" infinite-scroll-disabled="busy"
+					 infinite-scroll-distance="10">
+					<class-item v-for="item in courseInfo" :key="item.courseId" :courseInfo="item"></class-item>
+					<div v-if="loadingIcon" class="loading">
+						<i class="el-icon-loading"></i>
+						<p>加载中</p>
+					</div>
+				</div>
 			</el-col>
 		</el-row>
 	</div>
@@ -12,6 +19,7 @@
 <script>
 	import chooseBar from '../components/bars/chooseBar.vue'
 	import classItem from '../components/items/classItem.vue'
+	import {loadMore} from '../common/scripts/util'
 	export default {
 		name: "",
 		components: {
@@ -20,21 +28,53 @@
 		},
 		data () {
 			return {
-				courseInfo: []
+				courseInfo: [],
+				busy: false, // 是否正在加载
+				currentPageSize: 5, //当前页容量
+				historyPageSize: 5, //历史页容量
+				currentPageIndex: 0,// 当前页索引
+				historyPageIndex: 0,// 历史页索引
+				leftNone: false,// 没有更多了
+				loadingIcon: true, //显示loading
+				focus: 1 // 1代表choose待上课程 0代表历史课程
 			}
 		},
 		props: {},
 		computed: {},
 		created () {
 		/*请求数据*/
-			this.getCourseList()
 		},
 		mounted () {
 		},
 		methods: {
-			getCourseList(){
+			_getCourseList(status, order = 0, type){
 				//status,statusList,pageSize,pageIndex,order,begin,end*/
-				this.$api.getCourseList(0).then((res) => {
+				//载入加载动画
+				let pageSize, pageIndex
+				if (this.leftNone) {
+					return false
+				}
+				this.busy = true;
+				if (type == 1) {
+					this.currentPageIndex++
+					pageSize = this.currentPageSize
+					pageIndex = this.currentPageIndex
+				}
+				if (type == 0) {
+					this.historyPageIndex++
+					pageSize = this.historyPageSize
+					pageIndex = this.historyPageIndex
+				}
+				this.$api.getCourseList({
+					status: status, /*1正在上课，2已结束，3待上课，4教师旷课， 5已取消 ，6学生旷课 ，7教师和学生均旷课*/
+					statusList: [],// 拿多种状态的
+					pageSize: pageSize,
+					pageIndex: pageIndex,
+					order: order, // order是排列顺序 默认的是降序 order=0时是升序
+					begin: null, //ms
+					end: null, //ms
+
+				}).then((res) => {
 					let _data = res.data
 
 					//符合条件时status为0*/
@@ -42,15 +82,29 @@
 						this.$message(_data.msg)
 						return false
 					} else {
-			  /*数组赋值*/
-						this.courseInfo = _data.courses
+
+						if (_data.courses.length < 5) {
+							this.busy = false;
+							this.loadingIcon = false;
+							this.leftNone = true;// 标记没有更多了
+							return this.$message({
+								message: '没有更多了',
+								duration: 1500
+							})
+						}
+						//数组赋值*/
+						for (let i of _data.courses) {
+							this.courseInfo.push(i)
+						}
+						//释放加载动画
+						this.busy = false;
 					}
 
 				}).catch((err) => {
 					if (err.toString().indexOf('403') != -1) {
 						this.$message({
 							message: "没有认证！",
-						  	duration:1500
+							duration: 1500
 						})
 						setTimeout(() => {
 							this.$router.push('/static/login')
@@ -58,36 +112,82 @@
 					}
 					else {
 						this.$message(
-						  {
-						  	message:err
-						  }
+							{
+								message: err
+							}
 						)
 					}
 				})
 			},
+			// 清除历史状态和计数
+			_clearStatus (){
+				this.$store.commit('UN_SHOW_MENU')
+				this.leftNone = false
+				this.busy = false
+				this.loadingIcon = true
+				this.courseInfo = []
+				this.currentPageIndex = 0
+				this.historyPageIndex = 0
+			},
+			// 刷新按钮事件
 			reFresh(){
-				this.courseInfo = []
-				this.$store.commit('UN_SHOW_MENU')
-				this.getCourseList()
-
+				this._clearStatus()
+				if (this.focus) {
+					this._getCourseList(3, 0, 1)
+				} else {
+					this._getCourseList(2, 1, 1)
+				}
 			},
+			// 待上课程点击事件
 			nowCourse(){
-				this.courseInfo = []
-				this.$store.commit('UN_SHOW_MENU')
-				this.getCourseList()
+				this.focus = 1
+				this._clearStatus()
+				this._getCourseList(3, 0, 1)
 			},
+			//载入历史课程
 			historyCourse(){
-				this.$store.commit('UN_SHOW_MENU')
-				this.courseInfo = []
-				this.getCourseList()
+				this.focus = 0
+				this._clearStatus()
+				this._getCourseList(2, 1, 1)
+			},
+			//载入待上课程
+			loadCourse(){
+				console.log(this.focus)
+				this._getCourseList(3, 0, 1)
+			},
+			loadHistoryCourse(){
+				console.log(this.focus)
+				this._getCourseList(2, 1, 1)
+			},
+			loadFn(){
+				if (this.focus) {
+					this._getCourseList(3, 0, 1)
+				} else {
+					this._getCourseList(2, 1, 1)
+				}
 			}
-
 		}
 	}
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
+	@import "../common/styles/mixin";
+
 	.home {
 		padding-top: 80px;
+	}
+
+	.loading {
+		color: $fontClr_3rd;
+		font-size: 12px;
+		@include allMidBox();
+		.el-icon-loading {
+			margin-top: 6px;
+		}
+	}
+
+	.test {
+		height: 600px;
+		overflow: scroll;
 	}
 </style>

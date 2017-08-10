@@ -320,7 +320,7 @@
 			},
 			//TODO:调用网页版的课件制作网页
 			goPPTPage(){
-			  window.location.href="http://t.91xuexibao.com"
+				this.$ipc.sendSync('makePPT', 'hello world')
 			},
 			goReportPage(){
 				this.$ipc.sendSync('test', 'hello world')

@@ -290,6 +290,11 @@ const judgeOutDate = (Expires) => {
 	}
 }
 
+/**
+ * 根据名字拿到cookie的值
+ * @param name
+ * @returns {*}
+ */
 const getCookie = (name) => {
 	let arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
 	
@@ -300,6 +305,10 @@ const getCookie = (name) => {
 		return null;
 }
 
+/**
+ * 根据名字设置cookie
+ * @param name
+ */
 const delCookie = (name) => {
 	let exp = new Date();
 	exp.setTime(exp.getTime() - 1);
@@ -310,17 +319,12 @@ const delCookie = (name) => {
 	
 }
 
-const delAllCookie = () => {
-	var myDate = new Date();
-	myDate.setTime(-1000);//设置时间
-	var data = document.cookie;
-	var dataArray = data.split("; ");
-	for (var i = 0; i < dataArray.length; i++) {
-		var varName = dataArray[i].split("=");
-		document.cookie = varName[0] + "=''; expires=" + myDate.toGMTString();
-	}
-}
-
+/**
+ * 设置cookie的名字 值 和 过期时间（秒）
+ * @param name
+ * @param value
+ * @param seconds
+ */
 const setCookie = (name, value, seconds) => {
 	seconds = seconds || 0; //seconds有值就直接赋值，没有为0，这个根php不一样。
 	let expires = "";
@@ -336,5 +340,5 @@ const setCookie = (name, value, seconds) => {
 export {
 	countFn, parseTime, judgeTime, randomNum, verifyVal, setMediaStream, outputAudioData, computeVolume,
 	readAudioTo_HZ_Array, getStore, removeStore, loadMore, setStore, setUserInfoInLocal, judgeOutDate, getCookie,
-	delCookie, delAllCookie, setCookie, removeAllStore
+	delCookie, setCookie, removeAllStore
 }

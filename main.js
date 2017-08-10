@@ -7,11 +7,11 @@ const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 
 let loadingParams = {
-	width:580,
-	height:200,
+	width: 580,
+	height: 200,
 	frame: false,
 	show: false,
-	transparent:false
+	transparent: false
 }
 
 let mainParams = {
@@ -19,7 +19,7 @@ let mainParams = {
 	height: 600,
 	show: true,
 	frame: false,
-	transparent:false, // make the top-toolBar transparent
+	transparent: false, // make the top-toolBar transparent
 	resizable: false, // control the resize of the window
 };
 
@@ -28,12 +28,11 @@ let childWindow;
 
 function createWindow() {
 	mainWindow = new BrowserWindow(mainParams);
-	
 	// mainWindow.setTitle("test")
 	// if (process.env.NODE_ENV === 'development') {
-		console.log('develop');
-		mainWindow.loadURL('http://localhost:2048/static/main');
-		mainWindow.webContents.openDevTools();
+	console.log('develop');
+	mainWindow.loadURL('http://localhost:2048/static/main');
+	mainWindow.webContents.openDevTools();
 	// } else {
 	// 	mainWindow.loadURL(`file://${__dirname}/client/index.html`);
 	// }
@@ -60,6 +59,4 @@ app.on('activate', () => {
 	}
 });
 
-ipcMain.on('makePPT',(evt,data)=>{
-	mainWindow.loadURL('http://www.baidu.com')
-})
+

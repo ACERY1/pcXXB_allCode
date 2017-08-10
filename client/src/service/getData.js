@@ -64,20 +64,14 @@ const setNote =(courseId,notes)=>{
 	return fetch('post','/teacher/api/webcast/setNote',{courseId,notes})
 }
 
-/*教师获取课程信息*/
+
 /**
- *
- * @param status 状态
- * @param statusList 状态列表
- * @param pageSize 每一页数量
- * @param pageIndex 页码
- * @param order 排序
- * @param begin 开始时间
- * @param end 结束时间
+ *  获取课程列表
+ * @param config
  * @returns {Promise}
  */
-const  getCourseList=(status,statusList,pageSize,pageIndex,order,begin,end)=>{
-	return fetch('post','/teacher/api/webcast/courseList',{status,statusList,pageSize,pageIndex,order,begin,end})
+const  getCourseList=(config)=>{
+	return fetch('post','/teacher/api/webcast/courseList',{status:config.status,statusList:config.statusList,pageSize:config.pageSize,pageIndex:config.pageIndex,order:config.order,begin:config.begin,end:config.end})
 }
 
 /*教师对学生评价*/

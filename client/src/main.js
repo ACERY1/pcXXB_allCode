@@ -8,7 +8,11 @@ import  api from './config/api'
 import  utils from './config/utilConf'
 import store from './store/'
 import $ from 'jquery'
+import infiniteScroll from 'vue-infinite-scroll'
+import Loadmore from 'vue-loadmore';
 
+Vue.use(infiniteScroll)
+Vue.component('loadmore', Loadmore);
 // register vueRouter
 Vue.use(VueRouter)
 

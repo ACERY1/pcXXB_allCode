@@ -5,11 +5,14 @@
 				<div class="trigger" @click="goMain">
 					<img src="../../../static/icons/back.png" alt="">
 				</div>
-				<p>待上课程/课程详情</p>
+				<span @click="goMain">待上课程/</span>
+				<span>课程详情</span>
 			</div>
 			<div class="course-info-item">
 				<div class="course-info-item-title">辅导</div>
-				<div class="course-info-item-cont">上课时间：</div>
+				<div class="course-info-item-cont">上课时间：{{stuDate}} {{stuTime.hour}}:{{stuTime.minute}} -
+					{{endTime.hour}}:{{endTime.minute}}
+				</div>
 				<div class="course-info-item-cont">年级科目：{{info.gradeName}}</div>
 				<div class="course-info-item-cont">教材课本：{{info.bookVersionName}}</div>
 				<div class="course-info-item-cont">课程状态：{{courseSt}}</div>
@@ -18,7 +21,7 @@
 			<div class="course-info-item">
 				<div class="course-info-item-title">课件</div>
 				<div class="course-info-item-cont">上课课件：
-					<div class="course-info-item-cont-btn" v-if="!ware">制作</div>
+					<div class="course-info-item-cont-btn" v-if="!ware" @click="goPPTPage">制作</div>
 					<div class="course-info-item-cont-btn" v-if="ware">查看</div>
 					<div class="course-info-item-cont-time" v-if="ware">发布于 {{info.coursewareCreateTime}}</div>
 				</div>
@@ -30,7 +33,7 @@
 			<div class="course-info-item">
 				<div class="course-info-item-title">上课</div>
 				<div class="course-info-item-cont">上课报告：
-					<div class="course-info-item-cont-btn" v-if="!report">填写</div>
+					<div class="course-info-item-cont-btn" v-if="!report" @click="goReportPage">填写</div>
 					<div class="course-info-item-cont-btn" v-if="report">查看</div>
 					<div class="course-info-item-cont-time" v-if="report">发布于 {{info.courseReportCreateTime}}</div>
 				</div>
@@ -78,24 +81,38 @@
 			</div>
 			<div class="course-stu-item">
 				<p class="course-stu-item-title">上课备注：</p>
-				<p class="course-stu-item-txt">{{hasNote}}</p>
-				<p class="add" v-if="!noted">添加</p>
+				<p class="course-stu-item-txt" v-if="!isShowTextArea">{{hasNote}}</p>
+				<p class="add" v-if="!noted" @click="addNote">添加</p>
+				<p class="add" v-if="noted" @click="addNote">编辑</p>
+				<textarea name="" id="" cols="30" rows="10" placeholder="请在此输入上课备注，最多两百字" maxlength="200"
+						  v-if="isShowTextArea" v-model="note"></textarea>
+				<b-btn :styles="'orange'" :title="'保存'" :height="22" :width="60" :size="12" class="remarkBtn"
+					   v-if="isSatisfy&&isShowTextArea" v-on:click.native="setNote"></b-btn>
+				<b-btn :styles="'grey'" :title="'保存'" :height="22" :width="60" :size="12" class="remarkBtn"
+					   v-if="!isSatisfy&&isShowTextArea"></b-btn>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script>
+	import {judgeTime, parseTime} from '../../common/scripts/util'
 	import {courseStatus} from '../../common/scripts/filters'
+	import bBtn from '../../components/buttons/basicButtons.vue'
 	export default {
 		name: "classInfo",
-		components: {},
+		components: {
+			bBtn
+		},
 		data () {
 			return {
 				noted: false, // 是否写备注
 				messaged: false, // 是否留言了
 				ware: false, // 是否有课件
 				report: false,// 是否有上课报告
+
+				isShowTextArea: false, // 是否显示填备注的输入框
+				note: "", //备注信息
 				info: {
 					alreadyConsumeCourse: 0,
 					bookVersionName: "",
@@ -204,6 +221,27 @@
 			courseSt(){
 				return courseStatus(this.info.courseStatus)
 			},
+			stuDate(){
+				if (judgeTime(this.info.time.end) == 0) {
+					return "今天"
+				}
+				if (judgeTime(this.info.time.end) === 1) {
+					return "明天"
+				} else {
+					let _tempDate = new Date(this.info.time.end);
+					return `${_tempDate.getMonth() + 1}月${_tempDate.getDate()}日`
+				}
+			},
+			stuTime(){
+				return parseTime(this.info.time.begin)
+			},
+			endTime(){
+				return parseTime(this.info.time.end)
+			},
+			isSatisfy(){
+				return this.note.length > 1 // 备注所填长度是否满足要求
+			}
+
 		},
 		created () {
 			this._checkData()
@@ -223,7 +261,7 @@
 				if (err.toString().indexOf('403') != -1) {
 					this.$message({
 						message: "没有认证！",
-					  	duration:1500
+						duration: 1500
 					})
 					setTimeout(() => {
 						this.$router.push('/static/login')
@@ -237,10 +275,10 @@
 		mounted () {
 		},
 		methods: {
-		/*检查并判断数据*/
+			//检查并判断数据*/
 			_checkData(){
-				this.info.message.note === undefined ? this.messaged = false : this.messaged = true
-				this.info.note.note === undefined ? this.noted = false : this.noted = true
+				this.info.message.note === {} ? this.messaged = false : this.messaged = true
+				this.info.note === {} ? this.noted = false : this.noted = true
 				if (this.info.courseware_id != 0) {
 					this.ware = true
 				}
@@ -248,8 +286,44 @@
 					this.report = true
 				}
 			},
+			//去首页
 			goMain(){
 				this.$router.push('main')
+			},
+			//发送备注至后台
+			setNote(){
+				this.$api.setNote(this.$store.state.courseId, this.note, '').then((res) => {
+					this.info.note.note = this.note
+					this.isShowTextArea = false
+				}).catch((err) => {
+					if (err.toString().indexOf('403') != -1) {
+						this.$message({
+							message: "没有认证！",
+							duration: 1500
+						})
+						setTimeout(() => {
+							this.$router.push('/static/login')
+						}, 1500)
+					}
+					else {
+						this.$message(
+							{
+								message: err
+							}
+						)
+					}
+				})
+			},
+			//添加备注
+			addNote(){
+				this.isShowTextArea = !this.isShowTextArea
+			},
+			//TODO:调用网页版的课件制作网页
+			goPPTPage(){
+			  window.location.href="http://t.91xuexibao.com"
+			},
+			goReportPage(){
+				this.$ipc.sendSync('test', 'hello world')
 			}
 		}
 	}
@@ -282,6 +356,9 @@
 				}
 				img {
 					@include wh(8px, 15px);
+				}
+				span {
+					cursor: pointer;
 				}
 			}
 			&-item {
@@ -375,6 +452,19 @@
 					top: 22px;
 					right: 0;
 					cursor: pointer;
+				}
+				textarea {
+					width: 100%;
+					height: 6rem;
+					box-sizing: border-box;
+					padding: 8px;
+					border: 1px solid $border;
+					resize: none;
+					font-size: 12px;
+				}
+				.remarkBtn {
+					margin-top: 10px;
+					float: right;
 				}
 			}
 		}

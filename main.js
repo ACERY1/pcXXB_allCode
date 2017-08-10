@@ -2,7 +2,7 @@
  * Created by Acery on 2017/8/3.
  */
 const electron = require('electron')
-const ipcMain = electron.ipcMain
+const ipcMain = electron.ipcMain // Subscribe the render process
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 
@@ -17,21 +17,17 @@ let loadingParams = {
 let mainParams = {
 	width: 1000,
 	height: 600,
-	// icon: __dirname + '/icon.png',
-	// titleBarStyle: 'hidden-inset',
 	show: true,
 	frame: false,
-	transparent:false,
-	// resizable: false,
+	transparent:false, // make the top-toolBar transparent
+	resizable: false, // control the resize of the window
 };
 
 let mainWindow;
+let childWindow;
 
 function createWindow() {
 	mainWindow = new BrowserWindow(mainParams);
-	mainWindow.setMovable=false
-	mainWindow.isResizable(false)
-	mainWindow.isMovable=false
 	
 	// mainWindow.setTitle("test")
 	// if (process.env.NODE_ENV === 'development') {
@@ -63,3 +59,7 @@ app.on('activate', () => {
 		createWindow();
 	}
 });
+
+ipcMain.on('makePPT',(evt,data)=>{
+	mainWindow.loadURL('http://www.baidu.com')
+})

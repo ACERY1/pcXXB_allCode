@@ -1,5 +1,5 @@
 <template>
-	<div class="classItem" >
+	<div class="classItem">
 		<div class="classItem-headPic" @click="goInfo">
 			<img :src="courseInfo.profile_image_url" alt="">
 		</div>
@@ -33,8 +33,9 @@
 			</div>
 		</div>
 		<div class="clickArea" @click="goInfo"></div>
-		<div class="classItem-btn" @click="goClass">
-			<my-btn :styles="'orange'" :height="25" :width="80" :size="12" v-if="isOnClass == 1"></my-btn>
+		<div class="classItem-btn">
+			<my-btn :styles="'orange'" :height="25" :width="80" :size="12" v-if="isOnClass == 1"
+					v-on:click.native="goClass"></my-btn>
 			<my-btn :styles="'grey_d'" :height="25" :width="80" :size="12" v-if="isOnClass == 0"></my-btn>
 		</div>
 	</div>
@@ -128,12 +129,14 @@
 			},
 			methods: {
 				goInfo(){
-					/*保存课程ID*/
-					this.$store.commit("UPDATE_COURSE_ID",this.courseInfo.courseId)
+			/*保存课程ID*/
+					this.$store.commit('UN_SHOW_MENU')
+					this.$store.commit("UPDATE_COURSE_ID", this.courseInfo.courseId)
 					this.$router.push('/static/classInfo')
 
 				},
 				goClass(){
+					this.$store.commit('UN_SHOW_MENU')
 					this.$router.push('/static/onclass')
 				}
 			}
@@ -142,17 +145,19 @@
 
 <style lang="scss" rel="stylesheet/scss" scoped>
 
-	.clickArea{
+	.clickArea {
 		position: absolute;
 		right: 16%;
 		height: 130px;
 		width: 46%;
 	}
+
 	@import "../../common/styles/mixin";
 
 	.classItem:hover {
 		cursor: pointer;
-		background: $border;
+		background: lighten($border, 10%);
+		transition: all ease-in-out .2s;
 	}
 
 	.classItem {

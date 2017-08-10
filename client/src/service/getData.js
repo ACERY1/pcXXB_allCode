@@ -60,8 +60,8 @@ const getCourseDetail =(courseIds,courseId)=>{
  * @param note 备注内容 must
  * @returns {Promise}
  */
-const setNote =(courseId,note)=>{
-	return fetch('post','/teacher/api/webcast/setNote',{courseId,note})
+const setNote =(courseId,notes)=>{
+	return fetch('post','/teacher/api/webcast/setNote',{courseId,notes})
 }
 
 /*教师获取课程信息*/

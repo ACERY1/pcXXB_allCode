@@ -24,7 +24,7 @@ Vue.use(api)
 Vue.use({
 	install (Vue, options) {
 		//添加实例方法
-		Vue.prototype.$ipc = global.ipcRenderer || {};
+		Vue.prototype.$ipc = global.ipcRenderer || {}; // emit event to .ipcMain
 		Vue.prototype.$remoteApi = global.remoteApi;
 	}
 });

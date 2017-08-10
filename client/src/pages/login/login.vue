@@ -81,7 +81,6 @@
 						//登录成功*/
 						//教师端 15711370918 123456
 						setUserInfoInLocal(_data.teacherInfo) // 在本地保存用户数据
-					  	setStore("LOGIN",true) //保存登录状态
 					  /*TODO:这里差个时间*/
 					  	setCookie("IS_LOGIN",'this_is_local_cookie',10)
 						this.$store.commit('RECORD_TEACHER_INFO', _data.teacherInfo) // 保存数据

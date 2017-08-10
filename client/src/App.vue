@@ -12,8 +12,8 @@
 			return {}
 		},
 		created(){
-			/*TODO:判断登录还是有问题*/
-			if (getCookie("IS_LOGIN")==null) {
+			/*TODO:判断登录还是有问题 ps:现在解决了*/
+			if (getCookie("x_token")==null) {
 				this.$router.push('/static/login')
 			} else {
 				this.$router.push('/static/main')

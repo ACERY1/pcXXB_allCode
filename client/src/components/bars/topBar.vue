@@ -74,12 +74,12 @@
 		},
 		methods: {
 			goLogin(){
-		  /*TODO:这个判断有问题 */
-//				if (getCookie("IS_LOGIN") == null) {
+		  /*TODO:这个判断有问题 ps:现在解决了*/
+				if (getCookie("x_token")==null) {
 				this.$router.push('/static/login')
-//				} else {
-//					this.$router.push('/static/main')
-//				}
+				} else {
+					this.$router.push('/static/main')
+				}
 			},
 		/*设备检测*/
 			itemOne(){
@@ -93,7 +93,7 @@
 			},
 		/*退出登录*/
 			itemThree(){
-				/*TODO: 这个地方已经完成了：既在STORE里保存登录状态，又在LocalStorage里面保存了*/
+		  /*TODO: 这个地方已经完成了：既在STORE里保存登录状态，又在LocalStorage里面保存了*/
 				this.$store.commit('CLEAR_TEACHER_INFO') // 清除登录信息
 				this.$store.commit('RECORD_IS_LOGOUT') // 标记退出登录
 				setUserInfoInLocal({
@@ -114,7 +114,7 @@
 						})
 					} else {
 						this.$message({
-							message: _data.msg,
+							message: "再见！",
 							duration: 1400
 						})
 						setTimeout(() => {

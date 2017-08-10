@@ -22,7 +22,7 @@
 </template>
 
 <script>
-	import {countFn, setUserInfoInLocal,setCookie,setStore} from '../../common/scripts/util'
+	import {countFn, setUserInfoInLocal, setCookie, setStore} from '../../common/scripts/util'
 	import myBtn from '../../components/buttons/basicButtons.vue'
 
 	export default {
@@ -35,6 +35,7 @@
 				switchToGetPwd: false,
 				isQueryCode: false,
 				time: "获取验证码",
+				busy: false,
 
 				//用户名密码
 				userTel: '15711370918',
@@ -69,6 +70,10 @@
 			},
 			//登录*/
 			login(){
+				if (this.busy) {
+					return false
+				}
+				this.busy = true
 				if (this.$utils.verifyVal(this.userTel, this.password)) {
 					this.$message({message: "密码，账号不能为空", type: 'error', duration: 1000})
 					return false
@@ -81,8 +86,6 @@
 						//登录成功*/
 						//教师端 15711370918 123456
 						setUserInfoInLocal(_data.teacherInfo) // 在本地保存用户数据
-					  /*TODO:这里差个时间*/
-					  	setCookie("IS_LOGIN",'this_is_local_cookie',10)
 						this.$store.commit('RECORD_TEACHER_INFO', _data.teacherInfo) // 保存数据
 						this.$store.commit('RECORD_IS_LOGIN') // 提交登录状态
 						this.$message({message: "登录成功！", type: 'success', duration: 1000})
@@ -92,10 +95,12 @@
 
 					} else {
 						//业务验证失败*/
+						this.busy = false
 						this.$message({message: _data.msg, type: 'error', duration: 1000})
 					}
 				}).catch((err) => {
 					this.$message({message: `错误+${err}`, type: 'error', duration: 1000})
+					this.busy = false
 				})
 			},
 

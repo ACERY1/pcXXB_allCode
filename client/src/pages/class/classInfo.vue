@@ -81,9 +81,9 @@
 			</div>
 			<div class="course-stu-item">
 				<p class="course-stu-item-title">上课备注：</p>
-				<p class="course-stu-item-txt" v-if="!isShowTextArea">{{hasNote}}</p>
-				<p class="add" v-if="!noted" @click="addNote">添加</p>
-				<p class="add" v-if="noted" @click="addNote">编辑</p>
+				<p class="course-stu-item-txt" v-if="!isShowTextArea" v-text="hasNote">{{hasNote}}</p>
+				<p class="add" v-show="!noted" @click="addNote">添加</p>
+				<p class="add" v-show="noted" @click="addNote">编辑</p>
 				<textarea name="" id="" cols="30" rows="10" placeholder="请在此输入上课备注，最多两百字" maxlength="200"
 						  v-if="isShowTextArea" v-model="note"></textarea>
 				<b-btn :styles="'orange'" :title="'保存'" :height="22" :width="60" :size="12" class="remarkBtn"
@@ -293,7 +293,7 @@
 			//发送备注至后台
 			setNote(){
 				this.$api.setNote(this.$store.state.courseId, this.note, '').then((res) => {
-					this.info.note.note = this.note
+					this.info.note = {note: this.note}
 					this.isShowTextArea = false
 				}).catch((err) => {
 					if (err.toString().indexOf('403') != -1) {

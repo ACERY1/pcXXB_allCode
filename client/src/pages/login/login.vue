@@ -5,7 +5,7 @@
 		</div>
 		<input type="number" class="login-input tel" placeholder="请输入手机号" v-model="userTel">
 		<div class="login-input validate" v-if="switchToGetPwd">
-			<input type="text" placeholder="请输入验证码" maxlength="20">
+			<input type="text" placeholder="请输入验证码" maxlength="20" v-model="verifyCode">
 			<button class="valBtn" :disabled="isQueryCode" @click="queryCode">{{time}}</button>
 		</div>
 		<input type="password" class="login-input pwd" placeholder="请输入密码" v-model="password">
@@ -13,7 +13,7 @@
 		<my-btn :styles="'yellow'" :height="50" :width="300" :title="'登录'" class="login-btn" v-if="!switchToGetPwd"
 				:size="20" @click.native="login"></my-btn>
 		<my-btn :styles="'yellow'" :height="50" :width="300" :title="'完成'" class="login-btn" v-if="switchToGetPwd"
-				:size="20"></my-btn>
+				:size="20" @click.native="resetPwd"></my-btn>
 		<div class="login-forget">
 			<p v-if="!switchToGetPwd" @click="switchPwd">忘记密码？</p>
 			<p v-if="switchToGetPwd" @click="switchPwd">返回登录</p>
@@ -33,9 +33,10 @@
 		data () {
 			return {
 				switchToGetPwd: false,
-				isQueryCode: false,
+				isQueryCode: false, // 做防抖使用，防止多次请求
 				time: "获取验证码",
 				busy: false,
+				verifyCode: '',
 
 				//用户名密码
 				userTel: '15711370918',
@@ -54,14 +55,24 @@
 				this.switchToGetPwd = !this.switchToGetPwd
 				this.password = ''
 			},
-
 			//请求验证码*/
 			queryCode(){
 				this.time = 60;
 				this.isQueryCode = true
-				countFn(60, 1000, () => {
-					this.time--
-				}, this._queryDone)
+				this.$api.sendVerifyCode(this.userTel).then((res) => {
+					if (res.data.success) {
+						countFn(60, 1000, () => {
+							this.time--
+						}, this._queryDone)
+					} else {
+						this.$message({message: res.data.msg, duration: 2000})
+					}
+
+				}).catch((err) => {
+					this.$message({message: `错误+${err}`, type: 'error', duration: 1000})
+					this.isQueryCode = false
+				})
+
 			},
 			//请求验证码60秒之后的回调函数*/
 			_queryDone(){
@@ -76,6 +87,7 @@
 				this.busy = true
 				if (this.$utils.verifyVal(this.userTel, this.password)) {
 					this.$message({message: "密码，账号不能为空", type: 'error', duration: 1000})
+					this.busy = false
 					return false
 				}
 
@@ -95,15 +107,44 @@
 
 					} else {
 						//业务验证失败*/
-						this.busy = false
 						this.$message({message: _data.msg, type: 'error', duration: 1000})
+						this.busy = false
 					}
 				}).catch((err) => {
 					this.$message({message: `错误+${err}`, type: 'error', duration: 1000})
 					this.busy = false
 				})
 			},
+			resetPwd(){
+				if (this.verifyCode == '') {
+					this.$message({
+						message: '验证码不能为空',
+						duration: 1000
+					})
+					return false
+				}
+				if (this.password == '') {
+					this.$message({
+						message: '新密码不能为空',
+						duration: 1000
+					})
+					return false
+				}
 
+				this.$api.resetPassword(this.userTel, this.password, this.verifyCode).then((res) => {
+
+					let _data = res.data
+					this.$message({message: _data.msg, type: 'error', duration: 1000})
+
+//					if (_data.status = '-18') {
+//						this.$message({message: _data.msg, type: 'error', duration: 1000})
+//					}
+				}).catch((err) => {
+					this.$message({message: `错误+${err}`, type: 'error', duration: 1000})
+					this.busy = false
+				})
+				console.log('reset!')
+			}
 		}
 	}
 </script>

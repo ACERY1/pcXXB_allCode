@@ -29,9 +29,10 @@
 		data () {
 			return {
 				courseInfo: [],
-				busy: false, // 是否正在加载
+				busy: false, // 是否正在加载   动画显示处理
+				isQuery: false, // 是否正在请求 加锁处理
 				currentPageSize: 5, //当前页容量
-				historyPageSize: 5, //历史页容量
+				historyPageSize: 6, //历史页容量
 				currentPageIndex: 0,// 当前页索引
 				historyPageIndex: 0,// 历史页索引
 				leftNone: false,// 没有更多了
@@ -45,15 +46,22 @@
 		/*请求数据*/
 		},
 		mounted () {
+			console.log($('.home').scrollTop())
+			$('.test').on('scroll', () => {
+				console.log($('.test').scrollTop())
+			})
 		},
 		methods: {
 			_getCourseList(status, order = 0, type){
 				//status,statusList,pageSize,pageIndex,order,begin,end*/
-				//载入加载动画
+				// 加锁
+				this.isQuery = true
 				let pageSize, pageIndex
 				if (this.leftNone) {
+					this.isQuery = false
 					return false
 				}
+				//载入加载动画
 				this.busy = true;
 				if (type == 1) {
 					this.currentPageIndex++
@@ -80,24 +88,29 @@
 					//符合条件时status为0*/
 					if (_data.status) {
 						this.$message(_data.msg)
+						this.isQuery = false
 						return false
 					} else {
-
+						//数组赋值*/
+						for (let i of _data.courses) {
+							this.courseInfo.push(i)
+						}
 						if (_data.courses.length < 5) {
 							this.busy = false;
 							this.loadingIcon = false;
+							this.isQuery = false
 							this.leftNone = true;// 标记没有更多了
 							return this.$message({
 								message: '没有更多了',
 								duration: 1500
 							})
 						}
-						//数组赋值*/
-						for (let i of _data.courses) {
-							this.courseInfo.push(i)
-						}
+
 						//释放加载动画
 						this.busy = false;
+						// 释放锁
+						this.isQuery = false
+
 					}
 
 				}).catch((err) => {
@@ -131,6 +144,9 @@
 			},
 			// 刷新按钮事件
 			reFresh(){
+				if (this.isQuery) {
+					return false
+				}
 				this._clearStatus()
 				if (this.focus) {
 					this._getCourseList(3, 0, 1)
@@ -140,6 +156,9 @@
 			},
 			// 待上课程点击事件
 			nowCourse(){
+				if (this.isQuery) {
+					return false
+				}
 				this.focus = 1
 				this._clearStatus()
 				this._getCourseList(3, 0, 1)

@@ -57,7 +57,7 @@ const getCourseDetail =(courseIds,courseId)=>{
 /**
  *
  * @param courseId 课程id must
- * @param note 备注内容 must
+ * @param notes 备注内容 must
  * @returns {Promise}
  */
 const setNote =(courseId,notes)=>{
@@ -200,4 +200,25 @@ const  teacherReply=(courseId,teacherReply)=>{
 // 	return fetch('post','',{})
 // }
 
-export {login,getPrivilege,getSchedule,setSchedule,getCourseDetail,setNote,getCourseList,evaluateStudent,getKnowledgeList,onCourse,logout,teacherFinishCourse,teacherConfigure,videoPlatform,getTeacherEvluateNew,getCurrentCourse,saveTeacherEvluateNew,uploadReportImage,teacherReply}
+/**
+ *  重置密码
+ * @param mobile 手机号
+ * @param password 新密码
+ * @param verifyCode 验证码
+ * @returns {Promise}
+ */
+const resetPassword =(mobile,password,verifyCode)=>{
+	return fetch('post','/teacher/api/resetPassword',{mobile,password,verifyCode})
+}
+
+/**
+ * 重置密码
+ * @param mobile 手机号
+ * @param type 类型 默认6
+ * @returns {Promise}
+ */
+const  sendVerifyCode=(mobile,type=6)=>{
+	return fetch('post','/user/api/verifycode',{mobile,type})
+}
+
+export {login,getPrivilege,getSchedule,setSchedule,getCourseDetail,setNote,getCourseList,evaluateStudent,getKnowledgeList,onCourse,logout,teacherFinishCourse,teacherConfigure,videoPlatform,getTeacherEvluateNew,getCurrentCourse,saveTeacherEvluateNew,uploadReportImage,teacherReply,resetPassword,sendVerifyCode}

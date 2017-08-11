@@ -76,7 +76,8 @@
 	}
 
 	.el-dialog--tiny {
-		width: 800px;
+		width: 430px;
+		height: 450px;
 	}
 
 	.indexCnt {

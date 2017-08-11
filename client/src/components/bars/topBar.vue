@@ -14,9 +14,9 @@
 			</div>
 		</div>
 		<div class="topBar-btns">
-			<img src="../../../static/icons/topBar/minimize.png" alt="">
-			<img src="../../../static/icons/topBar/square.png" alt="">
-			<img src="../../../static/icons/topBar/close.png" alt="">
+			<img src="../../../static/icons/topBar/minimize.png" alt="" @click="minimize">
+			<img src="../../../static/icons/topBar/square.png" alt="" @click="maximize">
+			<img src="../../../static/icons/topBar/close.png" alt="" @click="quit">
 		</div>
 
 
@@ -75,23 +75,23 @@
 		methods: {
 			goLogin(){
 		  /*TODO:这个判断有问题 ps:现在解决了*/
-				if (getCookie("x_token")==null) {
-				this.$router.push('/static/login')
+				if (getCookie("x_token") == null) {
+					this.$router.push('/static/login')
 				} else {
 					this.$router.push('/static/main')
 				}
 			},
-		/*设备检测*/
+			//设备检测*/
 			itemOne(){
 				this.$store.commit('UN_SHOW_MENU')
 				this.$store.commit('UPDATE_SHOW_SETTING')
 			},
-		/*关于我们*/
+			//关于我们*/
 			itemTwo(){
 				this.$store.commit('UN_SHOW_MENU')
 				this.$store.commit('UPDATE_SHOW_ABOUT')
 			},
-		/*退出登录*/
+			//退出登录*/
 			itemThree(){
 		  /*TODO: 这个地方已经完成了：既在STORE里保存登录状态，又在LocalStorage里面保存了*/
 				this.$store.commit('CLEAR_TEACHER_INFO') // 清除登录信息
@@ -115,7 +115,7 @@
 					} else {
 						this.$message({
 							message: "再见！",
-							duration: 1400
+							duration: 1200
 						})
 						setTimeout(() => {
 							removeAllStore()
@@ -125,11 +125,21 @@
 					}
 				})
 			},
+		  	//显示菜单
 			showMenu(){
 				this.$store.state.showSetting = false
 				this.$store.state.showAbout = false
 				this.$store.commit('UPDATE_SHOW_MENU')
 
+			},
+			minimize(){
+				this.$ipc.send('minimize')
+			},
+			maximize(){
+				this.$ipc.send('maximize')
+			},
+			quit(){
+				this.$ipc.send('quitApp')
 			}
 		}
 	}

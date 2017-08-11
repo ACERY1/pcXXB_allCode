@@ -1,8 +1,8 @@
 <template>
 	<div class="chooseBar">
-		<el-menu class="el-menu-demo" mode="horizontal" default-active="1">
+		<el-menu class="el-menu-demo" mode="horizontal" :default-active="active">
 			<el-menu-item index="1" @click="itemOne"><p>待上课程</p></el-menu-item>
-			<el-menu-item index="2" @click="itemTwo"><p>历史课程</p></el-menu-item>
+			<el-menu-item index="0" @click="itemTwo"><p>历史课程</p></el-menu-item>
 			<freshBtn class="freshBtn" v-on:click.native="fresh"></freshBtn>
 		</el-menu>
 	</div>
@@ -36,7 +36,10 @@
 				default: () => {
 					console.log('click item2 !')
 				}
-			}
+			},
+		  active:{
+				default:'1'
+		  }
 		},
 		computed: {},
 		created () {

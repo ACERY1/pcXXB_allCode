@@ -1,6 +1,7 @@
 <template>
 	<div class="home" ref="mainBox">
-		<choose-bar :fresh="reFresh" :itemOne="nowCourse" :itemTwo="historyCourse"></choose-bar>
+		<choose-bar :fresh="reFresh" :itemOne="nowCourse" :itemTwo="historyCourse"
+					:active="focus.toString()"></choose-bar>
 		<el-row type="flex" justify="center" id="mainList" class="test">
 			<el-col :span="24">
 				<div v-infinite-scroll="loadFn" infinite-scroll-disabled="busy"
@@ -28,28 +29,86 @@
 		},
 		data () {
 			return {
-				courseInfo: [],
+//				courseInfo: [],
 				busy: false, // 是否正在加载   动画显示处理
 				isQuery: false, // 是否正在请求 加锁处理
+
 				currentPageSize: 5, //当前页容量
 				historyPageSize: 6, //历史页容量
-				currentPageIndex: 0,// 当前页索引
-				historyPageIndex: 0,// 历史页索引
+
+
+//				currentPageIndex: 0,// 当前页索引
+//				historyPageIndex: 0,// 历史页索引
+
 				leftNone: false,// 没有更多了
 				loadingIcon: true, //显示loading
-				focus: 1 // 1代表choose待上课程 0代表历史课程
+
+//				focus: 1 // 1代表choose待上课程 0代表历史课程
 			}
 		},
 		props: {},
-		computed: {},
+		computed: {
+			currentPageIndex: {
+				get (){
+					return this.$store.state.courseList.currentIndex
+				},
+				set(data){
+					this.$store.state.courseList.currentIndex = data
+				}
+			},
+			historyPageIndex: {
+				get(){
+					return this.$store.state.courseList.historyIndex
+				},
+				set(data){
+					this.$store.state.courseList.historyIndex = data
+				}
+			},
+			focus: {
+				get(){
+					return this.$store.state.courseList.focus
+				},
+				set(data){
+					this.$store.state.courseList.focus = data
+				}
+			},
+			courseInfo: {
+				get(){
+					return this.$store.state.courseList.courseInfo
+				},
+				set(data){
+					this.$store.state.courseList.courseInfo = data
+				}
+			},
+			mountPoint: {
+				get(){
+					return this.$store.state.courseList.mountPoint
+				},
+				set(data){
+					this.$store.state.courseList.mountPoint = data
+				}
+			}
+		},
 		created () {
-		/*请求数据*/
 		},
 		mounted () {
-			console.log($('.home').scrollTop())
-			$('.test').on('scroll', () => {
-				console.log($('.test').scrollTop())
+			let $test = $('.test')
+			$test.scrollTop(this.mountPoint)
+			$test.on('scroll', () => {
+				this.mountPoint = $('.test').scrollTop()
 			})
+
+		},
+		beforeDestroy(){
+			// domTree still alive but u trigger to destroy it!
+//			this.$store.commit("STORE_COURSE_LIST", {
+//				courseInfo: this.courseInfo,
+//				currentIndex: this.currentIndex,
+//				historyIndex: this.historyIndex,
+//				focus: this.focus,
+//				mountPoint: ''
+//			})
+
 		},
 		methods: {
 			_getCourseList(status, order = 0, type){
@@ -171,7 +230,6 @@
 			},
 			//载入待上课程
 			loadCourse(){
-				console.log(this.focus)
 				this._getCourseList(3, 0, 1)
 			},
 			loadHistoryCourse(){

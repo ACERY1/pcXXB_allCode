@@ -11,7 +11,8 @@ import {
 	UN_SHOW_MENU,
 	REVERT_SETTING_DATA,
 	UPDATE_COURSE_ID,
-	RECORD_IS_LOGOUT
+	RECORD_IS_LOGOUT,
+	STORE_COURSE_LIST
 } from './mutation_types'
 
 export default {
@@ -68,5 +69,13 @@ export default {
 	/*更新courseId*/
 	[UPDATE_COURSE_ID](state, data){
 		state.courseId = data
+	},
+	//保存缓存过的课程清单
+	[STORE_COURSE_LIST](state, data){
+		state.courseList.courseInfo = data.courseInfo // Array
+		state.courseList.currentIndex = data.currentIndex // number
+		state.courseList.historyIndex = data.historyIndex // number
+		state.courseList.mountPoint = data.mountPoint // number
+		state.courseList.focus = data.focus // 0 or 1
 	}
 }

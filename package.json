@@ -4,7 +4,8 @@
   "description": "pcend for teacher based on electron",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "pack": "electron-packager . XXB --out=pack --overwrite --ignore=client/node_modules "
   },
   "author": "acery",
   "license": "ISC",
@@ -34,6 +35,6 @@
   "devDependencies": {
     "devtron": "^1.4.0",
     "electron": "^1.6.2",
-    "electron-packager": "^8.6.0"
+    "electron-packager": "^8.7.2"
   }
 }

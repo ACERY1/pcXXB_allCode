@@ -1,0 +1,190 @@
+<template>
+	<div class="toolsBar">
+		<div class="toolsBar-time">
+			<p>00:05/55:00</p>
+		</div>
+		<div class="toolsBar-offClass">
+			<img src="../../../static/icons/live/offClass.png" alt="">
+		</div>
+		<div class="toolsBar-toolBtn">
+			<div class="toolsBar-toolBtn-item">
+				<div class="toBox" v-if="isShowColor">
+					<img src="../../../static/icons/live/red.png" alt="" v-if="!pickBool[0]"  @click="pickColor(0)">
+					<img src="../../../static/icons/live/red_picked.png" v-if="pickBool[0]" alt="" @click="pickColor(0)">
+					<img src="../../../static/icons/live/black.png" alt="" v-if="!pickBool[1]" @click="pickColor(1)">
+					<img src="../../../static/icons/live/black_picked.png" alt="" v-if="pickBool[1]" @click="pickColor(1)">
+					<img src="../../../static/icons/live/blue.png" alt="" v-if="!pickBool[2]" @click="pickColor(2)">
+					<img src="../../../static/icons/live/blue_picked.png" alt="" v-if="pickBool[2]" @click="pickColor(2)">
+				</div>
+				<img src="../../../static/icons/live/color.png" alt="" @click="showColor">
+			</div>
+			<div class="toolsBar-toolBtn-item">
+				<div class="toBox" v-if="isShowLine">
+					<img src="../../../static/icons/live/lg.png" alt="" v-if="!pickBool2[0]" @click="pickLine(0)">
+					<img src="../../../static/icons/live/lg_picked.png" alt="" v-if="pickBool2[0]" @click="pickLine(0)">
+					<img src="../../../static/icons/live/mid.png" alt="" v-if="!pickBool2[1]" @click="pickLine(1)">
+					<img src="../../../static/icons/live/mid_picked.png" alt="" v-if="pickBool2[1]" @click="pickLine(1)">
+					<img src="../../../static/icons/live/xs.png" alt="" v-if="!pickBool2[2]" @click="pickLine(2)">
+					<img src="../../../static/icons/live/xs_picked.png" alt="" v-if="pickBool2[2]" @click="pickLine(2)">
+				</div>
+				<img src="../../../static/icons/live/line.png" alt="" @click="showLine">
+			</div>
+			<div class="toolsBar-toolBtn-item">
+				<img src="../../../static/icons/live/clear.png" alt="">
+			</div>
+			<div class="toolsBar-toolBtn-item">
+				<img src="../../../static/icons/live/delete.png" alt="">
+			</div>
+		</div>
+		<div class="toolsBar-pager">
+			<img src="../../../static/icons/live/left.png" alt="" v-if="nowPage === 1">
+			<img src="../../../static/icons/live/left_l.png" alt="" v-if="nowPage != 1" @click="back">
+			<p>{{nowPage}}/{{allPage}}</p>
+			<img src="../../../static/icons/live/right.png" alt="" v-if="nowPage === allPage">
+			<img src="../../../static/icons/live/right_l.png" alt="" v-if="nowPage != allPage" @click="forward">
+		</div>
+		<div class="toolsBar-addPaper" @click="addNewPage">
+			<img src="../../../static/icons/live/addNew.png" alt="">
+		</div>
+	</div>
+</template>
+
+<script>
+	export default {
+		name: "",
+		components: {},
+		data () {
+			return {
+				nowPage: 1,
+				allPage: 1,
+				isShowColor: false,
+				isShowLine: false,
+				pickBool:[0,0,0],
+				pickBool2:[0,0,0],
+				isPickLine: false
+			}
+		},
+		props: {},
+		computed: {},
+		created () {
+		},
+		mounted () {
+		},
+		methods: {
+			back(){
+				if (this.nowPage != 1) {
+					this.nowPage--
+				}
+			},
+			forward () {
+				if (this.nowPage != this.allPage) {
+					this.nowPage++
+				}
+			},
+			addNewPage(){
+				this.allPage++
+			},
+			showColor(){
+				this.isShowLine = false
+				this.isShowColor = !this.isShowColor
+			},
+			showLine(){
+				this.isShowColor = false
+				this.isShowLine = !this.isShowLine
+			},
+			pickColor(code){
+				for(let i in this.pickBool){
+					this.pickBool.splice(i,1,0)
+				}
+				this.pickBool.splice(code,1,1)
+			},
+			pickLine(code){
+				for(let i in this.pickBool){
+					this.pickBool2.splice(i,1,0)
+				}
+				this.pickBool2.splice(code,1,1)
+			}
+		}
+	}
+</script>
+
+<style lang="scss" rel="stylesheet/scss" scoped>
+	@import "../../common/styles/mixin";
+
+	.toolsBar {
+		position: relative;
+		@include rowBox();
+		width: 100%;
+		height: 30px;
+		background: $bar_bg;
+		&-time {
+			padding-top: 2px;
+			margin-left: 10px;
+			margin-right: 20px;
+			@include rowMidBox();
+			@include fontSizeColor(12px, $bg_wht)
+		}
+		&-offClass {
+			cursor: pointer;
+			@include rowMidBox();
+		}
+		&-toolBtn {
+			right: 42%;
+			position: absolute;
+			@include rowBox();
+			&-item {
+				position: relative;
+				@include allMidBox();
+				width: 40px;
+				height: 30px;
+				img {
+					@include wh(22px,22px);
+					cursor: pointer;
+				}
+			}
+			&-item:hover {
+				cursor: pointer;
+				transition: all ease-in-out .3s;
+				background: $bar_focus;
+			}
+		}
+		&-pager {
+			position: absolute;
+			top: 8px;
+			right: 100px;
+			@include rowMidBox();
+			p {
+				text-align: center;
+				@include fontSizeColor(12px, $bg_wht);
+				width: 40px;
+			}
+			img {
+				cursor: pointer;
+			}
+		}
+		&-addPaper {
+			img {
+				cursor: pointer;
+			}
+			top: 4px;
+			right: 20px;
+			position: absolute;
+		}
+	}
+
+	.toBox {
+		position: absolute;
+		display: flex;
+		flex-flow: column nowrap;
+		align-items: center;
+		height: 140px;
+		width: 35px;
+		background: $bg_wht;
+		bottom: 30px;
+		img {
+			cursor: pointer;
+			margin-top: 15px;
+			@include wh(27px, 27px)
+		}
+	}
+</style>

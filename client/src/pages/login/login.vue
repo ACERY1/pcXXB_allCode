@@ -111,7 +111,7 @@
 						this.busy = false
 					}
 				}).catch((err) => {
-					this.$message({message: `错误+${err}`, type: 'error', duration: 1000})
+					this.$message({message: `错误${err.status},${err.statusText}`, type: 'error', duration: 1000})
 					this.busy = false
 				})
 			},

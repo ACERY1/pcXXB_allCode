@@ -10,6 +10,26 @@
 // import {baseUrl} from '../../config/baseUrl'
 import axios from 'axios'
 
+axios.interceptors.response.use(function (response) {
+	return response;
+}, function (error) {
+	if (error.response) {
+		// The request was made and the server responded with a status code
+		// that falls out of the range of 2xx
+		return Promise.reject({
+			error: error.response.data.msg,
+			status: error.response.status,
+			statusText:error.response.statusText
+		})
+	} else if (error.request) {
+		// The request was made but no response was received
+		return Promise.reject(error.request)
+	} else {
+		// Something happened in setting up the request that triggered an Error
+		return Promise.reject(error.message)
+	}
+})
+
 export default async(type = 'GET', url = '', data = {}) => {
 	type = type.toUpperCase();
 	 // 提示： 这里的url填相对路径 例如'/test/example'

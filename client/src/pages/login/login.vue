@@ -102,7 +102,7 @@
 						this.$store.commit('RECORD_IS_LOGIN') // 提交登录状态
 						this.$message({message: "登录成功！", type: 'success', duration: 1000})
 						setTimeout(() => {
-							this.$router.push('/static/home')
+							this.$router.push('main')
 						}, 1000)
 
 					} else {

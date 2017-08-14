@@ -167,6 +167,41 @@ const readAudioTo_HZ_Array = (audioSrc, ffSize) => {
 	return {array: new Uint8Array(analyser.frequencyBinCount), analyser, audio, audioBox}
 }
 
+const setSession = (name, content) => {
+	if (!name) return;
+	if (typeof content !== 'string') {
+		content = JSON.stringify(content);
+	}
+	window.sessionStorage.setItem(name, content);
+}
+
+/**
+ * 获取STORE
+ * @param name 存贮的名字
+ */
+const getSession = name => {
+	if (!name) return;
+	return window.sessionStorage.getItem(name);
+}
+
+/**
+ * 删除sessionSTORE
+ * @param name
+ */
+const removeSession = name => {
+	if (!name) return;
+	window.sessionStorage.removeItem(name);
+}
+
+/**
+ * 清除所有的localStorage
+ */
+const removeAllSession = () => {
+	for (let i of Object.keys(window.sessionStorage)) {
+		window.localStorage.removeItem(i)
+	}
+}
+
 /**
  *  存储本地STORE
  * @param name
@@ -188,6 +223,7 @@ const getStore = name => {
 	if (!name) return;
 	return window.localStorage.getItem(name);
 }
+
 
 /**
  * 删除本地STORE
@@ -340,5 +376,5 @@ const setCookie = (name, value, seconds) => {
 export {
 	countFn, parseTime, judgeTime, randomNum, verifyVal, setMediaStream, outputAudioData, computeVolume,
 	readAudioTo_HZ_Array, getStore, removeStore, loadMore, setStore, setUserInfoInLocal, judgeOutDate, getCookie,
-	delCookie, setCookie, removeAllStore
+	delCookie, setCookie, removeAllStore,getSession,setSession,removeSession
 }

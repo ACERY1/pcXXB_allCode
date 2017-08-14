@@ -221,4 +221,23 @@ const  sendVerifyCode=(mobile,type=6)=>{
 	return fetch('post','/user/api/verifycode',{mobile,type})
 }
 
-export {login,getPrivilege,getSchedule,setSchedule,getCourseDetail,setNote,getCourseList,evaluateStudent,getKnowledgeList,onCourse,logout,teacherFinishCourse,teacherConfigure,videoPlatform,getTeacherEvluateNew,getCurrentCourse,saveTeacherEvluateNew,uploadReportImage,teacherReply,resetPassword,sendVerifyCode}
+
+/**
+ * 查询是否制作了课件
+ * @param courseId
+ * @returns {Promise}
+ */
+const makeCourseWare = (courseId)=>{
+	return fetch('post','/courseware/api/makeCourseWare_V2',{course_id:courseId})
+}
+
+/**
+ * 预览课件
+ * @param coursewareId
+ * @returns {Promise}
+ */
+const previewCourseWare = (coursewareId)=>{
+	return fetch('post','/courseware/api/listPage',{coursewareId})
+}
+
+export {login,getPrivilege,getSchedule,setSchedule,getCourseDetail,setNote,getCourseList,evaluateStudent,getKnowledgeList,onCourse,logout,teacherFinishCourse,teacherConfigure,videoPlatform,getTeacherEvluateNew,getCurrentCourse,saveTeacherEvluateNew,uploadReportImage,teacherReply,resetPassword,sendVerifyCode,makeCourseWare,previewCourseWare}

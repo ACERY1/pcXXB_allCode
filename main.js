@@ -72,6 +72,10 @@ app.on('ready', () => {
 		mainWindow.setFullScreen(false)
 	})
 	
+	ipcMain.on("courseWare",()=>{
+		console.log('get')
+		mainWindow.loadURL("http://localhost:2048/courseware.html")
+	})
 	
 	mainWindow.on('enter-full-screen', () => {
 		// console.log(mainWindow.getSize()())
@@ -82,6 +86,8 @@ app.on('ready', () => {
 		// console.log(mainWindow.getSize()())
 		mainWindow.isResizable(false)
 	})
+	
+
 });
 
 

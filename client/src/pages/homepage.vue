@@ -20,7 +20,7 @@
 <script>
 	import chooseBar from '../components/bars/chooseBar.vue'
 	import classItem from '../components/items/classItem.vue'
-	import {loadMore} from '../common/scripts/util'
+	import {loadMore, removeSession} from '../common/scripts/util'
 	export default {
 		name: "",
 		components: {
@@ -90,6 +90,9 @@
 			}
 		},
 		created () {
+			// 清楚用来判断跳转路由的courseIdF
+			removeSession("temp_courseId")
+			removeSession("temp_courseWareId")
 		},
 		mounted () {
 			let $test = $('.test')

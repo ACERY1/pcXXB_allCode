@@ -22,8 +22,8 @@
 				<div class="course-info-item-title">课件</div>
 				<div class="course-info-item-cont">上课课件：
 					<div class="course-info-item-cont-btn" v-if="!ware" @click="goPPTPage">制作</div>
-					<div class="course-info-item-cont-btn" v-if="ware">查看</div>
-					<div class="course-info-item-cont-time" v-if="ware">发布于 {{info.coursewareCreateTime}}</div>
+					<div class="course-info-item-cont-btn" v-if="ware" @click="goPPTPage">修改</div>
+					<div class="course-info-item-cont-time" v-if="ware">发布于 {{info.coursewareUpdateTime}}</div>
 				</div>
 				<div class="course-info-item-cont">知 识 点：
 					<p v-if="!ware">请在课件制作后查看</p>
@@ -96,8 +96,9 @@
 </template>
 
 <script>
-	import {judgeTime, parseTime} from '../../common/scripts/util'
+	import {judgeTime, parseTime, setSession, getSession} from '../../common/scripts/util'
 	import {courseStatus} from '../../common/scripts/filters'
+	import fetch from '../../common/scripts/fetch'
 	import bBtn from '../../components/buttons/basicButtons.vue'
 	export default {
 		name: "classInfo",
@@ -244,7 +245,11 @@
 
 		},
 		created () {
-			this._checkData()
+			if (getSession("temp_courseId") != null) {
+				// 如果session里有 就从session里取
+				this.$store.commit("UPDATE_COURSE_ID", getSession("temp_courseId"))
+			}
+
 			this.$api.getCourseDetail('', this.$store.state.courseId).then((res) => {
 				let _data = res.data
 				if (_data.status == '-1') {
@@ -255,6 +260,7 @@
 				} else {
 			/*TODO:对接数据*/
 					this.info = _data.detail
+					this._checkData()
 				}
 
 			}).catch((err) => {
@@ -271,8 +277,10 @@
 					this.$message(err)
 				}
 			})
+
 		},
 		mounted () {
+
 		},
 		methods: {
 			//检查并判断数据*/
@@ -318,9 +326,28 @@
 			addNote(){
 				this.isShowTextArea = !this.isShowTextArea
 			},
-			//TODO:调用网页版的课件制作网页
+			//
 			goPPTPage(){
-				this.$ipc.sendSync('makePPT', 'hello world')
+				this.$api.makeCourseWare(this.$store.state.courseId).then((res) => {
+					let _data = res.data
+					if (_data.status) {
+						this.$message({message: _data.msg, duration: 1500})
+						return false
+					} else {
+						if (_data.courseWare_id == -1) {
+							this.$message({message: "已有课件", duration: 1500})
+							setSession("temp_courseWareId", this.info.courseware_id)
+							setSession("temp_courseId", this.$store.state.courseId)
+							this.$ipc.send("courseWare")
+						} else {
+							setSession("temp_courseId", this.$store.state.courseId)
+							setSession("temp_courseWareId", _data.courseWare_id)
+							this.$ipc.send("courseWare")
+						}
+
+					}
+
+				})
 			},
 			goReportPage(){
 				this.$ipc.sendSync('test', 'hello world')

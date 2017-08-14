@@ -5,7 +5,7 @@
 </template>
 
 <script>
-	import {getCookie} from './common/scripts/util'
+	import {getCookie, getSession} from './common/scripts/util'
 	export default {
 		name: 'app',
 		data () {
@@ -16,7 +16,13 @@
 			if (getCookie("x_token") == null) {
 				this.$router.push('/static/login')
 			} else {
-				this.$router.push('/static/main')
+		  /*TODO:根据session 里是否有temp_courseId 来判断是否是从制作课件跳转回来的*/
+				if (getSession("temp_courseId") != null) {
+					this.$router.push('/static/classInfo')
+				} else {
+					this.$router.push('/static/main')
+				}
+
 			}
 			window.onkeydown = (e) => {
 				if (e.code == 'Escape') {

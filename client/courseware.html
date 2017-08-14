@@ -1,0 +1,370 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<meta http-equiv="Pragma" content="no-cache">
+	<title>制作课件</title>
+	<link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="css/bootstrap-button.css">
+	<link rel="stylesheet" type="text/css" href="css/jquery.treemenu.css">
+	<link rel="stylesheet" type="text/css" href="css/iziModal.min.css">
+	<!-- <link rel="stylesheet" type="text/css" href="css/webuploader.css"> -->
+	<link rel="stylesheet" type="text/css" href="css/message.css?20170728">
+	<script type="text/javascript">
+		/*TODO:代码组成太难受了 By acery*/
+
+		/*使用JQuery*/
+				window.nodeRequire = require;
+				delete window.require;
+				delete window.exports;
+				delete window.module;
+
+
+	</script>
+	<script type="text/javascript" src="./js/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="./js/jquery.actual.min.js"></script>
+	<script type="text/javascript" src="./js/html2canvas.js"></script>
+	<script type="text/javascript" src="./js/jquery.treemenu.js"></script>
+	<script type="text/javascript" src="./js/cookie.js"></script>
+	<script type="text/javascript" src="./js/iziModal.min.js"></script>
+	<script type="text/javascript" src="./js/webuploader.js"></script>
+	<script type="text/x-mathjax-config">
+        MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+
+
+	</script>
+	<script type="text/javascript" async="async"
+			src="./MathJax-2.0-latest/MathJax.js?config=TeX-AMS_HTML">
+	</script>
+	<style type="text/css">
+		.webuploader-element-invisible {
+			opacity: 0;
+		}
+	</style>
+</head>
+<body style="background-color:#f5f5f5;">
+
+<div class="message-container">
+	<h2>
+		<img src="images/smallLogo.png" alt=""/>
+		学习宝教师端 <i style="font-style:normal;font-size:15px;">| 课件系统</i>
+		<div id="header-right">
+            <span>
+                <img class="teacher_avatar">
+            </span>
+			<span class="teacher_nick">XX老师</span><img class="toggle-exit" src="images/down.png" alt="">
+			<div id="exitLogin" style="display: none">退出登录</div>
+		</div>
+	</h2>
+	<div class="message-position">
+		<p><a onclick="javascript:history.go(-1);" style="text-decoration:none;">&lt;</a>&nbsp;&nbsp;待上课程 / 制作课件</p>
+		<!-- <p><a href="/index.html#/courseMessage/List/1" style="text-decoration:none;">&lt;</a>&nbsp;&nbsp;待上课程 / 制作课件</p> -->
+	</div>
+
+	<div class="message-top">
+		<dl class="">
+			<dt>
+			<div>
+				<img class="header_cover" src="" alt=""/>
+			</div>
+			</dt>
+			<dd>
+				<div>
+					<p class="stu_name"></p>
+					<p class="stu_school"></p>
+					<p class="class_info"><span class="class_time">今天 16:00--18:00</span> <span
+							class="stu_subject">数学</span> <span class="stu_grade">初三</span></p>
+				</div>
+			</dd>
+			<div class="teach-count-content">
+				<p>已为该学生辅导</p>
+				<p><span class="teachCount"></span>节</p>
+			</div>
+		</dl>
+	</div>
+
+	<div class="message-middle">
+		<h3>已选择知识点(制作课件前，请先添加知识点，或上传PDF课件)</h3>
+		<div class="add_point_content">
+			<ul>
+				<!-- <li data-by="0">三角形</li>
+                <li data-by="1" data-id="48168" data-pid="48150" data-pname="磁场">CI：带电粒子在匀强磁场中的运动<i class="icon-remove-circle"></i></li> -->
+			</ul>
+			<img src="images/addPoint.png" class="add-point">
+			<img src="images/pdf.png" class="add-pdf" style="display:none;">
+			<img src="images/cancelpdf.png" class="cancel-pdf" style="display:none;">
+			<input type="file" class="pdffile" accept="application/pdf" style="display:none;">
+			<!-- <button class="button button-caution button-rounded button-small add-point">添加知识点</button> -->
+		</div>
+	</div>
+	<input type="hidden" class="hid-cid" value="1"/>
+	<div class="message-courseware-content">
+		<h3>课件制作</h3>
+		<div class="courseware-thumbnail">
+			<ul class="thumbnail-ul">
+			</ul>
+			<div class="toggle-thumbnail">
+				<!-- <img src="images/up_thumbnail.png" class="up-thumbnail"> -->
+				<img src="images/down_t.png" class="down-thumbnail">
+				<!-- <i class="icon-double-angle-up up-thumbnail"></i>
+				<i class="icon-double-angle-down down-thumbnail"></i> -->
+			</div>
+		</div>
+		<div class="courseware-body">
+			<div class="courseware-body-left">
+				<!-- <div class="ppt-page-body" data-type="0">
+					  <div class="ppt-page-content" style="height: 100%;width: 100%;background:url(images/index.jpg) no-repeat;">
+						  <div style="width:430px;height:200px;box-sizing:border-box;position:absolute;bottom:90px;left:65px;font-family:'黑体'">
+							  <p style="font-size:48px;margin-bottom:25px;">王强</p>
+							  <p style="font-size:48px;margin-bottom:40px;">一对一直播课</p>
+							  <p style="font-size:24px;color:#969696;margin-bottom:20px;">主讲老师：<span>Liana</span></p>
+							  <p style="font-size:18px;color:#969696;">上课时间：1月4日<span style="padding-left:30px;">14:00-14:55</span></p>
+						  </div>
+					  </div>
+				  </div>  -->
+				<iframe src="ppt.html" id="ppt-content" style="border:none;" frameborder="0"></iframe>
+			</div>
+			<div class="courseware-body-right">
+				<ul>
+					<!-- <li class="add_outline">
+						<img src="images/outline.png">
+						<p>添加大纲<p>
+					</li> -->
+					<!-- <li class="add_question_anlyse" data-type="1" title="老师添加讲解题目(无答案)">
+						<img src="images/add_analyse.png">
+						<p>添加讲解题目<p>
+					</li> -->
+					<li class="add_exercises" data-type="2" title="新增页面添加题目">
+						<img src="images/add_analyse.png">
+						<p>添加题目</p>
+					</li>
+					<li class="add_textarea" data-type="3" title="新增页面添加文本内容">
+						<img src="images/add_textarea.png">
+						<p>添加文本</p>
+					</li>
+					<li class="add_img filePicker" id="filePicker" data-type="4" title="新增页面添加图片">
+						<img src="images/add_img.png">
+						<p>添加讲解图片</p>
+					</li>
+					<!-- <li class="delete_page">
+						<img src="images/delete_page.png">
+						<p>删除当前页</p>
+					</li> -->
+				</ul>
+				<!-- <div class="ppt-direction">
+					<span class="left-page">&lt;</span>
+					<span class="ppt-page"><input type="text" class="ppt_page" readonly="true" value="1">&nbsp;/&nbsp;<span class="totalpage">1</span></span>
+					<span class="right-page">&gt;</span>
+				</div> -->
+				<div class="ppt-action">
+					<button class="button button-rounded button-tiny preview">预览</button>
+					<button class="button button-highlight button-rounded button-tiny save-ppt">保存</button>
+				</div>
+			</div>
+		</div>
+		<div style="clear:both;"></div>
+		<div class="pptpage_content">
+			课件第<input type="text" class="ppt_page" readonly="true" value="1" style="width:25px;text-align:center;">页,
+			共&nbsp;<span class="totalpage"></span>&nbsp;页
+		</div>
+	</div>
+	<footer class="">
+		<!-- <p>东方皆冠科技有限公司<span style="vertical-align:middle;font-size:20px;">&copy;</span>2014-2017</p> -->
+		<p>客服电话：400-816-1991</p>
+	</footer>
+	<div class="hid-ppt"></div>
+	<div id="modal">
+		<select class="grade-select">
+			<option value="g">高中</option>
+			<option value="c">初中</option>
+			<option value="x">小学</option>
+		</select>
+
+		<select class="subject-select">
+			<option value="01">语文</option>
+			<option value="02">数学</option>
+			<option value="03">英语</option>
+			<option value="04">物理</option>
+			<option value="05">化学</option>
+			<option value="06">地理</option>
+			<option value="07">历史</option>
+			<option value="08">政治</option>
+			<option value="09">生物</option>
+		</select>
+		<div class="point-screening">
+			<div class="pointBy">
+				<label>知识点检索<span></span></label>
+				<ul class="bypoint-ul">
+					<li class="pointBySection active">按章节</li>
+					<li class="pointByPoint">按考点</li>
+				</ul>
+			</div>
+			<div class="pointBySession">
+				<label>教材版本<span></span></label>
+				<ul class="session-ul">
+				</ul>
+			</div>
+			<div class="pointByXueqi">
+				<label>年级及学期<span></span></label>
+				<ul class="xueqi-ul">
+				</ul>
+			</div>
+			<div class="pointByFreq" style="display:none;">
+				<label>考察频度<span></span></label>
+				<ul class="freq-ul">
+					<li class="active">全部</li>
+					<li>高频</li>
+					<li>次高频</li>
+					<li>一般</li>
+					<li>几乎不考</li>
+				</ul>
+			</div>
+			<div class="pointByDegree" style="display:none;">
+				<label>大纲掌握程度<span></span></label>
+				<ul class="degree-ul">
+					<li class="active">全部</li>
+					<li data-id="4">应用(四星)</li>
+					<li data-id="3">掌握(三星)</li>
+					<li data-id="2">理解(二星)</li>
+					<li data-id="1">了解(一星)</li>
+				</ul>
+			</div>
+		</div>
+		<div class="point"></div>
+		<div class="point-choose">
+			<ul>
+			</ul>
+		</div>
+		<div class="point-footer">
+			<p>最多选择10个知识点</p>
+			<button class="button button-caution button-rounded button-small pull-right confirm-point">确认</button>
+			<button class="button button-rounded button-small pull-right close-modal">取消</button>
+		</div>
+	</div>
+	<div id="qmodal">
+		<select class="point-select">
+		</select>
+		<div class="question-screening">
+			<img src="" class="questionby-img">
+			<div class="pointByStyle">
+				<label>题型<span></span></label>
+				<ul class="style-ul">
+					<li class="active">全部</li>
+					<li>选择题</li>
+					<li>填空题</li>
+					<li>解答题</li>
+				</ul>
+			</div>
+			<div class="pointByDiff">
+				<label>难度<span></span></label>
+				<ul class="diff-ul">
+					<li class="active">全部</li>
+					<li value="1">基础题</li>
+					<li value="2">中档题</li>
+					<li value="3">难题</li>
+				</ul>
+			</div>
+			<div class="pointBySource">
+				<label>来源<span></span></label>
+				<ul class="source-ul">
+					<li class="active">全部</li>
+				</ul>
+			</div>
+		</div>
+		<div class="question-sort">
+			<label>按难度系数排序<img src="images/qsort_asc.png" data-id="1"></label>
+			<p>共<span></span>条记录</p>
+		</div>
+		<div class="point-question-content">
+			<ul></ul>
+		</div>
+		<div class="question-page-content">
+			<button class="button button-default left-qpage">上一页</button>
+			<span class="question-page"><input type="text" readonly="readonly" value="1">&nbsp;/&nbsp;<span
+					class="totalqpage">1</span></span>
+			<button class="button button-default right-qpage">下一页</button>
+		</div>
+		<!-- <button class="button button-caution button-rounded button-small pull-right add-question">确认</button> -->
+	</div>
+</div>
+<div class="modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span
+						class="sr-only">Close</span></button>
+				<h4 class="modal-title">提示</h4>
+			</div>
+			<div class="modal-body">
+				<p style="text-align:center;font-size:20px;">是否保存本课件？</p>
+			</div>
+			<div class="modal-footer">
+				<button class="button button-highlight button-rounded button-small confirm-ppt">确认</button>
+				<button class="button button-rounded button-small cancel-ppt">取消</button>
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="cover">
+
+</div>
+<input type="hidden" id="qtoken">
+<input type="hidden" id="token_time">
+<script type="text/javascript" src="./js/courseware0808.js?20170810"></script>
+<script type="text/javascript">
+
+	var throttleV2 = function (fn, delay, mustRunDelay) {
+		var timer = null;
+		var t_start;
+		return function () {
+			var context = this, args = arguments, t_curr = new Date();
+			clearTimeout(timer);
+			if (!t_start) {
+				t_start = t_curr;
+			}
+			if (t_curr - t_start >= mustRunDelay) {
+				fn.apply(context, args);
+				t_start = t_curr;
+			} else {
+				timer = setTimeout(function () {
+					fn.apply(context, args);
+				}, delay);
+			}
+		}
+	}
+	function thumbnailLazyLoad() {
+		var top = $('.thumbnail-ul').scrollTop(), left = $('.thumbnail-ul').scrollLeft(),
+			$li = $('.thumbnail-ul li');
+		if ($('.thumbnail-ul').width() == 1120) {
+			var t = left;
+			for (var i = 0; i < $li.length; i++) {
+				if (223 * (i - 3) <= t) {
+					createImg($li.eq(i));
+				}
+			}
+		}
+		else {
+			var t = top;
+			for (var i = 0; i < $li.length; i++) {
+				if (226 * (i - 3) <= t) {
+					createImg($li.eq(i));
+				}
+			}
+		}
+	}
+	function createImg(obj) {
+		var src = obj.attr('data-src');
+		if (src && obj.find('img').length == 0) {
+			obj.find('.thumbnail-view').append('<img src="' + src + '"  style="width:100%;height:100%;"/>');
+		}
+	}
+	$('.thumbnail-ul').on('scroll', throttleV2(thumbnailLazyLoad, 100, 200));
+	setTimeout(function () {
+		thumbnailLazyLoad();
+	}, 500);
+
+</script>
+</body>
+</html>

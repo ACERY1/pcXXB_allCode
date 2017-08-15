@@ -20,7 +20,6 @@ const login = (mobile,password) => {
 const getPrivilege =()=>{
 	return fetch('post','/teacher/api/webcast/privilege',{})
 }
-
 /*获取指定时间内老师时间表*/
 /**
  *

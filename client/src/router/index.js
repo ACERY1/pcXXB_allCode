@@ -1,15 +1,19 @@
 /**
  * Created by Acery on 2017/8/3.
  */
+const test= r => require.ensure([], () => r(require('../components/dialogs/studyPoint.vue')), 'test'); // 上课
+
 
 const home = r => require.ensure([], () => r(require('../pages/homepage.vue')), 'home'); // 首页
 const guide = r => require.ensure([], () => r(require('../pages/indexContainer.vue')), 'guide'); // 引导
 const install = r => require.ensure([], () => r(require('../pages/install/install.vue')), 'install'); // 安装
 const update = r => require.ensure([], () => r(require('../pages/install/update.vue')), 'update'); // 安装
 const login = r => require.ensure([], () => r(require('../pages/login/login.vue')), 'login'); // 安装&注册
-const classInfo = r => require.ensure([], () => r(require('../pages/class/classInfo.vue')), 'classInfo'); // 的
-const mainContainer = r => require.ensure([], () => r(require('../pages/mainContainer.vue')), 'mainContainer.vue'); // 的
-const onClass= r => require.ensure([], () => r(require('../pages/class/onClass.vue')), 'onclass'); // 的
+const classInfo = r => require.ensure([], () => r(require('../pages/class/classInfo.vue')), 'classInfo'); // 课程详情
+const mainContainer = r => require.ensure([], () => r(require('../pages/mainContainer.vue')), 'mainContainer.vue'); // 容器
+const onClass= r => require.ensure([], () => r(require('../pages/class/onClass.vue')), 'onclass'); // 上课
+
+
 
 
 export default [
@@ -64,6 +68,11 @@ export default [
 		path:'/static/update',
 		name:'update',
 		component:update,
-	}
+	},
 	
+	{
+		path:'/static/test',
+		name:'test',
+		component:test,
+	}
 ]

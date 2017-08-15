@@ -23,7 +23,7 @@
 		<transition name="fade">
 			<div class="topBar-menu" v-show="isShowMenu">
 				<div class="topBar-menu-item" @click="itemOne">
-					<img src="../../../static/icons/people.png" alt="">
+					<img src="../../../static/icons/setting.png" alt="">
 					<p>设备检测</p>
 				</div>
 				<div class="topBar-menu-item" @click="itemTwo">
@@ -31,7 +31,7 @@
 					<p>关于我们</p>
 				</div>
 				<div class="topBar-menu-item" @click="itemThree">
-					<img src="../../../static/icons/people.png" alt="">
+					<img src="../../../static/icons/exit.png" alt="">
 					<p>退出登录</p>
 				</div>
 			</div>
@@ -85,11 +85,13 @@
 			itemOne(){
 				this.$store.commit('UN_SHOW_MENU')
 				this.$store.commit('UPDATE_SHOW_SETTING')
+				this.$store.commit("UPDATE_SHOW_POINT")
 			},
 			//关于我们*/
 			itemTwo(){
 				this.$store.commit('UN_SHOW_MENU')
 				this.$store.commit('UPDATE_SHOW_ABOUT')
+				this.$store.commit("UPDATE_SHOW_POINT")
 			},
 			//退出登录*/
 			itemThree(){
@@ -125,11 +127,12 @@
 					}
 				})
 			},
-		  	//显示菜单
+			//显示菜单
 			showMenu(){
 				this.$store.state.showSetting = false
 				this.$store.state.showAbout = false
 				this.$store.commit('UPDATE_SHOW_MENU')
+				this.$store.commit("UPDATE_SHOW_POINT")
 
 			},
 			minimize(){

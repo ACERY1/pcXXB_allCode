@@ -12,7 +12,8 @@ import {
 	REVERT_SETTING_DATA,
 	UPDATE_COURSE_ID,
 	RECORD_IS_LOGOUT,
-	STORE_COURSE_LIST
+	STORE_COURSE_LIST,
+	UPDATE_SHOW_POINT
 } from './mutation_types'
 
 export default {
@@ -48,6 +49,10 @@ export default {
 	/*更新关于弹框显示状态*/
 	[UPDATE_SHOW_ABOUT](state){
 		state.showAbout = !state.showAbout
+	},
+	/*显示知识点*/
+	[UPDATE_SHOW_POINT](state){
+		state.showPoint = !state.showPoint
 	},
 	/*清除登录数据*/
 	[CLEAR_TEACHER_INFO](state){

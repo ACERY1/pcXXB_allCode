@@ -38,6 +38,8 @@
 					v-on:click.native="goClass"></my-btn>
 			<my-btn :styles="'grey_d'" :height="25" :width="80" :size="12" v-if="isOnClass == 0"></my-btn>
 		</div>
+		<p class="status-text">{{statusText}}</p>
+		<p class="courseWare-text">{{courseWareText}}</p>
 	</div>
 </template>
 
@@ -119,7 +121,30 @@
 				endTime(){
 					return parseTime(this.courseInfo.end_time)
 				},
-
+				statusText(){
+					switch (this.courseInfo.status) {
+						case 2:
+							return "已结束";
+							break;
+						case 4:
+							return "教师旷课";
+							break;
+						case 5:
+							return "已取消";
+							break;
+						case 6:
+							return "学生旷课";
+							break;
+						case 7:
+							return "教师和学生均旷课";
+							break;
+					}
+				},
+				courseWareText(){
+					if (this.courseInfo.courseware_id == '0' && this.courseInfo.status != 1  && this.courseInfo.status != 0) {
+						return "(课件未制作)"
+					}
+				}
 			},
 			created () {
 //		  console.log(this.courseInfo.begin_time+'****'+ +new Date())
@@ -144,12 +169,26 @@
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
+	@import "../../common/styles/mixin";
 
 	.clickArea {
 		position: absolute;
 		right: 16%;
 		height: 130px;
-		width: 46%;
+		width: 100%;
+	}
+
+	.courseWare-text{
+		@include fontSizeColor(12px, $fontClr_3rd);
+		position: absolute;
+		right: 26px;
+		bottom: 30px;
+	}
+	.status-text {
+		@include fontSizeColor(12px, $fontClr_3rd);
+		position: absolute;
+		right: 38px;
+		bottom: 30px;
 	}
 
 	@import "../../common/styles/mixin";

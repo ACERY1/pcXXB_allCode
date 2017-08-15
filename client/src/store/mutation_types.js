@@ -12,4 +12,5 @@ export const UN_SHOW_MENU = 'UN_SHOW_MENU' // 不显示下拉菜单
 export const REVERT_SETTING_DATA = 'REVERT_SETTING_DATA' // 更新保存设置
 export const UPDATE_COURSE_ID = 'UPDATE_COURSE_ID' // 更新courseId
 export const STORE_COURSE_LIST = 'STORE_COURSE_LIST' // 保存加载过的清单
+export const UPDATE_SHOW_POINT = 'UPDATE_SHOW_POINT' // 保存加载过的清单
 

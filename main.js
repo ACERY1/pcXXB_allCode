@@ -75,6 +75,7 @@ app.on('ready', () => {
 	ipcMain.on("courseWare",()=>{
 		console.log('get')
 		mainWindow.loadURL("http://localhost:2048/courseware.html")
+		mainWindow.setFullScreen(true)
 	})
 	
 	mainWindow.on('enter-full-screen', () => {

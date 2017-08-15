@@ -100,7 +100,6 @@
 			$test.on('scroll', () => {
 				this.mountPoint = $('.test').scrollTop()
 			})
-
 		},
 		beforeDestroy(){
 			// domTree still alive but u trigger to destroy it!

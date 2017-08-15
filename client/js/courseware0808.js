@@ -138,7 +138,7 @@ $("#ppt-content").load(function () {
 		if ($('.courseware-thumbnail').height() == 166) {
 			$('.courseware-thumbnail').css({'height': '316px', 'overflow-x': 'hidden'});
 			$('.courseware-thumbnail ul').css({
-				'white-space': 'normal', 'overflow-y': 'scroll', 'overflow-x': 'hidden', 'width': '1138px'
+				'white-space': 'normal', 'overflow-y': 'scroll', 'overflow-x': 'hidden', 'width': '1000px'
 			});
 			$('.toggle-thumbnail').hide();
 		}
@@ -153,7 +153,7 @@ $("#ppt-content").load(function () {
 			$('.toggle-thumbnail').hide();
 		}
 		else {
-			$('.courseware-thumbnail').css({'height': '167px', 'width': '1138px', 'overflow': 'auto'});
+			$('.courseware-thumbnail').css({'height': '167px', 'width': '1000px', 'overflow': 'auto'});
 			$('.courseware-thumbnail ul').css({
 				'white-space': 'normal', 'overflow-y': 'hidden', 'overflow-x': 'scroll', 'width': '1120px'
 			});
@@ -420,27 +420,27 @@ $("#ppt-content").load(function () {
 	})
 	
 	$('#exitLogin').click(function () {
-		$.ajax({
-			url: '/teacher/api/logout',
-			type: 'GET',
-			success: function (data) {
-				var data = JSON.parse(data);
-				if (data.status == 0 || data.status == 1 || data.status == 9528) {
-					if (data.status == 9528) {
-						alert('您的账户已在其他设备上登录，请重新登录!');
-						cookie.clearCookies();
-					} else {
-						cookie.setCookie('is_Login', true, 0);
-					}
-					window.location.replace("../../index.html");
-				} else {
-					warnDialog('后台错误，退出失败！');
-				}
-			},
-			error: function (data) {
-				warnDialog('后台错误，退出失败！');
-			}
-		})
+		// $.ajax({
+		// 	url: '/teacher/api/logout',
+		// 	type: 'GET',
+		// 	success: function (data) {
+		// 		var data = JSON.parse(data);
+		// 		if (data.status == 0 || data.status == 1 || data.status == 9528) {
+		// 			if (data.status == 9528) {
+		// 				alert('您的账户已在其他设备上登录，请重新登录!');
+		// 				cookie.clearCookies();
+		// 			} else {
+		// 				cookie.setCookie('is_Login', true, 0);
+		// 			}
+		// 			window.location.replace("../../index.html");
+		// 		} else {
+		// 			warnDialog('后台错误，退出失败！');
+		// 		}
+		// 	},
+		// 	error: function (data) {
+		// 		warnDialog('后台错误，退出失败！');
+		// 	}
+		// })
 		
 	})
 	

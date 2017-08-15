@@ -16,7 +16,10 @@
 				<div class="course-info-item-cont">年级科目：{{info.gradeName}}</div>
 				<div class="course-info-item-cont">教材课本：{{info.bookVersionName}}</div>
 				<div class="course-info-item-cont">课程状态：{{courseSt}}</div>
-
+				<b-btn :styles="'orange'" :title="'进入教室'" v-if="isOnClass == 1" :height="24" :width="60" :size="10"
+					   class="inClassBtn" @click.native="goClass"></b-btn>
+				<b-btn :styles="'grey'" :title="'进入教室'" v-if="isOnClass == 0" class="inClassBtn" :height="24"
+					   :width="60" :size="10"></b-btn>
 			</div>
 			<div class="course-info-item">
 				<div class="course-info-item-title">课件</div>
@@ -27,7 +30,7 @@
 				</div>
 				<div class="course-info-item-cont">知 识 点：
 					<p v-if="!ware">请在课件制作后查看</p>
-					<div class="course-info-item-cont-btn" v-if="ware">查看</div>
+					<div class="course-info-item-cont-btn" v-if="ware" @click="checkPoint">查看</div>
 				</div>
 			</div>
 			<div class="course-info-item">
@@ -92,6 +95,7 @@
 					   v-if="!isSatisfy&&isShowTextArea"></b-btn>
 			</div>
 		</div>
+		<point-dialog :version="info.bookVersionName"></point-dialog>
 	</div>
 </template>
 
@@ -100,10 +104,12 @@
 	import {courseStatus} from '../../common/scripts/filters'
 	import fetch from '../../common/scripts/fetch'
 	import bBtn from '../../components/buttons/basicButtons.vue'
+	import pointDialog from '../../components/dialogs/studyPoint.vue'
 	export default {
 		name: "classInfo",
 		components: {
-			bBtn
+			bBtn,
+			pointDialog
 		},
 		data () {
 			return {
@@ -111,7 +117,6 @@
 				messaged: false, // 是否留言了
 				ware: false, // 是否有课件
 				report: false,// 是否有上课报告
-
 				isShowTextArea: false, // 是否显示填备注的输入框
 				note: "", //备注信息
 				info: {
@@ -145,66 +150,11 @@
 					teacherReply: {},
 					time: {end: 0, begin: 0},
 					type: 0
-				}
+				},
+//				isOnClass: (this.info.time.begin <= +new Date() && this.info.time.end >= +new Date()) ? 1 : 0,
 			}
 		},
-		props: {
-//			info: {
-//				type: Object,
-//				default: () => {
-//					return {
-//						"coursewareCreateTime": "2017-06-17 09:55",
-//						"note": {},
-//						"evluate": {},
-//						"courseReportCreateTime": "2017-06-27 19:26",
-//						"gender": 1,
-//						"subject": 1,
-//						"teacherIn": 0,
-//						"alreadyConsumeCourse": 74,
-//						"type": 1,
-//						"studentId": "595356950eda8a7280ccb99e",
-//						"score": "70",
-//						"school": "前黄高级中学国际分校",
-//						"knowlegeList": [
-//							{
-//								"knowleageName": "多项式乘多项式"
-//							},
-//							{
-//								"knowleageName": "单项式乘多项式"
-//							},
-//							{
-//								"knowleageName": "单项式乘单项式"
-//							},
-//							{
-//								"knowleageName": "幂的乘方与积的乘方"
-//							}
-//						],
-//						"courseware": 0,
-//						"subjectName": "数学",
-//						"courseware_id": 11044,
-//						"gradeName": "高二",
-//						"star": 0,
-//						"course_name": "一对一直播课",
-//						"teacherReply": {},
-//						"generateReport": 1,
-//						"bookVersionName": "人教版",
-//						"profile_image_url": "http://q.qlogo.cn/qqapp/1105221050/A2028337875E9D64CF8FAD5C58466FC0/100",
-//						"message": {'note': "老师给我重点讲一下三角函数的内容喔", "time": 12312},
-//						"leftCourse": 0,
-//						"teacherId": "b496b9ef-fcb0-459b-847a-c8e257ee8543",
-//						"coursewareUrl": "https://webcast.91xuexibao.com/static/broadcast/dist/courseware/static/preview.html?11044",
-//						"classContent": "完型，阅读讲解",
-//						"grade": 11,
-//						"name": "pipixia",
-//						"time": {
-//							"end": 1499432100000,
-//							"begin": 1499428800000
-//						},
-//						"courseStatus": 7
-//					}
-//				}
-//			}
-		},
+		props: {},
 		computed: {
 			hasNote(){
 				if (this.info.note.note === undefined) {
@@ -241,21 +191,32 @@
 			},
 			isSatisfy(){
 				return this.note.length > 1 // 备注所填长度是否满足要求
+			},
+			isOnClass(){
+//				console.log(this.info)
+				return (this.info.time.begin <= +new Date() && this.info.time.end >= +new Date()) ? 1 : 0
 			}
 
 		},
 		created () {
 			if (getSession("temp_courseId") != null) {
-				// 如果session里有 就从session里取
+				// 如果session里有 就从session里取 这里是从编辑课件跳转回来
 				this.$store.commit("UPDATE_COURSE_ID", getSession("temp_courseId"))
+				this.$ipc.send("esc")
 			}
 
 			this.$api.getCourseDetail('', this.$store.state.courseId).then((res) => {
 				let _data = res.data
 				if (_data.status == '-1') {
 					this.$message(_data.msg)
+					setTimeout(() => {
+						this.$router.push('/static/main')
+					}, 1500)
 				}
 				if (_data.status) {
+					setTimeout(() => {
+						this.$router.push('/static/main')
+					}, 1500)
 					this.$message(_data.msg)
 				} else {
 			/*TODO:对接数据*/
@@ -275,6 +236,7 @@
 				}
 				else {
 					this.$message(err)
+
 				}
 			})
 
@@ -296,6 +258,7 @@
 			},
 			//去首页
 			goMain(){
+				this.$store.commit('UN_SHOW_MENU')
 				this.$router.push('main')
 			},
 			//发送备注至后台
@@ -326,7 +289,7 @@
 			addNote(){
 				this.isShowTextArea = !this.isShowTextArea
 			},
-			//
+			// 跳转至课件制作
 			goPPTPage(){
 				this.$api.makeCourseWare(this.$store.state.courseId).then((res) => {
 					let _data = res.data
@@ -349,8 +312,26 @@
 
 				})
 			},
+			// 上课报告
 			goReportPage(){
-				this.$ipc.sendSync('test', 'hello world')
+				let id = this.$store.state.courseId.toString()
+//				window.location.host = `webcast.91xuexibao.com`
+//				window.location.protocol = 'https:'
+
+
+				window.location.href = `https://webcast.91xuexibao.com/static/broadcast/dist/index.html#/evaluate/${id}`
+//				window.location.pathname = '/static/broadcast/dist/index.html'
+//				window.location.hash = `#/evaluate/${id}`
+			},
+			// 知识点查看
+			checkPoint(){
+				this.$store.commit('UN_SHOW_MENU')
+				this.$store.commit("UPDATE_SHOW_POINT")
+				this.$api.getKnowledgeList(11, 1)
+			},
+			// 跳转到上课页面
+			goClass(){
+				this.$router.push('/static/onclass')
 			}
 		}
 	}
@@ -358,6 +339,15 @@
 
 <style lang="scss" rel="stylesheet/scss" scoped>
 	@import "../../common/styles/mixin";
+
+	.inClassBtn {
+		position: absolute;
+		right: 0;
+		cursor: pointer;
+		margin-top: -100px;
+		float: right;
+		margin-right: 20px;
+	}
 
 	.course {
 		@include rowBox();
@@ -389,6 +379,7 @@
 				}
 			}
 			&-item {
+				position: relative;
 				@include pdtb(30px, 30px);
 				@include underDashBorder();
 				&-title {

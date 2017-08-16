@@ -3,6 +3,8 @@
 		<el-menu class="el-menu-demo" mode="horizontal" :default-active="active">
 			<el-menu-item index="1" @click="itemOne"><p>待上课程</p></el-menu-item>
 			<el-menu-item index="0" @click="itemTwo"><p>历史课程</p></el-menu-item>
+			<!--for test-->
+			<el-menu-item index="3" @click="gotest"><p>测试页面</p></el-menu-item>
 			<freshBtn class="freshBtn" v-on:click.native="fresh"></freshBtn>
 		</el-menu>
 	</div>
@@ -46,7 +48,11 @@
 		},
 		mounted () {
 		},
-		methods: {}
+		methods: {
+			gotest(){
+				this.$router.push("/static/test")
+			}
+		}
 	}
 </script>
 

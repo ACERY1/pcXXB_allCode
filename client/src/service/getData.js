@@ -231,7 +231,7 @@ const makeCourseWare = (courseId)=>{
 }
 
 /**
- * 预览课件
+ * 查看课件
  * @param coursewareId
  * @returns {Promise}
  */
@@ -239,4 +239,20 @@ const previewCourseWare = (coursewareId)=>{
 	return fetch('post','/courseware/api/listPage',{coursewareId})
 }
 
-export {login,getPrivilege,getSchedule,setSchedule,getCourseDetail,setNote,getCourseList,evaluateStudent,getKnowledgeList,onCourse,logout,teacherFinishCourse,teacherConfigure,videoPlatform,getTeacherEvluateNew,getCurrentCourse,saveTeacherEvluateNew,uploadReportImage,teacherReply,resetPassword,sendVerifyCode,makeCourseWare,previewCourseWare}
+
+/**
+ * 根据本地x_token拿到图片上传token
+ * @param x_token
+ * @returns {Promise}
+ */
+const getToken = (x_token)=>{
+	return fetch('get','/fs/api/getToken',{x_token})
+}
+
+const uploadPic = (url,base64,token)=>{
+	return fetch('UPLOAD',url,base64,{token})
+}
+
+export {login,getPrivilege,getSchedule,setSchedule,getCourseDetail,setNote,getCourseList,evaluateStudent,getKnowledgeList,onCourse,logout,teacherFinishCourse,teacherConfigure,videoPlatform,getTeacherEvluateNew,getCurrentCourse,saveTeacherEvluateNew,uploadReportImage,teacherReply,resetPassword,sendVerifyCode,makeCourseWare,previewCourseWare,getToken,uploadPic}
+
+

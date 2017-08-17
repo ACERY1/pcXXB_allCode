@@ -1,6 +1,6 @@
 <template>
 	<div class="">
-		<el-dialog title="关于我们" v-model="show" size="tiny">
+		<el-dialog title="关于我们" v-model="show" size="large">
 			<cls-btn :on="isOn" class="indexCnt-clsBtn" :close="close"></cls-btn>
 			<div class="about">
 				<img src="../../../static/logos/main.png" alt="" class="about-logo"/>
@@ -27,44 +27,44 @@
 
 <script>
 	/*TODO:以后写拿最新版本号的请求*/
-	import clsBtn from '../../components/buttons/closeBtn.vue'
-	export default {
-		name: "",
-		components: {
-			clsBtn
-		},
-		data () {
-			return {
-				version: "1.0.0",
-				serviceTel: '400-816-1991',
-				webStation: 't.91xuexibao.com',
-				isOn: true
-			}
-		},
-		props: {
-			close: {
-				type: Function,
-				default: () => {
-					console.log("about!")
+		import clsBtn from '../../components/buttons/closeBtn.vue'
+		export default {
+			name: "",
+			components: {
+				clsBtn
+			},
+			data () {
+				return {
+					version: "1.0.0",
+					serviceTel: '400-816-1991',
+					webStation: 't.91xuexibao.com',
+					isOn: true
 				}
-			}
-		},
-		computed: {
-			show: {
-				get(){
-					return this.$store.state.showAbout
-				},
-				set(){
+			},
+			props: {
+				close: {
+					type: Function,
+					default: () => {
+						console.log("about!")
+					}
+				}
+			},
+			computed: {
+				show: {
+					get(){
+						return this.$store.state.showAbout
+					},
+					set(){
 
+					}
 				}
-			}
-		},
-		created () {
-		},
-		mounted () {
-		},
-		methods: {}
-	}
+			},
+			created () {
+			},
+			mounted () {
+			},
+			methods: {}
+		}
 
 </script>
 
@@ -73,6 +73,7 @@
 
 	.el-dialog__header {
 		display: none;
+
 	}
 
 	.el-dialog--tiny {

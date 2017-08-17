@@ -99,6 +99,7 @@
 						//教师端 15711370918 123456
 						setUserInfoInLocal(_data.teacherInfo) // 在本地保存用户数据
 						this.$store.commit('RECORD_TEACHER_INFO', _data.teacherInfo) // 保存数据
+					  	this.$store.commit('UPDATE_X_TOKEN',_data.x_token); // 保存x_token
 						this.$store.commit('RECORD_IS_LOGIN') // 提交登录状态
 						this.$message({message: "登录成功！", type: 'success', duration: 1000})
 						setTimeout(() => {

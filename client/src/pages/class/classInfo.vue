@@ -95,7 +95,7 @@
 					   v-if="!isSatisfy&&isShowTextArea"></b-btn>
 			</div>
 		</div>
-		<point-dialog :version="info.bookVersionName"></point-dialog>
+		<!--<point-dialog :version="info.bookVersionName"></point-dialog>-->
 	</div>
 </template>
 
@@ -104,12 +104,12 @@
 	import {courseStatus} from '../../common/scripts/filters'
 	import fetch from '../../common/scripts/fetch'
 	import bBtn from '../../components/buttons/basicButtons.vue'
-	import pointDialog from '../../components/dialogs/studyPoint.vue'
+	//	import pointDialog from '../../components/dialogs/studyPoint.vue'
 	export default {
 		name: "classInfo",
 		components: {
 			bBtn,
-			pointDialog
+//			pointDialog
 		},
 		data () {
 			return {
@@ -219,8 +219,11 @@
 					}, 1500)
 					this.$message(_data.msg)
 				} else {
-			/*TODO:对接数据*/
 					this.info = _data.detail
+					// store更新数据
+					this.$store.commit('UPDATE_COURSE_INFO', _data.detail)
+					// session保存数据
+					setSession('courseInfo', _data.detail)
 					this._checkData()
 				}
 
@@ -314,14 +317,9 @@
 			},
 			// 上课报告
 			goReportPage(){
-				let id = this.$store.state.courseId.toString()
-//				window.location.host = `webcast.91xuexibao.com`
-//				window.location.protocol = 'https:'
-
-
-				window.location.href = `https://webcast.91xuexibao.com/static/broadcast/dist/index.html#/evaluate/${id}`
-//				window.location.pathname = '/static/broadcast/dist/index.html'
-//				window.location.hash = `#/evaluate/${id}`
+				setSession("temp_courseId", this.$store.state.courseId)
+				this.$router.push("/static/classreport")
+				this.$ipc.send("maximize")
 			},
 			// 知识点查看
 			checkPoint(){

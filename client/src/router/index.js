@@ -12,6 +12,7 @@ const login = r => require.ensure([], () => r(require('../pages/login/login.vue'
 const classInfo = r => require.ensure([], () => r(require('../pages/class/classInfo.vue')), 'classInfo'); // 课程详情
 const mainContainer = r => require.ensure([], () => r(require('../pages/mainContainer.vue')), 'mainContainer.vue'); // 容器
 const onClass= r => require.ensure([], () => r(require('../pages/class/onClass.vue')), 'onclass'); // 上课
+const classReport= r => require.ensure([], () => r(require('../pages/class/classReport.vue')), 'classReport'); //填写报告
 
 
 
@@ -59,6 +60,11 @@ export default [
 				path:'/static/onclass',
 				name:'onclass',
 				component:onClass, // 首页
+			},
+			{
+				path:'/static/classreport',
+				name:'classreport',
+				component:classReport, // 首页
 			},
 		]
 	},

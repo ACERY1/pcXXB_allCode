@@ -11,6 +11,7 @@ import $ from 'jquery'
 import infiniteScroll from 'vue-infinite-scroll'
 import Loadmore from 'vue-loadmore';
 
+
 Vue.use(infiniteScroll)
 Vue.component('loadmore', Loadmore);
 // register vueRouter

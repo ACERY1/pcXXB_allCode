@@ -30,7 +30,7 @@ axios.interceptors.response.use(function (response) {
 	}
 })
 
-export default async(type = 'GET', url = '', data = {}) => {
+export default async(type = 'GET', url = '', data = {}, config = {}) => {
 	type = type.toUpperCase();
 	// 提示： 这里的url填相对路径 例如'/test/example'
 	if (type === 'GET') {
@@ -61,6 +61,17 @@ export default async(type = 'GET', url = '', data = {}) => {
 			});
 		}
 		
+	}
+	if (type === 'UPLOAD') {
+		if (config.token == undefined) {
+			return Promise.reject('wrong params')
+		}
+		return axios.post(url, data, {
+			headers: {
+				'Content-Type': 'application/octet-stream',
+				'Authorization': "UpToken " + config.token
+			}
+		});
 	}
 	
 }

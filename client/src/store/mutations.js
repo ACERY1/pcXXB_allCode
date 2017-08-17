@@ -13,7 +13,9 @@ import {
 	UPDATE_COURSE_ID,
 	RECORD_IS_LOGOUT,
 	STORE_COURSE_LIST,
-	UPDATE_SHOW_POINT
+	UPDATE_SHOW_POINT,
+	UPDATE_X_TOKEN,
+	UPDATE_COURSE_INFO
 } from './mutation_types'
 
 export default {
@@ -82,5 +84,17 @@ export default {
 		state.courseList.historyIndex = data.historyIndex // number
 		state.courseList.mountPoint = data.mountPoint // number
 		state.courseList.focus = data.focus // 0 or 1
+	},
+	/*更新token*/
+	[UPDATE_X_TOKEN](state, token){
+		state.x_token = token
+	},
+	/*更新课程详情*/
+	[UPDATE_COURSE_INFO](state,data){
+		state.courseInfo.gradeName = data.gradeName
+		state.courseInfo.name = data.name
+		state.courseInfo.school = data.school
+		state.courseInfo.subjectName = data.subjectName
+		state.courseInfo.avatar = data.profile_image_url
 	}
 }

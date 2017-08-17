@@ -77,9 +77,9 @@
 <style lang="scss" rel="stylesheet/scss">
 	@import "../../common/styles/mixin";
 
-	.el-dialog__header {
-		display: none;
-	}
+	/*.el-dialog__header {*/
+		/*display: none;*/
+	/*}*/
 
 	.el-table td, .el-table th.is-leaf {
 		background: #ffffff;

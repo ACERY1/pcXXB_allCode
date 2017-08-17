@@ -34,6 +34,14 @@ const state = {
 		mountPoint: 0, // 保存的锚点值
 		focus:1,  // 1代表choose待上课程 0代表历史课程
 		courseInfo:[] //保存已经加载过的课程信息
+	},
+	x_token: null, //登录token
+	courseInfo:{
+		name:null,
+		school:null,
+		gradeName:null,
+		subjectName:null,
+		avatar:null
 	}
 }
 export default new Vuex.Store({

@@ -85,13 +85,11 @@
 			itemOne(){
 				this.$store.commit('UN_SHOW_MENU')
 				this.$store.commit('UPDATE_SHOW_SETTING')
-				this.$store.commit("UPDATE_SHOW_POINT")
 			},
 			//关于我们*/
 			itemTwo(){
 				this.$store.commit('UN_SHOW_MENU')
 				this.$store.commit('UPDATE_SHOW_ABOUT')
-				this.$store.commit("UPDATE_SHOW_POINT")
 			},
 			//退出登录*/
 			itemThree(){
@@ -132,8 +130,6 @@
 				this.$store.state.showSetting = false
 				this.$store.state.showAbout = false
 				this.$store.commit('UPDATE_SHOW_MENU')
-				this.$store.commit("UPDATE_SHOW_POINT")
-
 			},
 			minimize(){
 				this.$ipc.send('minimize')

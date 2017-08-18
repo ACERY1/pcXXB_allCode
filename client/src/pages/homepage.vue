@@ -93,6 +93,7 @@
 			// 清楚用来判断跳转路由的courseIdF
 			removeSession("temp_courseId")
 			removeSession("temp_courseWareId")
+		  	removeSession("didPPT")
 		},
 		mounted () {
 			let $test = $('.test')

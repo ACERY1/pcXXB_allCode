@@ -54,11 +54,10 @@
 	.el-progress-bar__outer {
 		background-color: $pre2 !important;
 	}
-
-	.el-dialog--large {
+	.el-dialog--full{
 		top: 10% !important;
-		height: 545px !important;
-		width: 450px !important;
+		height:500px !important;
+		width: 800px !important;
 	}
 
 	.el-dialog--small {
@@ -119,6 +118,21 @@
 			margin: 0 !important;
 			color: #ffffff !important;
 			font-size: 14px !important;
+		}
+	}
+	@media screen  and (min-width: 1000px){
+		.el-dialog--full{
+			top: 10% !important;
+			height:900px !important;
+			width: 900px !important;
+		}
+	}
+
+	@media screen  and (max-width: 1000px){
+		.el-dialog--full{
+			top: 10% !important;
+			height:500px !important;
+			width: 800px !important;
 		}
 	}
 </style>

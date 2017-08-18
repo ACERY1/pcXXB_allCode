@@ -70,13 +70,26 @@ app.on('ready', () => {
 	// 监听esc键
 	ipcMain.on('esc', () => {
 		mainWindow.setFullScreen(false)
+		if (isFull) {
+		} else {
+			mainWindow.setFullScreen(true)
+			isFull = true
+		}
 	})
 	
 	ipcMain.on("courseWare",()=>{
-		console.log('get')
 		mainWindow.loadURL("http://localhost:2048/courseware.html")
 		mainWindow.setFullScreen(true)
+		isFull = true
 	})
+	
+	ipcMain.on("report",()=>{
+		mainWindow.loadURL("http://localhost:2048/report.html")
+		mainWindow.setFullScreen(true)
+		isFull = true
+	})
+	
+	
 	
 	mainWindow.on('enter-full-screen', () => {
 		// console.log(mainWindow.getSize()())

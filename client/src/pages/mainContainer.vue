@@ -1,5 +1,5 @@
 <template>
-	<div class="m">
+	<div class="ctn">
 		<!--<video class="videoScreen" autoplay="autoplay" muted id="videoBox2" height="100" width="100" style="position: absolute;background-color: #3b3b3b;z-index: 99999"></video>-->
 
 		<top-bar :avatar="top_avatar" :name="top_username"></top-bar>
@@ -68,5 +68,8 @@
 	.mainContainer {
 		padding-top: 50px;
 		/*margin-top: 50px;*/
+	}
+	.ctn{
+		height: 100%;
 	}
 </style>

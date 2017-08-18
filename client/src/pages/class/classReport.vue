@@ -509,6 +509,7 @@
 							return false;
 						} else {
 							this.$message({message: "上传成功！", duration: 1500})
+						  	this.cancelConfirm()
 							setTimeout(() => {
 								this.$router.push('/static/classInfo')
 								this.$ipc.send("maximize")

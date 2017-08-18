@@ -236,7 +236,7 @@ const makeCourseWare = (courseId)=>{
  * @returns {Promise}
  */
 const previewCourseWare = (coursewareId)=>{
-	return fetch('post','/courseware/api/listPage',{coursewareId})
+	return fetch('get','/courseware/api/listPage',{coursewareId})
 }
 
 

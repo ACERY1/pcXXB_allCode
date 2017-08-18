@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="keywords" content="">
+	<meta name="description" content="学习宝直播课，在家就能享受名师一对一授课">
+	<title>学习宝课程报告</title>
+</head>
+<style>
+	body, form, ul {
+		margin: 0;
+		padding: 0;
+		background: #f5f5f5
+	}
+
+	dd, dl, h1, h2, h3, h4, h5, hr, p {
+		margin: 0
+	}
+
+	body {
+		font-family: "Helvetica Neue", Helvetica, STHeiTi, sans-serif;
+		line-height: 1.5;
+		font-size: 14px;
+		color: #231815;
+		-webkit-user-select: none;
+		-webkit-tap-highlight-color: transparent;
+		-webkit-text-size-adjust: 100%;
+		-webkit-font-smoothing: antialiased;
+		-webkit-overflow-scrolling: touch
+	}
+
+	h1, h2, h3, h4, h5 {
+		font-weight: 400
+	}
+
+	table {
+		border-collapse: collapse;
+		border-spacing: 0
+	}
+
+	hr, img {
+		border: 0
+	}
+
+	li {
+		list-style: none
+	}
+
+	input, textarea {
+		font-family: inherit;
+		font-size: inherit;
+		font-style: inherit;
+		font-weight: inherit;
+		outline: 0
+	}
+
+	a {
+		-webkit-touch-callout: none;
+		text-decoration: none
+	}
+
+	:focus {
+		outline: 0
+	}
+
+	em, i {
+		font-style: normal
+	}
+
+	a {
+		color: #333
+	}
+
+	em {
+		color: #D41E23
+	}
+
+	::-webkit-input-placeholder {
+		color: #bbb
+	}
+
+	.red {
+		color: #D41E23
+	}
+
+	.g3 {
+		color: #333
+	}
+
+	.tc {
+		text-align: center
+	}
+
+	.dn {
+		display: none
+	}
+
+	.pn {
+		pointer-events: none
+	}
+
+	.container {
+		max-width: 750px;
+		margin: 0 auto;
+		font-size: 0;
+		background: #fff
+	}
+
+	.banner {
+		width: 100%
+	}
+
+	.student {
+		padding-bottom: .5rem;
+		background: #fff;
+	}
+
+	/*.box{width:100%;max-width:1200px;margin:0 auto}*/
+	.title-en {
+		font-size: .28rem;
+		margin: 0 .3rem;
+		text-align: center;
+		font-family: "微软雅黑";
+		border-bottom: 1px solid #dcdcdc;
+		padding: .4rem 0;
+	}
+
+	.title-cn {
+		font-size: .24rem;
+		width: 1.5rem;
+		background: #fff;
+		margin: -.2rem auto 0;
+		text-align: center;
+	}
+
+	.main {
+		background: url('./images/bg_name.png') center 0 no-repeat;
+		background-size: contain;
+		margin: .55rem 0 0;
+		text-align: center;
+	}
+
+	.main .name {
+		font-size: .42rem;
+		padding-top: 1.2rem;
+		padding-bottom: .16rem
+	}
+
+	.main .info {
+		font-size: .2rem;
+		line-height: .44rem
+	}
+
+	.main .time {
+		font-size: .18rem;
+		padding-bottom: 1.1rem;
+		padding-top: .05rem
+	}
+
+	.classroom {
+		background: url('./images/bg_middle.png') center 0 no-repeat;
+		background-size: cover;
+		padding: .7rem 0 1.1rem;
+	}
+
+	.classroom .title-en, .footer .title-en {
+		color: #fff;
+	}
+
+	.classroom .title-cn, .footer .title-cn {
+		color: #ffd944;
+	}
+
+	.classroom .title-cn {
+		background: #2e243f;
+		width: 1.8rem;
+	}
+
+	.content {
+		margin: .6rem .6rem 0;
+		font-size: .24rem;
+		color: #fff;
+		letter-spacing: 1px;
+		line-height: .4rem;
+		word-break: break-all;
+	}
+
+	.list {
+		padding: .5rem 0 .45rem;
+		background: #fff;
+	}
+
+	.list ul {
+		background: #fff
+	}
+
+	.list .icons, .titles, .item li {
+		display: -webkit-box;
+	}
+
+	.list li, .item div {
+		-webkit-box-flex: 1;
+		text-align: center;
+		width: 100%;
+	}
+
+	.list .star {
+		display: inline-block;
+		height: .35rem;
+		background: url('./images/star_dark.png') repeat-x;
+		background-size: auto 100%;
+	}
+
+	.star.light {
+		background: url('./images/star_light.png') repeat-x;
+		background-size: auto 100%;
+	}
+
+	.stars {
+		font-size: 0
+	}
+
+	.star0 {
+		width: 0rem;
+	}
+
+	.star1 {
+		width: .34rem;
+	}
+
+	.star2 {
+		width: .68rem;
+	}
+
+	.star3 {
+		width: 1.03rem;
+	}
+
+	.star4 {
+		width: 1.36rem;
+	}
+
+	.icons li {
+		height: 1.5rem;
+	}
+
+	.icon1 {
+		background: url('./images/icon1.png') center 0 no-repeat;
+		background-size: contain;
+	}
+
+	.icon2 {
+		background: url('./images/icon2.png') center 0 no-repeat;
+		background-size: contain;
+	}
+
+	.icon3 {
+		background: url('./images/icon3.png') center 0 no-repeat;
+		background-size: contain;
+	}
+
+	.titles {
+		font-family: "黑体";
+		font-size: .3rem;
+		padding: .1rem 0 .15rem;
+		font-weight: bold;
+	}
+
+	.item li {
+		-webkit-box-align: center;
+		padding-top: .16rem;
+		font-size: .2rem
+	}
+
+	.item li div:first-child {
+		padding: 0 .3rem;
+		box-sizing: border-box;
+		word-wrap: break-word;
+	}
+
+	.footer {
+		background: url('./images/bg_footer.png') center 0 no-repeat;
+		background-size: cover;
+		padding: 1.3rem 0 1.4rem;
+	}
+
+	.footer .teaching .title-cn {
+		width: 2.4rem;
+		background: #20142a;
+	}
+
+	.footer .teaching .content {
+		margin: .6rem .6rem .7rem;
+	}
+
+	.footer .parents .title-cn {
+		width: 2.1rem;
+		background: #04030d;
+	}
+
+	.work {
+		padding-bottom: .1rem
+	}
+
+	.work ul {
+		margin: 0 .3rem;
+		background: #fff
+	}
+
+	.work ul li h3 {
+		font-size: .2rem;
+		color: #ffd944;
+		padding: .2rem 0 .1rem;
+		border-bottom: dashed .01rem #dcdcdc;
+		margin-bottom: .2rem;
+	}
+
+	.work ul li img {
+		width: 100%;
+		border: solid 1px #dcdcdc;
+		-webkit-box-sizing: border-box;
+		margin: .1rem 0;
+	}
+
+	.work ul li pre {
+		font-size: .24rem;
+		color: #231815;
+		word-wrap: break-word;
+		white-space: pre-wrap;
+		word-break: break-all;
+	}
+
+	.dn {
+		display: none;
+	}
+
+	.goBack {
+		position: absolute;
+		top: 50px;
+		left: 50px;
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+	}
+
+	.goBack p {
+		font-size: 18px;
+		color: #3c3c3c;
+		font-weight: bold;
+		margin-left: 10px;
+	}
+</style>
+<script>
+	(function (b, a) {
+		function c() {
+			d = 100 * Math.min(e.getBoundingClientRect().width, a.maxWidth) / a.desinWidth;
+			e.style.fontSize = d + "px"
+		}
+
+		var e = b.document.documentElement, d = 100, f;
+		a.desinWidth = 750;
+		a.maxWidth = 750;
+		a.init = function () {
+			b.addEventListener("resize", function () {
+				clearTimeout(f);
+				f = setTimeout(c, 300)
+			}, !1);
+			c()
+		}
+	})(window, window.adaptive || (window.adaptive = {}));
+	adaptive.init();
+</script>
+</head>
+<body>
+<div class="goBack">
+	<img src="./images/goback.png" alt="">
+	<p>返回</p>
+</div>
+
+<img src="./images/share.jpg" width="0" height="0" style="position:absolute">
+<div class="container">
+	<img class="banner" src="./images/banner_m.png">
+	<div class="student">
+		<div class="box">
+			<h3 class="title-en">STUDENT INFORMATION</h3>
+			<p class="title-cn">学生信息</p>
+			<div class="main">
+				<h1 class="name">----</h1>
+				<p class="info">辅导年级：--<br/>辅导科目：--</p>
+				<p class="time">-- --</p>
+			</div>
+		</div>
+	</div>
+	<div class="classroom">
+		<div class="box">
+			<h3 class="title-en">CLASSROOM PERFORMANCE</h3>
+			<p class="title-cn">学生课堂表现</p>
+			<p class="content">暂无表现记录</p>
+		</div>
+	</div>
+	<div class="list">
+		<div class="box">
+			<ul class="icons">
+				<li class="icon1"></li>
+				<li class="icon2"></li>
+				<li class="icon3"></li>
+			</ul>
+			<ul class="titles">
+				<li>知识点</li>
+				<li>掌握程度</li>
+				<li>重要等级</li>
+			</ul>
+			<ul class="item">
+				<li>
+					<div>无知识点</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div class="footer">
+		<div class="box">
+			<div class="teaching">
+				<h3 class="title-en">TEACHING ARRANGEMENT</h3>
+				<p class="title-cn">下次课程教学安排</p>
+				<p class="content">暂无安排</p>
+			</div>
+			<div class="parents">
+				<h3 class="title-en">FOR PARENTS</h3>
+				<p class="title-cn">留给家长的话</p>
+				<p class="content">暂无留言</p>
+			</div>
+		</div>
+	</div>
+	<div class="work">
+		<div class="box">
+			<h3 class="title-en">HOME WORK</h3>
+			<p class="title-cn">课后作业</p>
+			<ul class="work-list">
+				<li>
+					<pre>无课后作业</pre>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+<script id="info" type="text/template">
+	<h1 class="name"><%= studentName||' ' %></h1>
+	<p class="info">辅导年级：<%= grade||' ' %><br/>辅导科目：<%= subject||' ' %></p>
+	<p class="time"><%= beginTime||' ' %>-<%= endTime||' ' %></p>
+</script>
+<script id="list" type="text/template">
+	<% var obj = JSON.parse(knowleageEvl); %>
+	<% var map = {'1':'不会','2':'了解','3':'理解','4':'掌握','5':'应用'}; %>
+	<% for(var i=0,l=obj,lt=l.length;i
+	<lt;i++){ %>
+	<li>
+		<div><%= l[i].knowleageName||' ' %></div>
+		<div><%= map[l[i].masterDegree]||' ' %></div>
+		<div class="stars">
+			<span class="star light star<%= l[i].importLevel ||' ' %>"></span>
+			<span class="star star<%= (l[i].importLevel)?(4 - l[i].importLevel):4 %>"></span>
+		</div>
+	</li>
+	<% } %>
+</script>
+<script id="work" type="text/template">
+	<% var obj = JSON.parse(homework); %>
+	<% var url = 'https://fs.91xuexibao.com/'; %>
+	<% for(var i=0,l=obj,lt=l.length;i
+	<lt;i++){ %>
+	<li>
+		<h3>题目<%= i+1 %></h3>
+		<% if(l[i].type==1){ %>
+		<% for(var j=0,g=l[i].url,lg=g.length;j
+		<lg
+		;j++){ %>
+		<img src="<%= url+g[j] %>" crossOrigin="*">
+		<% } %>
+		<% }else{ %>
+		<pre><%= l[i].data %></pre>
+		<% } %>
+	</li>
+	<% } %>
+</script>
+<script src="js/zepto.min.js"></script>
+<script src="js/html2canvas.js"></script>
+<script>
+	//异步请求地址
+	var ajaxUrl = '/teacher/api/webcast/getTeacherEvluateNew';
+	var tokenUrl = '/fs/api/getToken';
+	var imgUrl = '/teacher/api/webcast/uploadReportImage';
+	//	console.log(window.sessionStorage.getItem('temp_courseId'))
+	var courseId = window.sessionStorage.getItem('temp_courseId');
+	var token = '';
+
+	getToken();
+	getAjax();
+
+	function getAjax() {
+		$.ajax({
+			'type': 'POST', 'url': ajaxUrl, data: {'courseId': courseId},
+			success: function (json) {
+				var json = JSON.parse(json);
+				if (json.status == 0) {
+					$('.student').find('.main').html($.tpl($('#info').html(), json));
+					$('.classroom').find('.content').html(json.classroomPerformance);
+					if (json.knowleageEvl) {
+						$('.list').find('.item').html($.tpl($('#list').html(), json));
+					}
+					$('.work').find('ul').html($.tpl($('#work').html(), json));
+					$('.teaching').find('.content').html(json.teachingArragement);
+					if (json.leaveMessage) {
+						$('.parents').find('.content').html(json.leaveMessage);
+					} else {
+						$('.parents').addClass('dn');
+					}
+
+					if (!json.report_url) {
+						setTimeout(function () {
+							uploadImg();
+						}, 6000)
+
+					}
+				} else {
+					alert(json.msg);
+				}
+			}
+		});
+	}
+
+	function getToken() {
+		$.ajax({
+			'type': 'get', 'url': tokenUrl,
+			success: function (json) {
+				var data = JSON.parse(json);
+				if (data.status == 0) {
+					token = data.result;
+				} else {
+					alert(data.msg);
+				}
+			}
+		});
+	}
+
+	function uploadImg() {
+		$('.work-list img').each(function () {
+			convertImgToBase64($(this)[0]);
+		})
+
+		scrollTo(0, 0);
+		html2canvas($('.container'), {
+			onrendered: function (canvas) {
+				var base64 = canvas.toDataURL().substr(22);
+				var str = '/course/evaluate/' + new Date().getTime() + (Math.random(1000000) + '').substring(2, 10) + '.jpg';
+				var key = window.btoa(str);
+				var qiniuUploadUrl;
+				if (window.location.protocol === 'https:') {
+					qiniuUploadUrl = 'https://up-z1.qbox.me/putb64/-1/key/' + key;
+				} else {
+					qiniuUploadUrl = 'http://upload-z1.qiniu.com/putb64/-1/key/' + key;
+				}
+				$.ajax({
+					'type': 'POST', 'url': qiniuUploadUrl,
+					data: base64,
+					contentType: "application/octet-stream",
+					headers: {
+						Authorization: "UpToken " + token
+					},
+					success: function (data) {
+						var imgUrl = 'https://fs.91xuexibao.com/' + data.key;
+						postImgUrl(imgUrl);
+					}
+				});
+			}
+		});
+
+	}
+
+	function postImgUrl(url) {
+		$.ajax({
+			'type': 'post', 'url': imgUrl,
+			data: {'courseId': numCourseId, 'imgUrl': url},
+			success: function (data) {
+				var data = JSON.parse(data);
+				if (data.status == 0) {
+					//提交成功
+				} else {
+					alert(data.msg);
+				}
+			}
+		});
+	}
+
+
+	// 获取参数
+	function GetQueryString(name) {
+		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+		var r = window.location.search.substr(1).match(reg);
+		if (r != null)return unescape(r[2]);
+		return null;
+	}
+
+	function convertImgToBase64(domImg) {
+		var canvas = document.createElement('CANVAS');
+		canvas.height = domImg.height;
+		canvas.width = domImg.width;
+		var ctx = canvas.getContext('2d');
+		ctx.drawImage(domImg, 0, 0, canvas.width, canvas.height);
+		var dataURL = canvas.toDataURL('image/png');
+		domImg.src = dataURL;
+	}
+
+	$('.goBack').on('click', function () {
+		window.history.go(-1)
+	})
+</script>
+</body>
+</html>

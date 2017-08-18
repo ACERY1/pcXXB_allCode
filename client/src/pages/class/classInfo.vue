@@ -19,27 +19,32 @@
 				<b-btn :styles="'orange'" :title="'进入教室'" v-if="isOnClass == 1" :height="24" :width="60" :size="10"
 					   class="inClassBtn" @click.native="goClass"></b-btn>
 				<b-btn :styles="'grey'" :title="'进入教室'" v-if="isOnClass == 0" class="inClassBtn" :height="24"
-					   :width="60" :size="10"></b-btn>
+					   :width="60" :size="10" @click.native="onClass"></b-btn>
 			</div>
 			<div class="course-info-item">
 				<div class="course-info-item-title">课件</div>
 				<div class="course-info-item-cont">上课课件：
 					<div class="course-info-item-cont-btn" v-if="!ware" @click="goPPTPage">制作</div>
-					<div class="course-info-item-cont-btn" v-if="ware" @click="goPPTPage">修改</div>
+					<div class="course-info-item-cont-btn" v-if="ware" @click="checkPPT">查看</div>
+					<div class="course-info-item-cont-btn" v-if="ware" @click="goPPTPage">&nbsp; &nbsp;修改</div>
 					<div class="course-info-item-cont-time" v-if="ware">发布于 {{info.coursewareUpdateTime}}</div>
 				</div>
-				<div class="course-info-item-cont">知 识 点：
-					<p v-if="!ware">请在课件制作后查看</p>
-					<div class="course-info-item-cont-btn" v-if="ware" @click="checkPoint">查看</div>
-				</div>
+
+				<!--未来版本需求-->
+				<!--<div class="course-info-item-cont">知 识 点：-->
+				<!--<p v-if="!ware">请在课件制作后查看</p>-->
+				<!--<div class="course-info-item-cont-btn" v-if="ware" @click="checkPoint">查看</div>-->
+				<!--</div>-->
+
 			</div>
 			<div class="course-info-item">
 				<div class="course-info-item-title">上课</div>
 				<div class="course-info-item-cont">上课报告：
 					<div class="course-info-item-cont-btn" v-if="!report" @click="goReportPage">填写</div>
-					<div class="course-info-item-cont-btn" v-if="report">查看</div>
+					<div class="course-info-item-cont-btn" v-if="report" @click="checkReport">查看</div>
 					<div class="course-info-item-cont-time" v-if="report">发布于 {{info.courseReportCreateTime}}</div>
 				</div>
+
 			</div>
 		</div>
 		<div class="course-stu">
@@ -96,6 +101,16 @@
 			</div>
 		</div>
 		<!--<point-dialog :version="info.bookVersionName"></point-dialog>-->
+		<el-dialog size="full" v-model="isShowCourseWare" :close-on-click-modal="true">
+			<ul id="previewBox">
+				<li class="previewImg" v-for="item in courseWareImages" :key="item">
+					<img :src="item" alt="">
+				</li>
+			</ul>
+		</el-dialog>
+		<img src="../../../static/icons/close_wht.png" alt="" class="clsBtn" v-if="isShowCourseWare"
+			 @click="isShowCourseWare=false;temp_scrollTop=0">
+		<img src="../../../static/icons/toTop.png" class="toTopBtn" @click="scrollToTop" v-if="temp_scrollTop>1000">
 	</div>
 </template>
 
@@ -151,7 +166,9 @@
 					time: {end: 0, begin: 0},
 					type: 0
 				},
-//				isOnClass: (this.info.time.begin <= +new Date() && this.info.time.end >= +new Date()) ? 1 : 0,
+				isShowCourseWare: false,
+				courseWareImages: [], // 课件预览图片
+				temp_scrollTop: 0 // 用于计算弹窗内容滚动高度
 			}
 		},
 		props: {},
@@ -202,7 +219,9 @@
 			if (getSession("temp_courseId") != null) {
 				// 如果session里有 就从session里取 这里是从编辑课件跳转回来
 				this.$store.commit("UPDATE_COURSE_ID", getSession("temp_courseId"))
-				this.$ipc.send("esc")
+				if (getSession('didPPT')) {
+					this.$ipc.send("esc")
+				}
 			}
 
 			this.$api.getCourseDetail('', this.$store.state.courseId).then((res) => {
@@ -245,7 +264,6 @@
 
 		},
 		mounted () {
-
 		},
 		methods: {
 			//检查并判断数据*/
@@ -301,13 +319,14 @@
 						return false
 					} else {
 						if (_data.courseWare_id == -1) {
-							this.$message({message: "已有课件", duration: 1500})
 							setSession("temp_courseWareId", this.info.courseware_id)
 							setSession("temp_courseId", this.$store.state.courseId)
+							setSession("didPPT", true);
 							this.$ipc.send("courseWare")
 						} else {
 							setSession("temp_courseId", this.$store.state.courseId)
 							setSession("temp_courseWareId", _data.courseWare_id)
+							setSession("didPPT", true);
 							this.$ipc.send("courseWare")
 						}
 
@@ -324,12 +343,50 @@
 			// 知识点查看
 			checkPoint(){
 				this.$store.commit('UN_SHOW_MENU')
-				this.$store.commit("UPDATE_SHOW_POINT")
 				this.$api.getKnowledgeList(11, 1)
 			},
 			// 跳转到上课页面
 			goClass(){
 				this.$router.push('/static/onclass')
+			},
+			// 查看课件
+			checkPPT(){
+				this.isShowCourseWare = true
+				this.courseWareImages = []
+				let self = this
+				setSession("temp_courseWareId", this.info.courseware_id)
+				this.$api.previewCourseWare(getSession('temp_courseWareId')).then((res) => {
+					let _data = res.data
+					for (let item of _data.pageList) {
+						this.courseWareImages.push(item.imageUrl)
+					}
+					$('#previewBox').on('scroll', function () {
+						self.temp_scrollTop = this.scrollTop
+					})
+				}).catch((err) => {
+					console.log(err)
+				})
+
+				// 打开弹框（too many fucking dialog!!）
+			},
+			// 滑到顶部
+			scrollToTop(){
+				$('#previewBox').scrollTop(0)
+				this.temp_scrollTop = 0
+			},
+			// 查看报告
+			checkReport(){
+				setSession("temp_courseId", this.$store.state.courseId)
+				setSession("didPPT", true);
+		  /**/
+				this.$ipc.send("report")
+			},
+			// onclass
+			onClass(){
+		  /*TODO:测试*/
+				console.log('保存session！')
+				setSession("temp_courseId", this.$store.state.courseId)
+				setSession('temp_host', window.location.host)
 			}
 		}
 	}
@@ -337,6 +394,77 @@
 
 <style lang="scss" rel="stylesheet/scss" scoped>
 	@import "../../common/styles/mixin";
+
+	#previewBox {
+		background-color: $btn_gry;
+		overflow: scroll;
+	}
+
+	.clsBtn {
+		cursor: pointer;
+		z-index: 1000000;
+		position: absolute;
+	}
+
+	.toTopBtn {
+		z-index: 1000000;
+		cursor: pointer;
+		position: absolute;
+	}
+
+	@media screen and (min-width: 1000px) {
+		// 最大化时候
+
+		.clsBtn {
+			right: 9vw;
+			top: 120px;
+		}
+		.toTopBtn {
+			right: 9vw;
+			bottom: 110px;
+		}
+
+		#previewBox {
+			@include wh(900px, 900px);
+		}
+		.previewImg {
+			margin-bottom: 20px;
+			@include allMidBox();
+			@include wh(900px, 700px);
+			img {
+				@include wh(100%, 100%)
+			}
+			overflow: hidden;
+
+		}
+
+	}
+
+	@media screen and (max-width: 1000px) {
+		// 最小化时候
+		.clsBtn {
+			right: 40px;
+			top: 80px;
+		}
+		.toTopBtn {
+			right: 30px;
+			bottom: 80px;
+		}
+		#previewBox {
+			@include wh(800px, 500px);
+		}
+		.previewImg {
+			margin-bottom: 20px;
+			@include allMidBox();
+			@include wh(800px, 600px);
+			img {
+				@include wh(100%, 100%)
+			}
+			overflow: hidden;
+
+		}
+
+	}
 
 	.inClassBtn {
 		position: absolute;
@@ -348,12 +476,17 @@
 	}
 
 	.course {
+
+		justify-content: center;
 		@include rowBox();
 		box-sizing: border-box;
 		padding: 20px;
 		/*width: 1000px;*/
 		background: #ffffff;
 		&-info {
+			padding-left: 20px;
+			border: dashed $border;
+			border-width: 0 0 0 1px;
 			width: 680px;
 			margin-right: 20px;
 			//			@include underDashBorder();

@@ -23,10 +23,12 @@
 				</div>
 				<div class="onClass-main-video-item">
 					<div class="videoBox">
+						<video autoplay="autoplay" muted :src="localVideoURL" width="238" height="250"></video>
 						<img src="../../../static/icons/live/closeBtn.png" alt="" class="video_clsBtn">
 					</div>
 					<div class="signalBar">
-						<span>我</span>
+
+						<span @click="test">我</span>
 						<img src="../../../static/icons/live/s1.png" alt="" v-if="signal2 === 1">
 						<img src="../../../static/icons/live/s2.png" alt="" v-if="signal2 === 2">
 						<img src="../../../static/icons/live/s3.png" alt="" v-if="signal2 === 3">
@@ -37,61 +39,97 @@
 				</div>
 			</div>
 		</div>
-		<tool-bar></tool-bar>
+		<tool-bar class="toolBar"></tool-bar>
 	</div>
 </template>
 
 <script>
-	import toolBar from '../../components/bars/toolsBar.vue'
-	import {randomNum, countFn} from '../../common/scripts/util'
-	export default {
-		name: "",
-		components: {
-			toolBar
-		},
-		data () {
-			return {
-				isShowMtBar: true,
-				signal1: 6,
-				signal2: 6
-			}
-		},
-		props: {},
-		computed: {},
-		created () {
-			countFn(100, 100, () => {
-				this._updateSignal1(randomNum(1, 6))
-				this._updateSignal2(randomNum(1, 6))
-			}, () => {
-				this.signal2 = 6
-				this.signal1 = 6
-			});
-		},
-		mounted () {
-		},
-		methods: {
-			_showMtBar(){
-				this.isShowMtBar = false
+	/*功能
+	 * 1.获取本地视频流并显示出来，记得清除多余的mediaStream
+	 * 2.通过webrtc建立p2p视频通话（ws连接，发送自己的流，接受对面的流） 流包括 音频流 视频流 坐标流(x,y)
+	 * 3. 本地canvas绘图 改变颜色 粗细 并返回实时的坐标(x,y)
+	 * 4. 两张canvas重叠，一张接受对面的坐标，一张绘自己的坐标
+	 * 5. 新增白纸功能,在图片最后一页加入白纸，翻页会翻到图片的下一页，清空当前的绘图数据
+	 * 6.
+	 * 2.*/
+		import toolBar from '../../components/bars/toolsBar.vue'
+		import {XMediaStream} from '../../common/scripts/XmediaStream'
+		import {XAudioBox} from '../../common/scripts/XaudioBox'
+		import {randomNum, countFn, setMediaStream} from '../../common/scripts/util'
+		export default {
+			name: "",
+			components: {
+				toolBar
 			},
-			_updateSignal1(val){
-				this.signal1 = val
+			data () {
+				return {
+					isShowMtBar: true,
+					signal1: 6,
+					signal2: 6,
+					localVideoURL: ''
+				}
 			},
-			_updateSignal2(val){
-				this.signal2 = val
+			props: {},
+			computed: {},
+			created () {
+			},
+			mounted () {
+
+
+			},
+			methods: {
+				_showMtBar(){
+					this.isShowMtBar = false
+				},
+				_updateSignal1(val){
+					this.signal1 = val
+				},
+				_updateSignal2(val){
+					this.signal2 = val
+				},
+				test (){
+					let t = new XMediaStream()
+					try {
+						(async() => {
+							await t.createMedia('audio')
+							let ad = new XAudioBox()
+							ad.initBox()
+//							ad.loadSrc('../../../static/audios/demo.mov')
+							ad.loadStream(t.mediaStream)
+							ad.createDataArray(32)
+//							ad.playSrc(1)
+
+							ad.outputData(() => {
+								console.log(ad.dataArray)
+							})
+
+						  setTimeout(()=>{
+								t.stopAll()
+//								ad.stop()
+						  },2000)
+
+
+//							this.localVideoURL = window.URL.createObjectURL(t.mediaStream)
+						})()
+					} catch (err) {
+						console.log(err)
+					}
+
+				}
 			}
 		}
-	}
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
 	@import "../../common/styles/mixin";
 
 	.onClass {
-		width: 1000px;
+		/*position: relative;*/
+		width: 100%;
 		&-infoBar {
-			width: 1000px;
-			z-index: 2050;
-			position: absolute;
+			width: 100%;
+			z-index: 1000;
+			position: fixed;
 			height: 20px;
 			background: #fff198;
 			p {
@@ -108,31 +146,35 @@
 		}
 		&-main {
 			@include rowBox();
-			height: 530px;
+			height: 90vh;
 			&-box {
 				height: 100%;
-				background: #ffffff;
-				width: 772px;
+				background-color: #b3b3b3;
+				width: 80%;
 			}
 			&-video {
 				box-sizing: border-box;
-				padding: 30px 15px 0 15px;
-				width: 228px;
-				height: 100%;
+				padding: 20px 15px 0 15px;
+				width: 20%;
+				height: 90%;
 				background: $bg_wht;
+				display: flex;
+				flex-flow: column;
+				align-items: center;
 				&-item {
 					position: relative;
-					@include wh(198px, 210px);
 					background: #42b983;
 					margin-bottom: 40px;
+					overflow: hidden;
 					.videoBox {
+						@include wh(100%, 100%);
 					}
 					.signalBar {
 						padding-top: 3px;
 						padding-left: 10px;
 						background: rgba(0, 0, 0, .5);
 						position: absolute;
-						@include wh(198px, 24px);
+
 						bottom: 0;
 						@include fontSizeColor(12px, $bg_wht);
 						img {
@@ -142,6 +184,34 @@
 						}
 					}
 				}
+
+				/*for minScreen*/
+				@media screen and(max-width: 1140px) {
+					&-item {
+						@include wh(148px, 200px);
+					}
+					.signalBar {
+						@include wh(148px, 24px);
+					}
+				}
+				/*For fullScreen*/
+				@media screen and(min-width: 1140px) {
+					&-item {
+						@include wh(238px, 250px);
+					}
+					.signalBar {
+						@include wh(100%, 24px);
+					}
+				}
+			}
+			/*For xs Screen*/
+			@media screen and(max-width: 800px) {
+				&-box {
+					width: 100%;
+				}
+				&-video {
+					display: none;
+				}
 			}
 		}
 	}
@@ -149,8 +219,13 @@
 	.video_clsBtn {
 		cursor: pointer;
 		right: 6px;
-		top:  6px;
+		top: 6px;
 		position: absolute;
-		@include wh(16px,16px)
+		@include wh(16px, 16px)
+	}
+
+	.toolBar {
+		bottom: 0;
+		position: fixed !important;
 	}
 </style>

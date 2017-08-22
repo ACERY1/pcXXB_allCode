@@ -115,7 +115,7 @@ const setMediaStream = (hasAudio, hasVideo) => {
 		audio: hasAudio,
 		video: hasVideo
 	}
-	return navigator.mediaDevices.getUserMedia(constraint)
+	return navigator.mediaDevices.getUserMedia(constraint) // Promise
 }
 
 /**
@@ -126,7 +126,7 @@ const setMediaStream = (hasAudio, hasVideo) => {
  */
 const outputAudioData = (stream, fftSize) => {
 	let audioCtx = new AudioContext();
-	let gainNode = audioCtx.createGain();
+	let gainNode = audioCtx.createXGain();
 	let source = audioCtx.createMediaStreamSource(stream);
 	let analyser = audioCtx.createAnalyser()
 	source.connect(gainNode)

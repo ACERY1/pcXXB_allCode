@@ -43,6 +43,11 @@
 		border-bottom: 2px solid #f4a100 !important;
 	}
 
+	.el-dialog--large{
+		width:450px!important;
+		height: 500px;
+	}
+
 	#app {
 		height: 100%;
 	}

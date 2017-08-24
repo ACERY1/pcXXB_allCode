@@ -228,15 +228,11 @@ XBoard.prototype.clearData = function () {
  * 通过储存的坐标绘制画图 作用：用于resize之后的重绘
  */
 XBoard.prototype.drawData = function () {
-	
 	let self = this
 	self.ctx.strokeStyle = self.color
 	self.ctx.lineWidth = self.penSize
-	
-	
 	self.ctx.beginPath()
 	self.ctx.moveTo(this.points[0].x * self.scaleX, this.points[0].y * self.scaleY)
-	
 	for (let i =0;i<this.points.length;i++) {
 		self.ctx.lineTo(this.points[i].x * self.scaleX, this.points[i].y * self.scaleY) // 按比例来缩放
 		self.ctx.stroke();

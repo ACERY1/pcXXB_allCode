@@ -81,27 +81,15 @@
 				a.changeColor('blue')
 				a.changeSize('S')
 				setTimeout(() => {
-//					a.clearAllCanvas()
+					a.clearAllCanvas()
 //					console.log('test')
 //					a.recompute($('#test'))
-					a.useEraser()
 					console.log('start')
 				}, 6000)
 				setTimeout(() => {
-					a.clearAllCanvas()
-				}, 8000)
-				setTimeout(() => {
 					console.log('stop')
-					a.cancelEraser()
-
-					setTimeout(() => {
-						a.drawData()
-					}, 2000)
-//					a.recompute($('#test'))
-//					a.drawData()
-//					console.log('t')
-//					a.recompute($('#test'))
-//					a.cancelEraser()
+					a.recompute($('#test'))
+					a.drawData()
 				}, 12000)
 
 			},

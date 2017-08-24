@@ -36,7 +36,7 @@
 		<div class="classItem-btn">
 			<my-btn :styles="'orange'" :height="25" :width="80" :size="12" v-if="isOnClass == 1"
 					v-on:click.native="goClass"></my-btn>
-			<my-btn :styles="'grey_d'" :height="25" :width="80" :size="12" v-if="isOnClass == 0"></my-btn>
+			<my-btn :styles="'grey_d'" :height="25" :width="80" :size="12" v-if="isOnClass == 0" v-on:click.native="goClass"></my-btn>
 		</div>
 		<p class="status-text">{{statusText}}</p>
 		<p class="courseWare-text">{{courseWareText}}</p>

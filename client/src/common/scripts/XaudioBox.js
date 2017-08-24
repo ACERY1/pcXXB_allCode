@@ -100,4 +100,5 @@ XAudioBox.prototype.stop = function () {
 	window.cancelAnimationFrame(this.animationId)
 }
 
+
 export {XAudioBox}

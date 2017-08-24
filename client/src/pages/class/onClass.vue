@@ -5,7 +5,9 @@
 			<img src="../../../static/icons/live/closeBtn.png" alt="" @click="_showMtBar">
 		</div>
 		<div class="onClass-main">
-			<div class="onClass-main-box"></div>
+			<div class="onClass-main-box">
+				<canvas id="test"></canvas>
+			</div>
 			<div class="onClass-main-video">
 				<div class="onClass-main-video-item">
 					<div class="videoBox">
@@ -55,6 +57,7 @@
 		import toolBar from '../../components/bars/toolsBar.vue'
 		import {XMediaStream} from '../../common/scripts/XmediaStream'
 		import {XAudioBox} from '../../common/scripts/XaudioBox'
+		import {XBoard} from '../../common/scripts/XBoard'
 		import {randomNum, countFn, setMediaStream} from '../../common/scripts/util'
 		export default {
 			name: "",
@@ -74,7 +77,32 @@
 			created () {
 			},
 			mounted () {
+				let a = new XBoard('test', $('#test'))
+				a.changeColor('blue')
+				a.changeSize('S')
+				setTimeout(() => {
+//					a.clearAllCanvas()
+//					console.log('test')
+//					a.recompute($('#test'))
+					a.useEraser()
+					console.log('start')
+				}, 6000)
+				setTimeout(() => {
+					a.clearAllCanvas()
+				}, 8000)
+				setTimeout(() => {
+					console.log('stop')
+					a.cancelEraser()
 
+					setTimeout(() => {
+						a.drawData()
+					}, 2000)
+//					a.recompute($('#test'))
+//					a.drawData()
+//					console.log('t')
+//					a.recompute($('#test'))
+//					a.cancelEraser()
+				}, 12000)
 
 			},
 			methods: {
@@ -103,10 +131,10 @@
 								console.log(ad.dataArray)
 							})
 
-						  setTimeout(()=>{
+							setTimeout(() => {
 								t.stopAll()
 //								ad.stop()
-						  },2000)
+							}, 2000)
 
 
 //							this.localVideoURL = window.URL.createObjectURL(t.mediaStream)
@@ -149,7 +177,8 @@
 			height: 90vh;
 			&-box {
 				height: 100%;
-				background-color: #b3b3b3;
+				/*background-color: #b3b3b3;*/
+				background: #ffffff;
 				width: 80%;
 			}
 			&-video {
@@ -227,5 +256,9 @@
 	.toolBar {
 		bottom: 0;
 		position: fixed !important;
+	}
+
+	#test {
+		@include wh(100%, 100%)
 	}
 </style>

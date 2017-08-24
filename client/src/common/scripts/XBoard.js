@@ -29,13 +29,13 @@ function XBoard(DomId, canvasDom) {
 	this.domId = null // store dom attr:id
 	this.color = 'black' // now : blue red black
 	this.penSize = 8// the size of pen(S:2,M:4,L:8)
-	this.eraserSize = 20 // the size of eraser
+	this.eraserSize = 40 // the size of eraser
 	this.scaleX = 1 // store newCanvasWidth/canvasWidth
 	this.scaleY = 1 // store newCanvasHeight/canvasHeight
 	this.points = [] // store all  position data  (func: resize to recovery)
 	this.clearPoints = []
 	this.tempPoint = [] //temporary storage （after send out remember clear!)
-	this.tolerantRadious = 10 // blur clear
+	this.tolerantRadious = 20 // blur clear
 	
 	// bind events
 	let _bindEvents = () => {
@@ -96,7 +96,7 @@ function XBoard(DomId, canvasDom) {
 		}
 		
 	} else {
-		console.error("XB init Err: params undefined")
+		console.error("XB init ERR: params undefined")
 	}
 	
 }
@@ -117,7 +117,7 @@ XBoard.prototype.changeColor = function (color) {
 			this.color = '#ff3333';
 			break;
 		default: {
-			console.error('XB changeColorErr: unknown colors')
+			console.error('XB changeColorERR: unknown colors')
 		}
 	}
 }
@@ -138,7 +138,7 @@ XBoard.prototype.changeSize = function (size) {
 			this.penSize = 8;
 			break;
 		default: {
-			console.error('XB changeSizeErr: unknown size')
+			console.error('XB changeSizeERR: unknown size')
 		}
 	}
 }
@@ -151,6 +151,17 @@ XBoard.prototype.clearAllCanvas = function () {
 	this.ctx.closePath()
 	this.ctx.clearRect(0, 0, this.width, this.height);
 }
+
+XBoard.prototype.clearCanvasByPoints = function (points) {
+	if (!points) {
+		console.error('XB:clearCanvasByPoints ERR ---params undefined')
+	} else {
+		for (let item of points) {
+			this.ctx.clearRect(item.x, item.y, this.eraserSize, this.eraserSize)
+		}
+	}
+}
+
 
 /**
  * 使用橡皮
@@ -175,8 +186,6 @@ XBoard.prototype.cancelEraser = function () {
 					), 1 / 2) <= this.tolerantRadious) {
 				
 				this.points.splice(i, 1)
-				console.log(this.points.length)
-				
 			}
 		}
 	}
@@ -232,12 +241,40 @@ XBoard.prototype.drawData = function () {
 	self.ctx.strokeStyle = self.color
 	self.ctx.lineWidth = self.penSize
 	self.ctx.beginPath()
+	// if(!this.points)
+	if (this.points.length == 0) {
+		console.error("XB:drawData ERR --- points.length ERR")
+		return false
+	}
 	self.ctx.moveTo(this.points[0].x * self.scaleX, this.points[0].y * self.scaleY)
-	for (let i =0;i<this.points.length;i++) {
+	for (let i = 0; i < this.points.length; i++) {
 		self.ctx.lineTo(this.points[i].x * self.scaleX, this.points[i].y * self.scaleY) // 按比例来缩放
 		self.ctx.stroke();
 	}
 	self.ctx.closePath()
+	self.clearData()
+}
+
+XBoard.prototype.drawCanvasByPoints = function (color, size, points) {
+	this.recompute()
+	if (!points || !color || !size) {
+		console.error('XB: drawCanvasByPoints --- params undefined')
+		return false
+	} else {
+		this.ctx.strokeStyle = color
+		this.ctx.lineWidth  = size
+		this.ctx.beginPath()
+		if(points.length == 0){
+			console.error("XB:drawCanvasByPoints ERR --- points.length ERR")
+			return false
+		}
+		self.ctx.moveTo(points[0].x*this.scaleX,points[0].y*this.scaleY)
+		for(let i=0;i< points.length;++i){
+			this.ctx.lineTo(points[i].x*this.scaleX,points[i].y*this.scaleY)
+			this.ctx.stroke()
+		}
+		this.ctx.closePath()
+	}
 }
 
 

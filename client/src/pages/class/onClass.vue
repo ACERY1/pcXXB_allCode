@@ -6,7 +6,7 @@
 		</div>
 		<div class="onClass-main">
 			<div class="onClass-main-box">
-				<canvas id="test"></canvas>
+				<canvas id="localCanvas"></canvas>
 			</div>
 			<div class="onClass-main-video">
 				<div class="onClass-main-video-item">
@@ -41,7 +41,8 @@
 				</div>
 			</div>
 		</div>
-		<tool-bar class="toolBar"></tool-bar>
+		<tool-bar class="toolBar" @changeSize="changeSize" @changeColor="changeColor" @useEraser="useEraser"
+				  @cancelEraser="cancelEraser" @clearCanvas="clearCanvas"></tool-bar>
 	</div>
 </template>
 
@@ -69,7 +70,8 @@
 					isShowMtBar: true,
 					signal1: 6,
 					signal2: 6,
-					localVideoURL: ''
+					localVideoURL: '',
+					localCanvas: null
 				}
 			},
 			props: {},
@@ -77,20 +79,25 @@
 			created () {
 			},
 			mounted () {
-				let a = new XBoard('test', $('#test'))
-				a.changeColor('blue')
-				a.changeSize('S')
-				setTimeout(() => {
-					a.clearAllCanvas()
-//					console.log('test')
-//					a.recompute($('#test'))
-					console.log('start')
-				}, 6000)
-				setTimeout(() => {
-					console.log('stop')
-					a.recompute($('#test'))
-					a.drawData()
-				}, 12000)
+
+				this.localCanvas = new XBoard('localCanvas', $('#localCanvas'))
+//				let a = new XBoard('test', $('#test'))
+//				this.localCanvas.changeColor('blue')
+//				this.localCanvas.changeSize('S')
+//				setTimeout(() => {
+//
+//
+//				}, 4000)
+//				setTimeout(() => {
+//					console.log('start')
+//					a.useEraser()
+//				}, 8000)
+//				setTimeout(() => {
+//				  	a.cancelEraser()
+//				  	a.clearCanvasByPoints(a.clearPoints)
+//					console.log('stop')
+////					a.recompute($('#test'))
+//				}, 12000)
 
 			},
 			methods: {
@@ -131,6 +138,45 @@
 						console.log(err)
 					}
 
+				},
+				changeColor(code){
+					let color = null
+					switch (code) {
+						case 0:
+							color = 'red';
+							break;
+						case 1:
+							color = 'black';
+							break;
+						case 2:
+							color = 'blue';
+							break;
+					}
+					this.localCanvas.changeColor(color)
+				},
+				changeSize (code) {
+					let size = null
+					switch (code) {
+						case 0:
+							size = 'L';
+							break;
+						case 1:
+							size = 'M';
+							break;
+						case 2:
+							size = 'S';
+							break;
+					}
+					this.localCanvas.changeSize(size)
+				},
+				useEraser (){
+					this.localCanvas.useEraser()
+				},
+				cancelEraser (){
+					this.localCanvas.cancelEraser()
+				},
+				clearCanvas (){
+					this.localCanvas.clearAllCanvas()
 				}
 			}
 		}
@@ -246,7 +292,7 @@
 		position: fixed !important;
 	}
 
-	#test {
+	#localCanvas {
 		@include wh(100%, 100%)
 	}
 </style>

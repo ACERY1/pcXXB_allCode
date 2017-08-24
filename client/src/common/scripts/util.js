@@ -126,7 +126,7 @@ const setMediaStream = (hasAudio, hasVideo) => {
  */
 const outputAudioData = (stream, fftSize) => {
 	let audioCtx = new AudioContext();
-	let gainNode = audioCtx.createXGain();
+	let gainNode = audioCtx.createGain();
 	let source = audioCtx.createMediaStreamSource(stream);
 	let analyser = audioCtx.createAnalyser()
 	source.connect(gainNode)

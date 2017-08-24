@@ -152,6 +152,11 @@ XBoard.prototype.clearAllCanvas = function () {
 	this.ctx.clearRect(0, 0, this.width, this.height);
 }
 
+
+/**
+ * 通过点坐标用于清除画布
+ * @param points
+ */
 XBoard.prototype.clearCanvasByPoints = function (points) {
 	if (!points) {
 		console.error('XB:clearCanvasByPoints ERR ---params undefined')
@@ -255,8 +260,16 @@ XBoard.prototype.drawData = function () {
 	self.clearData()
 }
 
+
+/**
+ * 通过点坐标绘制图形
+ * @param color
+ * @param size
+ * @param points
+ * @returns {boolean} status
+ */
 XBoard.prototype.drawCanvasByPoints = function (color, size, points) {
-	this.recompute()
+	this.recompute(this.canvasDom)
 	if (!points || !color || !size) {
 		console.error('XB: drawCanvasByPoints --- params undefined')
 		return false
@@ -268,7 +281,7 @@ XBoard.prototype.drawCanvasByPoints = function (color, size, points) {
 			console.error("XB:drawCanvasByPoints ERR --- points.length ERR")
 			return false
 		}
-		self.ctx.moveTo(points[0].x*this.scaleX,points[0].y*this.scaleY)
+		this.ctx.moveTo(points[0].x*this.scaleX,points[0].y*this.scaleY)
 		for(let i=0;i< points.length;++i){
 			this.ctx.lineTo(points[i].x*this.scaleX,points[i].y*this.scaleY)
 			this.ctx.stroke()
@@ -280,13 +293,6 @@ XBoard.prototype.drawCanvasByPoints = function (color, size, points) {
 
 export {XBoard}
 
-
-// {"lessonToken":"X0014ym7N26O5PFp0dd7ab3157cc83779969e7fff1d6887376r5q19X87mw4Swp",
-// "cmd":"draw",
-// "data":"{
-// \"color\":\"#333333\"
-// ,\"size\":2,
-// \"point\":[{\"x\":126,\"y\":287},{\"x\":127,\"y\":287},{\"x\":142,\"y\":303},{\"x\":150,\"y\":311},{\"x\":176,\"y\":338},{\"x\":198,\"y\":364},{\"x\":290,\"y\":512},{\"x\":291,\"y\":512},{\"x\":291,\"y\":512}]}"}:
 
 let dataTemplate = {
 	'lessonToken': '课程的token',

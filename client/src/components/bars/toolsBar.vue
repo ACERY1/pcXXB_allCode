@@ -93,6 +93,7 @@
 			},
 			addNewPage(){
 				this.allPage++
+			  	this.$emit('addNewPage')
 			},
 			showColor(){
 				this.isShowLine = false

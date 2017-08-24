@@ -42,7 +42,7 @@
 			</div>
 		</div>
 		<tool-bar class="toolBar" @changeSize="changeSize" @changeColor="changeColor" @useEraser="useEraser"
-				  @cancelEraser="cancelEraser" @clearCanvas="clearCanvas"></tool-bar>
+				  @cancelEraser="cancelEraser" @clearCanvas="clearCanvas" @addNewPage="addNewPage"></tool-bar>
 	</div>
 </template>
 
@@ -177,7 +177,11 @@
 				},
 				clearCanvas (){
 					this.localCanvas.clearAllCanvas()
+				},
+			  	addNewPage (){
+
 				}
+
 			}
 		}
 </script>

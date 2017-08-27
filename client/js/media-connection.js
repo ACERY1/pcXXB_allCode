@@ -78,6 +78,8 @@ let  media_connection = ()=>{
 			onlineStatus = false;
 			console.log('网络已经断开');
 		});
+		
+		
 		function createVideo(stream, isLocal){
 			var message_bottom,
 				play_flag = true,

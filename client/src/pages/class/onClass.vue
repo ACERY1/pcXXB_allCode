@@ -66,7 +66,8 @@
 		import {XBoard} from '../../common/scripts/XBoard'
 		import {randomNum, countFn, setMediaStream, getSession} from '../../common/scripts/util'
 		//		import mediaConnection from '../../../js/media-connection'
-		import mediaConnection from '../../common/scripts/mediaConnection'
+		//		import mediaConnection from '../../common/scripts/mediaConnection'
+		import WebRTC from '../../../js/webrtc'
 		export default {
 			name: "",
 			components: {
@@ -82,11 +83,14 @@
 					signal2: 6,
 					localVideoURL: '',
 					remoteVideoURL: '',
+					localStreamObj: {},
+					remoteStreamObj: {},
+					localAudio: {},
+					remoteAudio: {},
 					localCanvas: null,
 					remoteCanvas: null,
 					images: [],
 					pageCount: 0 // 图片页数
-
 				}
 			},
 			props: {},
@@ -114,36 +118,19 @@
 					console.log(res)
 				})
 				// 查询课件id
-				this.$api.searchCourseware(this.courseId)
+				this.$api.searchCourseware(this.courseId).then((res) => {
+					console.log(res)
+				})
 				// 通过课件id查询课件内容
-				this.$api.previewCourseWare(this.coursewareId)
+				this.$api.previewCourseWare(this.coursewareId).then((res) => {
+					console.log(res)
+				})
 				// 拿到上课token
-				this.$api.getLessonToken(this.courseId)
+				this.$api.getLessonToken(this.courseId).then((res) => {
 
+				})
 
-//				mediaConnection();
-//				setInterval(() => {
-//					this._reDraw();
-//					console.log('redraw')
-//				}, 2000)
-
-//				let a = new XBoard('test', $('#test'))
-//				this.localCanvas.changeColor('blue')
-//				this.localCanvas.changeSize('S')
-//				setTimeout(() => {
-//
-//
-//				}, 4000)
-//				setTimeout(() => {
-//					console.log('start')
-//					a.useEraser()
-//				}, 8000)
-//				setTimeout(() => {
-//				  	a.cancelEraser()
-//				  	a.clearCanvasByPoints(a.clearPoints)
-//					console.log('stop')
-////					a.recompute($('#test'))
-//				}, 12000)
+				this.mediaConnection()
 
 
 			},
@@ -165,8 +152,6 @@
 				_reDraw(){
 					this.remoteCanvas.recompute($('#remoteCanvas'))
 					this.localCanvas.recompute($('#localCanvas'))
-//					this.localCanvas.drawData()
-//					this.localCanvas.clearCanvasByPoints(this.localCanvas.clearPoints)
 					this.localCanvas.plotPoints()
 				},
 				// 发送上课命令
@@ -176,6 +161,64 @@
 				// 发送下课命令
 				_offClass () {
 					this.$ipc.send('onClass', false)
+				},
+				// 上课视频连接
+				mediaConnection () {
+					let webrtc = WebRTC('teacher')
+					let courseId = window.sessionStorage.getItem('courseId_forClass') || 0
+					let onlineStatus = true
+					let streamObj = {}
+					let that = this
+					let streamConfig = {
+						"video": true,
+						"audio": {
+							optional: [{
+								googAutoGainControl: true
+							}, {
+								googEchoCancellation: true
+							}, {
+								googNoiseSuppression: true
+							}]
+						}
+					} // 视频流配置
+
+					webrtc.on("socket_opened", function () {
+
+						// 1.建一个对象，传入配置，发射出来，然后返回对象便以后操作
+						webrtc.createLocalStream(streamConfig)
+					})
+
+					webrtc.on("stream_created", function (e) {
+						streamObj = new XMediaStream()
+						streamObj.recordStream(e.stream)
+						that.localStreamObj = streamObj
+						that.localVideoURL = window.URL.createObjectURL(streamObj.mediaStream)
+					});
+
+					webrtc.on("peer_stream", function (e) {
+						// 来自对方
+						var stream = e.stream;
+						console.log('s1')
+						console.log(stream.getAudioTracks());
+						console.log(stream.getVideoTracks());
+					});
+
+
+					webrtc.on("remove_peer", function () {
+						console.log("remove_peer");
+					});
+					webrtc.on("remove_stream", function () {
+						console.log("远程流删除");
+					});
+
+					that.$api.teacherConfigure(courseId).then((res) => {
+						let _data = res.data.result.video
+						webrtc.connect(_data.channelName, _data.uid, _data.key)
+
+					}).catch((err) => {
+						console.log(err)
+					})
+
 				},
 				test (){
 					let t = new XMediaStream()

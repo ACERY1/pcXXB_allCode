@@ -34,8 +34,8 @@ XMediaStream.prototype.createMedia = function (name, constraint={}) {
 	}
 	switch (name) {
 		case 'audio': {
-			_constraint['audio'] = true
-			_constraint['video'] = false
+			// _constraint['audio'] = true
+			// _constraint['video'] = false
 			for (let key of Object.keys(constraint)) {
 				_constraint[key] = constraint[key]
 			}
@@ -54,13 +54,13 @@ XMediaStream.prototype.createMedia = function (name, constraint={}) {
 		}
 			break;
 		case 'video': {
-			_constraint['audio'] = true
-			_constraint['video'] = {}
-			for (let key of Object.keys(constraint)) {
-				_constraint.video[key] = constraint[key]
-			}
+			// _constraint['audio'] = true
+			// _constraint['video'] = {}
+			// for (let key of Object.keys(constraint)) {
+			// 	_constraint.video[key] = constraint[key]
+			// }
 			return new Promise((resolve, reject) => {
-				navigator.mediaDevices.getUserMedia(_constraint).then((stream) => {
+				navigator.mediaDevices.getUserMedia(constraint).then((stream) => {
 					this.mediaStream = stream
 					this.streamId = stream.id
 					this.mediaTracks = stream.getTracks()
@@ -124,5 +124,18 @@ XMediaStream.prototype.getLabel = function () {
 	return _labels
 }
 
+/**
+ * 记录传入的音频流 适用于并非经过内部构造的
+ * @param stream
+ */
+XMediaStream.prototype.recordStream = function (stream) {
+	this.mediaStream = stream
+	this.streamId = stream.id
+	this.mediaTracks = stream.getTracks()
+	XMediaStream.mediaCount++
+	// console.log(this.mediaStream)
+	// console.log(this.streamId)
+	// console.log(this.mediaTracks)
+}
 
 export {XMediaStream}

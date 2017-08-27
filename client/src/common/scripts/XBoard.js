@@ -37,7 +37,7 @@ function XBoard(DomId, canvasDom) {
 	this.tempPoint = [] //temporary storage （after send out remember clear!)
 	this.tempClearPoint = [] // judge valid line
 	this.tolerantRadious = 10 // blur clear
-	this.pointsData = [{cmd: 'draw', data: [{x: 0, y: 0}]}]
+	this.pointsData = []
 	
 	// bind events
 	let _bindEvents = () => {
@@ -56,9 +56,39 @@ function XBoard(DomId, canvasDom) {
 		self.canvasDom.on('mouseup', function () {
 			self.isPainting = false
 			// 判断是否为无效橡皮擦轨迹
+			// if (self.isUsingEraser) {
+			// 	console.log(self.judgeIntersection(self.tempClearPoint))
+			// }
+			
+			// 存下当前的pointData
+			let _temp = {
+				cmd: '', // clear/draw
+				data: {
+					color: null,
+					size: null,
+					point: [
+						{
+							x: 0,
+							y: 0
+						}
+					]
+				}
+			};
 			if (self.isUsingEraser) {
-				console.log(self.judgeIntersection(self.tempClearPoint))
+				// 说明是clearLine
+				_temp.cmd = 'clear'
+				
+				_temp.data.point = self.tempClearPoint
+			} else {
+				// 说明是drawLine
+				_temp.cmd = 'draw'
+				_temp.data.color = self.color
+				_temp.data.size = self.penSize
+				_temp.data.point = self.tempPoint
 			}
+			
+			self.pointsData.push(_temp)
+			// console.log(self.pointsData)
 			self.ctx.closePath();
 		})
 		
@@ -74,7 +104,7 @@ function XBoard(DomId, canvasDom) {
 					self.ctx.lineWidth = self.penSize
 				}
 				self.ctx.lineTo(e.clientX - self.left, e.clientY - self.top)
-				self.storeData(e.clientX - self.left, e.clientY - self.top, self.eraserSize, self.eraserSize)
+				// self.storeData(e.clientX - self.left, e.clientY - self.top, self.eraserSize, self.eraserSize)
 				self.storeTempData(e.clientX - self.left, e.clientY - self.top, self.eraserSize, self.eraserSize)
 				self.ctx.stroke();
 			}
@@ -160,6 +190,7 @@ XBoard.prototype.clearAllCanvas = function () {
 	this.ctx.closePath()
 	this.ctx.clearRect(0, 0, this.width, this.height);
 	this.clearData()
+	
 }
 
 
@@ -223,7 +254,7 @@ XBoard.prototype.judgeIntersection = function (points) {
 			// Math.pow(Math.pow(x1-x2,2)+Math.pow(y1-y2,2),1/2)
 			
 			
-			console.log(points[i].x, point.x)
+			// console.log(points[i].x, point.x)
 			// console.log(Math.pow(
 			// 	(
 			// 		Math.pow(points[i].x - point.x, 2)
@@ -237,7 +268,7 @@ XBoard.prototype.judgeIntersection = function (points) {
 						Math.pow(this.clearPoints[i].y - point.y, 2)
 					), 1 / 2) <= this.tolerantRadious) {
 				count++
-				console.log(count)
+				// console.log(count)
 			}
 		}
 	}
@@ -290,11 +321,13 @@ XBoard.prototype.storeTempData = function (pointX, pointY) {
 				y: pointY
 			}
 		)
+		// console.log('get1')
 	} else {
 		this.tempPoint.push({
 			x: pointX,
 			y: pointY
 		})
+		// console.log('get2')
 	}
 	
 }
@@ -305,6 +338,7 @@ XBoard.prototype.storeTempData = function (pointX, pointY) {
 XBoard.prototype.clearData = function () {
 	this.points = []
 	this.clearPoints = []
+	this.pointsData = []
 }
 
 /**
@@ -368,22 +402,33 @@ XBoard.prototype.drawCanvasByPoints = function (color, size, points) {
  * new: 从 pointsData 里读取命令和坐标数据进行绘画和擦除
  */
 XBoard.prototype.plotPoints = function () {
+	// console.log(this.pointsData)
 	if (!this.pointsData.length) {
 		console.error('XB: plotPoint ERR ---- there is no data in pointsData')
 		return false
 	} else {
 		for (let i = 0; i < this.pointsData.length; ++i) {
-			if (this.pointsData[i].cmd = 'clear') {
+	
+			if (this.pointsData[i].cmd == 'clear') {
 				// 清除
+				this.clearLine(this.pointsData[i].data.point)
 			}
-			if (this.pointsData[i].cmd = 'points') {
+			if (this.pointsData[i].cmd == 'draw') {
 				// 绘画
+				this.drawLine(this.pointsData[i].data.color, this.pointsData[i].data.size, this.pointsData[i].data.point)
 			}
 		}
 	}
 }
 
-XBoard.prototype.drawLine = function (color,size,data) {
+/**
+ * 绘画命令所执行函数
+ * @param color
+ * @param size
+ * @param data
+ * @returns {boolean}
+ */
+XBoard.prototype.drawLine = function (color, size, data) {
 	if (!data || !color || !size) {
 		console.error('XB: drawLine --- params undefined')
 		return false
@@ -396,29 +441,41 @@ XBoard.prototype.drawLine = function (color,size,data) {
 			return false
 		}
 		this.ctx.moveTo(data[0].x * this.scaleX, data[0].y * this.scaleY)
-		for (let i = 0; i < points.length; ++i) {
+		for (let i = 0; i < data.length; ++i) {
 			this.ctx.lineTo(data[i].x * this.scaleX, data[i].y * this.scaleY)
+			
+			// update data
+			data[i].x = data[i].x * this.scaleX
+			data[i].y = data[i].y * this.scaleY
 			this.ctx.stroke()
 		}
 		this.ctx.closePath()
 	}
 }
 
+/**
+ * 清除命令所执行函数
+ * @param points
+ * @returns {boolean}
+ */
 XBoard.prototype.clearLine = function (points) {
-	if(!points||points.length ==0){
+	if (!points || points.length == 0) {
 		console.error('XB: clearLine ERR --- params wrong')
 		return false
-	}else {
+	} else {
 		for (let i = 0; i < points.length; ++i) {
 			this.ctx.clearRect(points[i].x * this.scaleX, points[i].y * this.scaleY, this.eraserSize, this.eraserSize)
+			
+			// update Data
+			points[i].x = points[i].x * this.scaleX
+			points[i].y = points[i].y * this.scaleY
+			
 		}
 	}
 }
 
 
-
 export {XBoard}
-
 
 
 let tempData = [

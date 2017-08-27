@@ -165,9 +165,9 @@
 				_reDraw(){
 					this.remoteCanvas.recompute($('#remoteCanvas'))
 					this.localCanvas.recompute($('#localCanvas'))
-					this.localCanvas.drawData()
-					this.localCanvas.clearCanvasByPoints(this.localCanvas.clearPoints)
-
+//					this.localCanvas.drawData()
+//					this.localCanvas.clearCanvasByPoints(this.localCanvas.clearPoints)
+					this.localCanvas.plotPoints()
 				},
 				// 发送上课命令
 				_onClass (){

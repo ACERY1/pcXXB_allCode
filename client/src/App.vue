@@ -5,7 +5,7 @@
 </template>
 
 <script >
-	import {getCookie, getSession} from './common/scripts/util'
+	import {getCookie, getSession,getStore} from './common/scripts/util'
 	export default {
 		name: 'app',
 		data () {
@@ -13,13 +13,18 @@
 		},
 		created(){
 		/*TODO:判断登录还是有问题 ps:现在解决了*/
-			if (getCookie("x_token") == null) {
+			if (getCookie("x_token") == null ||!getStore('name')) {
 				this.$router.push('/static/login')
 			} else {
 		  /*TODO:根据session 里是否有temp_courseId 来判断是否是从制作课件跳转回来的*/
 				if (getSession("temp_courseId") != null) {
 					this.$router.push('/static/classInfo')
-				} else {
+				}
+				if(getSession('courseId_forClass')){
+					// 上课阶段防止跳转
+					this.$message("正在上课呢")
+				}
+				else {
 					this.$router.push('/static/main')
 				}
 

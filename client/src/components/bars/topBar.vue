@@ -41,7 +41,7 @@
 </template>
 
 <script>
-	import {getCookie, removeAllStore, setUserInfoInLocal} from '../../common/scripts/util'
+	import {getCookie, removeAllStore, setUserInfoInLocal, removeAllSession, delCookie,getStore} from '../../common/scripts/util'
 	import confD from '../../components/dialogs/configDialog.vue'
 	export default {
 		name: "",
@@ -75,7 +75,7 @@
 		methods: {
 			goLogin(){
 		  /*TODO:这个判断有问题 ps:现在解决了*/
-				if (getCookie("x_token") == null) {
+				if (getCookie("x_token") == null || !getStore('name')) {
 					this.$router.push('/static/login')
 				} else {
 					this.$router.push('/static/main')
@@ -119,6 +119,7 @@
 						})
 						setTimeout(() => {
 							removeAllStore()
+							removeAllSession()
 							this.goLogin()
 						}, 1500)
 

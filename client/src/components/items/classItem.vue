@@ -36,7 +36,8 @@
 		<div class="classItem-btn">
 			<my-btn :styles="'orange'" :height="25" :width="80" :size="12" v-if="isOnClass == 1"
 					v-on:click.native="goClass"></my-btn>
-			<my-btn :styles="'grey_d'" :height="25" :width="80" :size="12" v-if="isOnClass == 0" v-on:click.native="goClass"></my-btn>
+			<my-btn :styles="'grey_d'" :height="25" :width="80" :size="12" v-if="isOnClass == 0"
+					v-on:click.native="goClass"></my-btn>
 		</div>
 		<p class="status-text">{{statusText}}</p>
 		<p class="courseWare-text">{{courseWareText}}</p>
@@ -49,7 +50,7 @@
 	 * 1.courseInfo (Object)
 	 * */
 		import myBtn from '../../components/buttons/basicButtons.vue'
-		import {judgeTime, parseTime} from '../../common/scripts/util'
+		import {judgeTime, parseTime, setSession} from '../../common/scripts/util'
 		export default {
 			name: "",
 			components: {
@@ -141,7 +142,7 @@
 					}
 				},
 				courseWareText(){
-					if (this.courseInfo.courseware_id == '0' && this.courseInfo.status != 1  && this.courseInfo.status != 0) {
+					if (this.courseInfo.courseware_id == '0' && this.courseInfo.status != 1 && this.courseInfo.status != 0) {
 						return "(课件未制作)"
 					}
 				}
@@ -161,8 +162,15 @@
 
 				},
 				goClass(){
+					if (!this.courseInfo.courseware) {
+						this.$message({message: '你还未制作课件，请先制作课件', duration: 1500})
+						return;
+					}
 					this.$store.commit('UN_SHOW_MENU')
 					this.$router.push('/static/onclass')
+					// ***** 这里有session！ ****
+					setSession('courseId_forClass', this.courseInfo.courseId)
+					//****************************
 				}
 			}
 		}
@@ -178,17 +186,18 @@
 		width: 100%;
 	}
 
-	.courseWare-text{
+	.courseWare-text {
 		@include fontSizeColor(12px, $fontClr_3rd);
 		position: absolute;
 		right: 26px;
-		bottom: 30px;
+		bottom: 10px;
 	}
+
 	.status-text {
 		@include fontSizeColor(12px, $fontClr_3rd);
 		position: absolute;
 		right: 38px;
-		bottom: 30px;
+		bottom: 10px;
 	}
 
 	@import "../../common/styles/mixin";
@@ -251,7 +260,7 @@
 
 		}
 		&-btn {
-			top: 52px;
+			top: 42px;
 			right: 20px;
 			position: absolute;
 		}

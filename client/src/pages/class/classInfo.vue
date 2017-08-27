@@ -115,16 +115,14 @@
 </template>
 
 <script>
-	import {judgeTime, parseTime, setSession, getSession} from '../../common/scripts/util'
+	import {judgeTime, parseTime, setSession, getSession, removeSession} from '../../common/scripts/util'
 	import {courseStatus} from '../../common/scripts/filters'
 	import fetch from '../../common/scripts/fetch'
 	import bBtn from '../../components/buttons/basicButtons.vue'
-	//	import pointDialog from '../../components/dialogs/studyPoint.vue'
 	export default {
 		name: "classInfo",
 		components: {
-			bBtn,
-//			pointDialog
+			bBtn
 		},
 		data () {
 			return {
@@ -220,7 +218,7 @@
 				// 如果session里有 就从session里取 这里是从编辑课件跳转回来
 				this.$store.commit("UPDATE_COURSE_ID", getSession("temp_courseId"))
 				if (getSession('didPPT')) {
-					this.$ipc.send("esc")
+					this.$ipc.send("shrinkScreen")
 				}
 			}
 
@@ -258,13 +256,16 @@
 				}
 				else {
 					this.$message(err)
-
 				}
 			})
 
 		},
 		mounted () {
+			removeSession('didPPT')
+			removeSession('temp_courseId')
+			removeSession('temp_courseWareId')
 		},
+
 		methods: {
 			//检查并判断数据*/
 			_checkData(){
@@ -323,11 +324,14 @@
 							setSession("temp_courseId", this.$store.state.courseId)
 							setSession("didPPT", true);
 							this.$ipc.send("courseWare")
+							this.$ipc.send("fullScreen")
+
 						} else {
 							setSession("temp_courseId", this.$store.state.courseId)
 							setSession("temp_courseWareId", _data.courseWare_id)
 							setSession("didPPT", true);
 							this.$ipc.send("courseWare")
+							this.$ipc.send("fullScreen")
 						}
 
 					}
@@ -338,7 +342,8 @@
 			goReportPage(){
 				setSession("temp_courseId", this.$store.state.courseId)
 				this.$router.push("/static/classreport")
-				this.$ipc.send("maximize")
+//				this.$ipc.send("maximize")
+				this.$ipc.send("fullScreen")
 			},
 			// 知识点查看
 			checkPoint(){
@@ -380,13 +385,13 @@
 				setSession("didPPT", true);
 		  /**/
 				this.$ipc.send("report")
+				this.$ipc.send("fullScreen")
 			},
-			// onclass
 			onClass(){
 		  /*TODO:测试*/
 				console.log('保存session！')
-				setSession("temp_courseId", this.$store.state.courseId)
-				setSession('temp_host', window.location.host)
+//				setSession("temp_courseId", this.$store.state.courseId)
+//				setSession('temp_host', window.location.host)
 			}
 		}
 	}

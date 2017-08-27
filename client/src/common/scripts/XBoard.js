@@ -28,14 +28,16 @@ function XBoard(DomId, canvasDom) {
 	this.canvasDom = null // store the dom
 	this.domId = null // store dom attr:id
 	this.color = 'black' // now : blue red black
-	this.penSize = 8// the size of pen(S:2,M:4,L:8)
+	this.penSize = 4// the size of pen(S:2,M:4,L:8)
 	this.eraserSize = 40 // the size of eraser
 	this.scaleX = 1 // store newCanvasWidth/canvasWidth
 	this.scaleY = 1 // store newCanvasHeight/canvasHeight
 	this.points = [] // store all  position data  (func: resize to recovery)
 	this.clearPoints = []
 	this.tempPoint = [] //temporary storage （after send out remember clear!)
-	this.tolerantRadious = 20 // blur clear
+	this.tempClearPoint = [] // judge valid line
+	this.tolerantRadious = 10 // blur clear
+	this.pointsData = [{cmd: 'draw', data: [{x: 0, y: 0}]}]
 	
 	// bind events
 	let _bindEvents = () => {
@@ -44,6 +46,8 @@ function XBoard(DomId, canvasDom) {
 		document.getElementById(self.domId).setAttribute('width', self.width)
 		
 		self.canvasDom.on('mousedown', function (e) {
+			self.tempPoint = [] // refresh
+			self.tempClearPoint = [] // refresh
 			self.isPainting = true
 			self.ctx.beginPath()
 			self.ctx.moveTo(e.clientX - self.left, e.clientY - self.top)
@@ -51,6 +55,10 @@ function XBoard(DomId, canvasDom) {
 		
 		self.canvasDom.on('mouseup', function () {
 			self.isPainting = false
+			// 判断是否为无效橡皮擦轨迹
+			if (self.isUsingEraser) {
+				console.log(self.judgeIntersection(self.tempClearPoint))
+			}
 			self.ctx.closePath();
 		})
 		
@@ -67,6 +75,7 @@ function XBoard(DomId, canvasDom) {
 				}
 				self.ctx.lineTo(e.clientX - self.left, e.clientY - self.top)
 				self.storeData(e.clientX - self.left, e.clientY - self.top, self.eraserSize, self.eraserSize)
+				self.storeTempData(e.clientX - self.left, e.clientY - self.top, self.eraserSize, self.eraserSize)
 				self.ctx.stroke();
 			}
 		})
@@ -150,6 +159,7 @@ XBoard.prototype.clearAllCanvas = function () {
 	this.ctx.stroke()
 	this.ctx.closePath()
 	this.ctx.clearRect(0, 0, this.width, this.height);
+	this.clearData()
 }
 
 
@@ -161,8 +171,13 @@ XBoard.prototype.clearCanvasByPoints = function (points) {
 	if (!points) {
 		console.error('XB:clearCanvasByPoints ERR ---params undefined')
 	} else {
-		for (let item of points) {
-			this.ctx.clearRect(item.x, item.y, this.eraserSize, this.eraserSize)
+		for (let i = 0; i < points.length; ++i) {
+			// this.ctx.clearRect(item.x, item.y, this.eraserSize, this.eraserSize)
+			this.ctx.clearRect(points[i].x * this.scaleX, points[i].y * this.scaleY, this.eraserSize, this.eraserSize)
+			
+			// 更新clearPoints
+			points[i].x = points[i].x * this.scaleX
+			points[i].y = points[i].y * this.scaleY
 		}
 	}
 }
@@ -180,20 +195,54 @@ XBoard.prototype.useEraser = function () {
  */
 XBoard.prototype.cancelEraser = function () {
 	this.isUsingEraser = false
-	for (let i = 0; i < this.clearPoints.length; i++) {
+	
+	// ******** 半径算法 被 通过clearPoints模拟橡皮轨迹 所替代 *********
+	// for (let i = 0; i < this.clearPoints.length; i++) {
+	// 	for (let point of this.points) {
+	// 		// Math.pow(Math.pow(x1-x2,2)+Math.pow(y1-y2,2),1/2)
+	// 		if (Math.pow(
+	// 				(
+	// 					Math.pow(this.clearPoints[i].x - point.x, 2)
+	// 					+
+	// 					Math.pow(this.clearPoints[i].y - point.y, 2)
+	// 					//         this.tolerantRadious
+	// 				), 1 / 2) <= this.eraserSize) {
+	//
+	// 			this.points.splice(i, 1)
+	// 		}
+	// 	}
+	// }
+}
+
+XBoard.prototype.judgeIntersection = function (points) {
+	// 离散分布情况计数
+	let count = 0
+	
+	for (let i = 0; i < points.length; i++) {
 		for (let point of this.points) {
 			// Math.pow(Math.pow(x1-x2,2)+Math.pow(y1-y2,2),1/2)
+			
+			
+			console.log(points[i].x, point.x)
+			// console.log(Math.pow(
+			// 	(
+			// 		Math.pow(points[i].x - point.x, 2)
+			// 		+
+			// 		Math.pow(points[i].y - point.y, 2)
+			// 	), 1 / 2))
 			if (Math.pow(
 					(
 						Math.pow(this.clearPoints[i].x - point.x, 2)
 						+
 						Math.pow(this.clearPoints[i].y - point.y, 2)
 					), 1 / 2) <= this.tolerantRadious) {
-				
-				this.points.splice(i, 1)
+				count++
+				console.log(count)
 			}
 		}
 	}
+	
+	return count > 1;
 }
 
 
@@ -232,10 +281,30 @@ XBoard.prototype.storeData = function (pointX, pointY) {
 }
 
 /**
+ * 储存临时坐标数据（用于发送和判断的坐标数据）
+ */
+XBoard.prototype.storeTempData = function (pointX, pointY) {
+	if (this.isUsingEraser) {
+		this.tempClearPoint.push({
+				x: pointX,
+				y: pointY
+			}
+		)
+	} else {
+		this.tempPoint.push({
+			x: pointX,
+			y: pointY
+		})
+	}
+	
+}
+
+/**
  * 清除储存的坐标数据
  */
 XBoard.prototype.clearData = function () {
 	this.points = []
+	this.clearPoints = []
 }
 
 /**
@@ -254,10 +323,14 @@ XBoard.prototype.drawData = function () {
 	self.ctx.moveTo(this.points[0].x * self.scaleX, this.points[0].y * self.scaleY)
 	for (let i = 0; i < this.points.length; i++) {
 		self.ctx.lineTo(this.points[i].x * self.scaleX, this.points[i].y * self.scaleY) // 按比例来缩放
+		
+		// 更新点坐标
 		self.ctx.stroke();
+		self.points[i].x = this.points[i].x * self.scaleX
+		self.points[i].y = this.points[i].y * self.scaleY
 	}
 	self.ctx.closePath()
-	self.clearData()
+	// self.clearData()
 }
 
 
@@ -275,15 +348,15 @@ XBoard.prototype.drawCanvasByPoints = function (color, size, points) {
 		return false
 	} else {
 		this.ctx.strokeStyle = color
-		this.ctx.lineWidth  = size
+		this.ctx.lineWidth = size
 		this.ctx.beginPath()
-		if(points.length == 0){
+		if (points.length == 0) {
 			console.error("XB:drawCanvasByPoints ERR --- points.length ERR")
 			return false
 		}
-		this.ctx.moveTo(points[0].x*this.scaleX,points[0].y*this.scaleY)
-		for(let i=0;i< points.length;++i){
-			this.ctx.lineTo(points[i].x*this.scaleX,points[i].y*this.scaleY)
+		this.ctx.moveTo(points[0].x * this.scaleX, points[0].y * this.scaleY)
+		for (let i = 0; i < points.length; ++i) {
+			this.ctx.lineTo(points[i].x * this.scaleX, points[i].y * this.scaleY)
 			this.ctx.stroke()
 		}
 		this.ctx.closePath()
@@ -291,7 +364,78 @@ XBoard.prototype.drawCanvasByPoints = function (color, size, points) {
 }
 
 
+/**
+ * new: 从 pointsData 里读取命令和坐标数据进行绘画和擦除
+ */
+XBoard.prototype.plotPoints = function () {
+	if (!this.pointsData.length) {
+		console.error('XB: plotPoint ERR ---- there is no data in pointsData')
+		return false
+	} else {
+		for (let i = 0; i < this.pointsData.length; ++i) {
+			if (this.pointsData[i].cmd = 'clear') {
+				// 清除
+			}
+			if (this.pointsData[i].cmd = 'points') {
+				// 绘画
+			}
+		}
+	}
+}
+
+XBoard.prototype.drawLine = function (color,size,data) {
+	if (!data || !color || !size) {
+		console.error('XB: drawLine --- params undefined')
+		return false
+	} else {
+		this.ctx.strokeStyle = color
+		this.ctx.lineWidth = size
+		this.ctx.beginPath()
+		if (data.length == 0) {
+			console.error("XB: drawLine ERR --- points.length ERR")
+			return false
+		}
+		this.ctx.moveTo(data[0].x * this.scaleX, data[0].y * this.scaleY)
+		for (let i = 0; i < points.length; ++i) {
+			this.ctx.lineTo(data[i].x * this.scaleX, data[i].y * this.scaleY)
+			this.ctx.stroke()
+		}
+		this.ctx.closePath()
+	}
+}
+
+XBoard.prototype.clearLine = function (points) {
+	if(!points||points.length ==0){
+		console.error('XB: clearLine ERR --- params wrong')
+		return false
+	}else {
+		for (let i = 0; i < points.length; ++i) {
+			this.ctx.clearRect(points[i].x * this.scaleX, points[i].y * this.scaleY, this.eraserSize, this.eraserSize)
+		}
+	}
+}
+
+
+
 export {XBoard}
+
+
+
+let tempData = [
+	{
+		cmd: '', // clear/draw
+		data: {
+			color: '',
+			size: '',
+			point: [
+				{
+					x: 0,
+					y: 0
+				}
+			]
+		}
+	}
+];
 
 
 let dataTemplate = {
@@ -303,3 +447,5 @@ let dataTemplate = {
 		point: [{x: '横坐标', y: '纵坐标'}]
 	}
 }
+
+

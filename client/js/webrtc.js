@@ -12,7 +12,7 @@ var WebRTC = function(role) {
     moz = !!navigator.mozGetUserMedia,
 
     // websocketServer = "ws://" + window.sessionStorage.getItem('temp_host') + "/media/websocket/ws",
-    websocketServer = "wss://test.91xuexibao.com/media/websocket/ws",
+    websocketServer = "ws://localhost:2048/media/websocket/ws",
 
     packetSize = 100,
     
@@ -80,7 +80,7 @@ var WebRTC = function(role) {
         this.connections = [];
     } // define Class
 
-    webrtc.prototype = new EventEmitter(); 
+    webrtc.prototype = new EventEmitter(); // 继承事件发射器
 
     webrtc.prototype.connect = function(room, uid, key) {
         var that = this,
@@ -130,6 +130,7 @@ var WebRTC = function(role) {
         }
 
     };
+    
     webrtc.prototype.initEvents = function(){
         var that = this;
         this.on("_ice_candidate", function(data) {
@@ -209,6 +210,7 @@ var WebRTC = function(role) {
             console.log(error);
         });
     } // 发送offer
+  
     webrtc.prototype.sendAnswer = function(socketId, sdp) {
         var pc = this.peerConnections[socketId],
         that = this;
@@ -234,6 +236,7 @@ var WebRTC = function(role) {
             console.log(error);
         });
     };
+    
     webrtc.prototype.createLocalStream = function(options) {
         var that = this;
         if (getUserMedia) {
@@ -252,6 +255,7 @@ var WebRTC = function(role) {
             that.emit("stream_create_error", new Error("WebRTC is not supported in this browser."));
         }
     }
+    
     webrtc.prototype.attachStream = function(stream, domId) {
         var element = document.getElementById(domId);
         if (navigator.mozGetUserMedia) {
@@ -261,6 +265,7 @@ var WebRTC = function(role) {
             element.src = URL.createObjectURL(stream);
         }
     }
+    
     webrtc.prototype.removeStream = function(domId) {
         var element = document.getElementById(domId);
         if (navigator.mozGetUserMedia) {
@@ -269,6 +274,7 @@ var WebRTC = function(role) {
             URL.revokeObjectURL(element.src);
         }
     }
+    
     webrtc.prototype.createPeerConnection = function(socketId) {
         var that = this,
         pc;
@@ -328,6 +334,7 @@ var WebRTC = function(role) {
         pc.createDataChannel('');
         return pc;
     }
+    
     webrtc.prototype.closePeerConnection = function(socketId){
         var pc;
         if(pc = this.peerConnections[socketId]){
@@ -336,16 +343,19 @@ var WebRTC = function(role) {
             this.connections.splice(this.connections.indexOf(socketId), 1);
         }
     }
+    
     webrtc.prototype.closePeerConnections = function(){
         var that = this;
         this.connections.forEach(function(socketId){
             that.closePeerConnection(socketId);
         });
     }
+    
     webrtc.prototype.closeSource = function(){
         this.localMediaStream && (this.localMediaStream = null);
         this.closePeerConnections();
     }
+    
     webrtc.prototype.removeVideoTrack = function(stream){
         var that = this;
         try{
@@ -363,6 +373,7 @@ var WebRTC = function(role) {
             }
         }
     }
+    
     webrtc.prototype.addVideoTrack = function(stream, videoStream){
         var that = this;
         try{
@@ -382,3 +393,5 @@ var WebRTC = function(role) {
 
     return new webrtc(role).initEvents();
 }
+
+export default WebRTC

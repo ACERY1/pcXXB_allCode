@@ -4,7 +4,7 @@
 			<p>00:05/55:00</p>
 		</div>
 		<div class="toolsBar-offClass">
-			<img src="../../../static/icons/live/offClass.png" alt="">
+			<img src="../../../static/icons/live/offClass.png" alt="" @click="offClass">
 		</div>
 		<div class="toolsBar-toolBtn">
 			<div class="toolsBar-toolBtn-item">
@@ -133,6 +133,9 @@
 				this._clearStatus()
 				this.$emit('clearCanvas')
 			},
+		  	offClass () {
+				this.$emit('offClass')
+			}
 
 		}
 	}
@@ -160,6 +163,7 @@
 		}
 		&-toolBtn {
 			right: 42%;
+
 			position: absolute;
 			@include rowBox();
 			&-item {
@@ -204,6 +208,7 @@
 
 	.toBox {
 		position: absolute;
+		z-index: 10;
 		display: flex;
 		flex-flow: column nowrap;
 		align-items: center;

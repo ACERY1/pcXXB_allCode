@@ -7,6 +7,10 @@
 		<div class="onClass-main">
 			<div class="onClass-main-box">
 				<canvas id="localCanvas"></canvas>
+				<canvas id="remoteCanvas"></canvas>
+				<div id="imgBox">
+					<img :src="images[pageCount]" alt="">
+				</div>
 			</div>
 			<div class="onClass-main-video">
 				<div class="onClass-main-video-item">
@@ -42,7 +46,8 @@
 			</div>
 		</div>
 		<tool-bar class="toolBar" @changeSize="changeSize" @changeColor="changeColor" @useEraser="useEraser"
-				  @cancelEraser="cancelEraser" @clearCanvas="clearCanvas" @addNewPage="addNewPage"></tool-bar>
+				  @cancelEraser="cancelEraser" @clearCanvas="clearCanvas" @addNewPage="addNewPage"
+				  @offClass="offClass"></tool-bar>
 	</div>
 </template>
 
@@ -59,7 +64,9 @@
 		import {XMediaStream} from '../../common/scripts/XmediaStream'
 		import {XAudioBox} from '../../common/scripts/XaudioBox'
 		import {XBoard} from '../../common/scripts/XBoard'
-		import {randomNum, countFn, setMediaStream} from '../../common/scripts/util'
+		import {randomNum, countFn, setMediaStream, getSession} from '../../common/scripts/util'
+		//		import mediaConnection from '../../../js/media-connection'
+		import mediaConnection from '../../common/scripts/mediaConnection'
 		export default {
 			name: "",
 			components: {
@@ -67,11 +74,19 @@
 			},
 			data () {
 				return {
+					courseId: null,
+					coursewareId: null,
+					lessonToken: null,
 					isShowMtBar: true,
 					signal1: 6,
 					signal2: 6,
 					localVideoURL: '',
-					localCanvas: null
+					remoteVideoURL: '',
+					localCanvas: null,
+					remoteCanvas: null,
+					images: [],
+					pageCount: 0 // 图片页数
+
 				}
 			},
 			props: {},
@@ -79,8 +94,39 @@
 			created () {
 			},
 			mounted () {
-
+				// init courseId
+				this.courseId = getSession('courseId_forClass');
+				// bind reDraw event
+				this.$ipc.on('redraw', () => {
+					this._reDraw();
+				})
+				// onClass
+				this._onClass()
+				// 实例化本地白板
 				this.localCanvas = new XBoard('localCanvas', $('#localCanvas'))
+				this.remoteCanvas = new XBoard('remoteCanvas', $('#remoteCanvas'))
+				// 教师配置
+				this.$api.teacherConfigure(this.courseId).then((res) => {
+					console.log(res)
+				})
+				// 查询平台
+				this.$api.videoPlatform(this.courseId, 'webrtc').then((res) => {
+					console.log(res)
+				})
+				// 查询课件id
+				this.$api.searchCourseware(this.courseId)
+				// 通过课件id查询课件内容
+				this.$api.previewCourseWare(this.coursewareId)
+				// 拿到上课token
+				this.$api.getLessonToken(this.courseId)
+
+
+//				mediaConnection();
+//				setInterval(() => {
+//					this._reDraw();
+//					console.log('redraw')
+//				}, 2000)
+
 //				let a = new XBoard('test', $('#test'))
 //				this.localCanvas.changeColor('blue')
 //				this.localCanvas.changeSize('S')
@@ -99,6 +145,11 @@
 ////					a.recompute($('#test'))
 //				}, 12000)
 
+
+			},
+			beforeDestroy(){
+				//
+				this._offClass()
 			},
 			methods: {
 				_showMtBar(){
@@ -109,6 +160,22 @@
 				},
 				_updateSignal2(val){
 					this.signal2 = val
+				},
+				// 重绘和重计算高度
+				_reDraw(){
+					this.remoteCanvas.recompute($('#remoteCanvas'))
+					this.localCanvas.recompute($('#localCanvas'))
+					this.localCanvas.drawData()
+					this.localCanvas.clearCanvasByPoints(this.localCanvas.clearPoints)
+
+				},
+				// 发送上课命令
+				_onClass (){
+					this.$ipc.send("onClass", true)
+				},
+				// 发送下课命令
+				_offClass () {
+					this.$ipc.send('onClass', false)
 				},
 				test (){
 					let t = new XMediaStream()
@@ -178,8 +245,12 @@
 				clearCanvas (){
 					this.localCanvas.clearAllCanvas()
 				},
-			  	addNewPage (){
-
+				addNewPage (){
+					console.log('添加新页')
+				},
+				offClass () {
+					console.log('下课')
+					window.history.go(-1)
 				}
 
 			}
@@ -214,7 +285,9 @@
 			@include rowBox();
 			height: 90vh;
 			&-box {
+				position: relative;
 				height: 100%;
+				z-index: 0;
 				/*background-color: #b3b3b3;*/
 				background: #ffffff;
 				width: 80%;
@@ -297,6 +370,21 @@
 	}
 
 	#localCanvas {
+		z-index: 1;
+		top: 0;
+		position: absolute;
 		@include wh(100%, 100%)
+	}
+
+	#remoteCanvas {
+		top: 0;
+		z-index: 0;
+		position: absolute;
+		@include wh(100%, 100%)
+	}
+
+	#imgBox {
+		top: 0;
+		position: absolute;
 	}
 </style>

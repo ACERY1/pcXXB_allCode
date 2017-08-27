@@ -90,12 +90,15 @@
 			}
 		},
 		created () {
-			// 清楚用来判断跳转路由的courseIdF
-			removeSession("temp_courseId")
-			removeSession("temp_courseWareId")
-		  	removeSession("didPPT")
+			// 清除用来判断跳转路由的courseId
+			removeSession("temp_courseId") // 为课程详情下的制作/查看课件的
+			removeSession("temp_courseWareId") // 为课程详情下的制作/查看课件的
+			removeSession("didPPT") // 判断是否做过ppt 为课程详情的
+			removeSession("courseInfo") // 为课程详情存储的session
+			removeSession("courseId_forClass") // 为上课页面存储的session
 		},
 		mounted () {
+			// 回归访问历史
 			let $test = $('.test')
 			$test.scrollTop(this.mountPoint)
 			$test.on('scroll', () => {

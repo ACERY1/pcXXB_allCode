@@ -39,7 +39,7 @@
 				verifyCode: '',
 
 				//用户名密码
-				userTel: '18292039753',
+				userTel: '15711370918',
 				password: '123456'
 			}
 		},

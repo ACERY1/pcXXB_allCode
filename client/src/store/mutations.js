@@ -14,7 +14,8 @@ import {
 	RECORD_IS_LOGOUT,
 	STORE_COURSE_LIST,
 	UPDATE_X_TOKEN,
-	UPDATE_COURSE_INFO
+	UPDATE_COURSE_INFO,
+	START_COUNT_TIME
 } from './mutation_types'
 
 export default {
@@ -91,5 +92,9 @@ export default {
 		state.courseInfo.school = data.school
 		state.courseInfo.subjectName = data.subjectName
 		state.courseInfo.avatar = data.profile_image_url
+	},
+	/*开始计时*/
+	[START_COUNT_TIME](state){
+		state.isCountingTime= true
 	}
 }

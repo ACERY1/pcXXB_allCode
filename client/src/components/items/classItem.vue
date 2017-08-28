@@ -166,6 +166,11 @@
 						this.$message({message: '你还未制作课件，请先制作课件', duration: 1500})
 						return;
 					}
+//					console.log(Math.round((this.courseInfo.begin_time - (+new Date())) / 60000))
+					if (Math.round((this.courseInfo.begin_time - (+new Date())) / 60000) > 15) {
+						this.$message({message: '请在开课前15分钟再进入课堂', duration: 1500})
+						return;
+					}
 					this.$store.commit('UN_SHOW_MENU')
 					this.$router.push('/static/onclass')
 					// ***** 这里有session！ ****

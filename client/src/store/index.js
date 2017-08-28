@@ -42,7 +42,8 @@ const state = {
 		gradeName:null,
 		subjectName:null,
 		avatar:null
-	}
+	},
+	isCountingTime:false
 }
 export default new Vuex.Store({
 	state,

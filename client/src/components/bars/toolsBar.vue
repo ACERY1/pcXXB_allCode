@@ -1,7 +1,8 @@
 <template>
 	<div class="toolsBar">
 		<div class="toolsBar-time">
-			<p>00:05/55:00</p>
+			<p v-if="!isCounting">00:00/55:00</p>
+			<p v-if="isCounting">{{countMin<=9?'0'+countMin:countMin}}:{{countSec<=9?'0'+countSec:countSec}}/55:00</p>
 		</div>
 		<div class="toolsBar-offClass">
 			<img src="../../../static/icons/live/offClass.png" alt="" @click="offClass">
@@ -50,10 +51,12 @@
 		<div class="toolsBar-addPaper" @click="addNewPage">
 			<img src="../../../static/icons/live/addNew.png" alt="">
 		</div>
+		<p v-if="false">{{counting}}</p>
 	</div>
 </template>
 
 <script>
+	import {countFn} from '../../common/scripts/util'
 	// 0红 1黑 2蓝 0粗 1中 2细
 	export default {
 		name: "",
@@ -67,7 +70,10 @@
 				isShowLine: false,
 				pickBool: [0, 0, 0],
 				pickBool2: [0, 0, 0],
-				isPickLine: false
+				isPickLine: false,
+				isCounting: false,
+				countMin: 0,
+				countSec: 0
 			}
 		},
 		props: {
@@ -84,10 +90,26 @@
 				}
 			},
 		},
-		computed: {},
+		computed: {
+			counting: {
+				get (){
+					console.log('get??')
+					if (this.$store.state.isCountingTime) {
+						this.countTime()
+					}
+				},
+				set (){
+					console.log('get??')
+					if (this.$store.state.isCountingTime) {
+						this.countTime()
+					}
+				}
+			}
+		},
 		created () {
 		},
 		mounted () {
+
 		},
 		methods: {
 			_clearStatus(){
@@ -148,6 +170,20 @@
 			},
 			offClass () {
 				this.$emit('offClass')
+			},
+			countTime(){
+				this.isCounting = true
+				countFn(55 * 60, 1000, () => {
+					if (this.countSec == 59) {
+						this.countMin++
+						this.countSec = 0
+					} else {
+						this.countSec++
+					}
+				}, () => {
+					this.$emit('timeUp')
+				})
+
 			}
 
 		}

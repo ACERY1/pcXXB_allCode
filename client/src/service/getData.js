@@ -284,13 +284,13 @@ const searchCourseware = (courseId) => {
 /**
  *
  * @param pagNum
- * @param htmlContent
- * @param pageType
  * @param coursewareId
  * @returns {Promise}
  */
-const insertPage = (pagNum, htmlContent, pageType, coursewareId) => {
-	return fetch('get', '/courseware/api/insertPage', {pagNum, htmlContent, pageType, coursewareId})
+const insertPage = (pagNum, coursewareId) => {
+	return fetch('get', '/courseware/api/insertPage', {
+		pagNum, htmlContent: '<i style="display:none;">??????</i>', pageType: -1, coursewareId
+	})
 }
 
 /**
@@ -313,9 +313,20 @@ const syncLessonMessage = (lessonToken) => {
 	return fetch('post', '/lesson/teacher/api/syncLessonMessage', {lessonToken})
 }
 
-
+/**
+ * 真 *开始上课
+ * @param lessonToken
+ * @returns {Promise}
+ */
 const startLesson = (lessonToken) => {
-	return fetch('post','/lesson/teacher/api/startLesson',{lessonToken})
+	return fetch('post', '/lesson/teacher/api/startLesson', {lessonToken})
+}
+
+/**
+ * 断点续上课
+ */
+const searchHistory = (lessonToken) => {
+	return fetch('post', '/lesson/teacher/api/history', {lessonToken})
 }
 
 
@@ -323,7 +334,8 @@ export {
 	login, getPrivilege, getSchedule, setSchedule, getCourseDetail, setNote, getCourseList, evaluateStudent,
 	getKnowledgeList, onCourse, logout, teacherFinishCourse, teacherConfigure, videoPlatform, getTeacherEvluateNew,
 	getCurrentCourse, saveTeacherEvluateNew, uploadReportImage, teacherReply, resetPassword, sendVerifyCode,
-	makeCourseWare, previewCourseWare, getToken, uploadPic, getLessonToken, insertPage, searchCourseware
+	makeCourseWare, previewCourseWare, getToken, uploadPic, getLessonToken, insertPage, searchCourseware,
+	syncLessonMessage, searchHistory, startLesson
 }
 
 

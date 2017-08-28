@@ -47,7 +47,8 @@
 		</div>
 		<tool-bar class="toolBar" @changeSize="changeSize" @changeColor="changeColor" @useEraser="useEraser"
 				  @cancelEraser="cancelEraser" @clearCanvas="clearCanvas" @addNewPage="addNewPage"
-				  @offClass="offClass"></tool-bar>
+				  @offClass="offClass" :nowPage="nowPage" :allPage="pageNum" @backPage="backPage"
+				  @forwardPage="forwardPage"></tool-bar>
 	</div>
 </template>
 
@@ -90,11 +91,19 @@
 					localCanvas: null,
 					remoteCanvas: null,
 					images: [],
-					pageCount: 0 // 图片页数
+					imagesObj: [],
+					pageCount: 0// 图片页数
 				}
 			},
 			props: {},
-			computed: {},
+			computed: {
+				pageNum (){
+					return this.images.length
+				},
+				nowPage (){
+					return this.pageCount + 1
+				}
+			},
 			created () {
 			},
 			mounted () {
@@ -109,28 +118,56 @@
 				// 实例化本地白板
 				this.localCanvas = new XBoard('localCanvas', $('#localCanvas'))
 				this.remoteCanvas = new XBoard('remoteCanvas', $('#remoteCanvas'))
-				// 教师配置
-				this.$api.teacherConfigure(this.courseId).then((res) => {
-					console.log(res)
-				})
+				//				// 教师配置
+				//				this.$api.teacherConfigure(this.courseId).then((res) => {
+				//					console.log(res)
+				//				})
+				let getData = async() => {
+					try {
+						await  this.$api.videoPlatform(this.courseId, 'webrtc')
+						let _coursewareId = await this.$api.searchCourseware(this.courseId)
+
+						//	获取课件id
+						this.coursewareId = _coursewareId.data.coursewareId
+						let _coursePics = await this.$api.previewCourseWare(this.coursewareId)
+
+						// 获取图片和课件详细信息
+						this.imagesObj = _coursePics.data.pageList
+						for (let item of this.imagesObj) {
+							this.images.push(item.imageUrl)
+						}
+
+						// 获取上课token
+						let _courseToken = await this.$api.getLessonToken(this.courseId)
+						this.lessonToken = _courseToken.data.result.lessonToken
+//						console.log(this.coursewareId, this.images, this.lessonToken)
+					} catch (err) {
+						console.error(err)
+					}
+
+				}
+
+				getData()
+
+
 				// 查询平台
-				this.$api.videoPlatform(this.courseId, 'webrtc').then((res) => {
-					console.log(res)
-				})
-				// 查询课件id
-				this.$api.searchCourseware(this.courseId).then((res) => {
-					console.log(res)
-				})
-				// 通过课件id查询课件内容
-				this.$api.previewCourseWare(this.coursewareId).then((res) => {
-					console.log(res)
-				})
-				// 拿到上课token
-				this.$api.getLessonToken(this.courseId).then((res) => {
+//				this.$api.videoPlatform(this.courseId, 'webrtc').then((res) => {
+//					console.log(res)
+//				})
+//				// 查询课件id
+//				this.$api.searchCourseware(this.courseId).then((res) => {
+//					console.log(res)
+//				})
+//				// 通过课件id查询课件内容
+//				this.$api.previewCourseWare(this.coursewareId).then((res) => {
+//					console.log(res)
+//				})
+//				// 拿到上课token
+//				this.$api.getLessonToken(this.courseId).then((res) => {
+//
+//				})
 
-				})
-
-				this.mediaConnection()
+//				this.mediaConnection()
 
 
 			},
@@ -198,7 +235,6 @@
 					webrtc.on("peer_stream", function (e) {
 						// 来自对方
 						var stream = e.stream;
-						console.log('s1')
 						console.log(stream.getAudioTracks());
 						console.log(stream.getVideoTracks());
 					});
@@ -220,6 +256,7 @@
 					})
 
 				},
+				// 测试封装的媒体流对象
 				test (){
 					let t = new XMediaStream()
 					try {
@@ -292,10 +329,18 @@
 					console.log('添加新页')
 				},
 				offClass () {
-					console.log('下课')
-					window.history.go(-1)
+//					console.log('下课')
+					this.$store.commit("UPDATE_COURSE_ID", this.courseId)
+					this.$router.push('/static/classInfo')
+				},
+				// 上一页
+				backPage (){
+					this.pageCount--
+				},
+				// 下一页
+				forwardPage (){
+					this.pageCount++
 				}
-
 			}
 		}
 </script>
@@ -429,5 +474,9 @@
 	#imgBox {
 		top: 0;
 		position: absolute;
+		@include wh(100%, 100%);
+		img {
+			@include wh(100%, 100%)
+		}
 	}
 </style>

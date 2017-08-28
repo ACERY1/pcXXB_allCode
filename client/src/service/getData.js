@@ -277,8 +277,8 @@ const getLessonToken = (courseId) => {
 /**
  * 查询课件
  */
-const searchCourseware = (courseId)=>{
-	return fetch('get','/courseware/api/searchCourseware',{courseId})
+const searchCourseware = (courseId) => {
+	return fetch('get', '/courseware/api/searchCourseware', {courseId})
 }
 
 /**
@@ -289,8 +289,8 @@ const searchCourseware = (courseId)=>{
  * @param coursewareId
  * @returns {Promise}
  */
-const insertPage = (pagNum,htmlContent,pageType,coursewareId) =>{
-	return fetch('get','/courseware/api/insertPage',{pagNum,htmlContent,pageType,coursewareId})
+const insertPage = (pagNum, htmlContent, pageType, coursewareId) => {
+	return fetch('get', '/courseware/api/insertPage', {pagNum, htmlContent, pageType, coursewareId})
 }
 
 /**
@@ -300,8 +300,8 @@ const insertPage = (pagNum,htmlContent,pageType,coursewareId) =>{
  * @param data
  * @returns {Promise}
  */
-const sendMessage = (lessonToken,cmd,data)=>{
-	return fetch('post','/lesson/teacher/api/sendMessage',{lessonToken,cmd,data})
+const sendMessage = (lessonToken, cmd, data) => {
+	return fetch('post', '/lesson/teacher/api/sendMessage', {lessonToken, cmd, data})
 }
 
 /**
@@ -309,8 +309,13 @@ const sendMessage = (lessonToken,cmd,data)=>{
  * @param lessonToken
  * @returns {Promise}
  */
-const syncLessonMessage = (lessonToken)=>{
-	return fetch('post','/lesson/teacher/api/syncLessonMessage',{lessonToken})
+const syncLessonMessage = (lessonToken) => {
+	return fetch('post', '/lesson/teacher/api/syncLessonMessage', {lessonToken})
+}
+
+
+const startLesson = (lessonToken) => {
+	return fetch('post','/lesson/teacher/api/startLesson',{lessonToken})
 }
 
 
@@ -318,7 +323,7 @@ export {
 	login, getPrivilege, getSchedule, setSchedule, getCourseDetail, setNote, getCourseList, evaluateStudent,
 	getKnowledgeList, onCourse, logout, teacherFinishCourse, teacherConfigure, videoPlatform, getTeacherEvluateNew,
 	getCurrentCourse, saveTeacherEvluateNew, uploadReportImage, teacherReply, resetPassword, sendVerifyCode,
-	makeCourseWare, previewCourseWare, getToken, uploadPic,getLessonToken,insertPage,searchCourseware
+	makeCourseWare, previewCourseWare, getToken, uploadPic, getLessonToken, insertPage, searchCourseware
 }
 
 

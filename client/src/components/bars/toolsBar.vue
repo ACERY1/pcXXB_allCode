@@ -60,8 +60,8 @@
 		components: {},
 		data () {
 			return {
-				nowPage: 1,
-				allPage: 1,
+//				nowPage: 1,
+//				allPage: 1,
 				isUseEraser: false,
 				isShowColor: false,
 				isShowLine: false,
@@ -70,7 +70,20 @@
 				isPickLine: false
 			}
 		},
-		props: {},
+		props: {
+			nowPage: {
+				type: Number,
+				default: () => {
+					return 1
+				}
+			},
+			allPage: {
+				type: Number,
+				default: () => {
+					return 1
+				}
+			},
+		},
 		computed: {},
 		created () {
 		},
@@ -83,17 +96,17 @@
 			},
 			back(){
 				if (this.nowPage != 1) {
-					this.nowPage--
+					this.$emit('backPage')
 				}
 			},
 			forward () {
 				if (this.nowPage != this.allPage) {
-					this.nowPage++
+					this.$emit('forwardPage')
 				}
 			},
 			addNewPage(){
-				this.allPage++
-			  	this.$emit('addNewPage')
+//				this.allPage++
+				this.$emit('addNewPage')
 			},
 			showColor(){
 				this.isShowLine = false
@@ -133,7 +146,7 @@
 				this._clearStatus()
 				this.$emit('clearCanvas')
 			},
-		  	offClass () {
+			offClass () {
 				this.$emit('offClass')
 			}
 

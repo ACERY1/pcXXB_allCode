@@ -21,11 +21,12 @@
 			<div class="onClass-main-video">
 				<div class="onClass-main-video-item">
 					<div class="videoBox">
+						<div class="videoMask"></div>
 						<video autoplay="autoplay" muted :src="remoteVideoURL" width="238" height="250"></video>
-						<img src="../../../static/icons/live/closeBtn.png" alt="" class="video_clsBtn">
+						<img src="../../../static/icons/live/closeBtn.png" alt="" class="video_clsBtn" @click="closeVideo(0)">
 					</div>
 					<div class="signalBar">
-						<span>周老师</span>
+						<span>{{studentName}}</span>
 						<img src="../../../static/icons/live/s1.png" alt="" v-if="signal1 === 1||signal1 === 0">
 						<img src="../../../static/icons/live/s2.png" alt="" v-if="signal1 === 2">
 						<img src="../../../static/icons/live/s3.png" alt="" v-if="signal1 === 3">
@@ -36,12 +37,13 @@
 				</div>
 				<div class="onClass-main-video-item">
 					<div class="videoBox">
+						<div class="videoMask"></div>
 						<video autoplay="autoplay" muted :src="localVideoURL" width="238" height="250"></video>
-						<img src="../../../static/icons/live/closeBtn.png" alt="" class="video_clsBtn">
+						<img src="../../../static/icons/live/closeBtn.png" alt="" class="video_clsBtn" @click="closeVideo(1)">
 					</div>
 					<div class="signalBar">
 
-						<span @click="test">我</span>
+						<span @click="test">{{teacherName}}</span>
 						<img src="../../../static/icons/live/s1.png" alt="" v-if="signal2 === 1 ||signal2 === 0">
 						<img src="../../../static/icons/live/s2.png" alt="" v-if="signal2 === 2">
 						<img src="../../../static/icons/live/s3.png" alt="" v-if="signal2 === 3">
@@ -75,7 +77,7 @@
 		import {computeVolume} from '../../common/scripts/util'
 		import  basicBtn from '../../components/buttons/basicButtons.vue'
 		import {
-			randomNum, countFn, setMediaStream, getSession, setSession, removeSession
+			randomNum, countFn, setMediaStream, getSession, setSession, removeSession, getStore
 		} from '../../common/scripts/util'
 		//		import mediaConnection from '../../../js/media-connection'
 		//		import mediaConnection from '../../common/scripts/mediaConnection'
@@ -110,7 +112,10 @@
 					images: [],
 					imagesObj: [],
 					pageCount: 0,// 图片页数
-					isOnClass: true
+					isOnClass: true,
+					studentIn: false, // 判断学生是否进来
+					teacherName: getStore('name'),
+					studentName: ''
 				}
 			},
 			props: {},
@@ -162,6 +167,14 @@
 				// 实例化本地白板
 				this.localCanvas = new XBoard('localCanvas', $('#localCanvas'))
 				this.remoteCanvas = new XBoard('remoteCanvas', $('#remoteCanvas'))
+
+				// 当前课程
+				this.$api.getCurrentCourse(this.courseId).then((res) => {
+					let _data = res.data
+					this.beginTime = _data.beginTime
+					this.studentName = _data.studentName
+				})
+
 				let getData = async() => {
 					try {
 						await  this.$api.videoPlatform(this.courseId, 'webrtc')
@@ -169,6 +182,7 @@
 
 						//	获取课件id
 						this.coursewareId = _coursewareId.data.coursewareId
+
 						let _coursePics = await this.$api.previewCourseWare(this.coursewareId)
 
 						// 获取图片和课件详细信息
@@ -190,20 +204,15 @@
 
 				getData()
 
-				// 当前课程
-				this.$api.getCurrentCourse(this.courseId).then((res) => {
-					let _data = res.data
-					this.beginTime = _data.beginTime
-					console.log(res)
-				})
 
-//				this.mediaConnection()
+				this.mediaConnection()
 
 
 			},
 			beforeDestroy(){
 				//
 				this._offClass()
+				this.clearStreams()
 			},
 			methods: {
 				_showMtBar(){
@@ -433,6 +442,25 @@
 				// 底部栏计时结束
 				timeCountDone (){
 					console.log('计时结束！！')
+				},
+				// 清除媒体流
+				clearStreams (){
+					this.localStreamObj.stopAll()
+					this.remoteStreamObj.stopAll()
+					this.localBox.stop()
+					this.remoteBox.stop()
+				},
+			  	// 上课一系列的命令
+			  	_sendMessage (cmd,data) {
+					return this.$api.sendMessage(this.lessonToken,cmd,data)
+				},
+			  	// 关闭视频信号
+			  	closeVideo(code){
+					if(code){
+						this.localStreamObj.stopAll()
+					}else {
+						this.remoStreamObj.stopAll()
+					}
 				}
 			}
 		}
@@ -584,5 +612,10 @@
 			position: absolute;
 			z-index: 2;
 		}
+	}
+	.videoMask{
+		position: absolute;
+		@include wh(100%,100%);
+		background: #00a2d4;
 	}
 </style>

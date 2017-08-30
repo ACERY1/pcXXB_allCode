@@ -39,6 +39,18 @@ function XBoard(DomId, canvasDom) {
 	this.tolerantRadious = 10 // blur clear
 	this.pointsData = []
 	
+	
+	// define callBack fn
+	this.writeFn = ()=>{
+		console.log('write')
+	}
+	this.eraserFn = ()=>{
+		console.log('eraser')
+	}
+	this.clearFn = ()=>{
+		console.log('clear')
+	}
+	
 	// bind events
 	let _bindEvents = () => {
 		let self = this;
@@ -88,6 +100,13 @@ function XBoard(DomId, canvasDom) {
 			}
 			
 			self.pointsData.push(_temp)
+			//	触发回调函数
+			if(self.isUsingEraser){
+				self.eraserFn(_temp)
+			}else{
+				self.writeFn(_temp)
+			}
+	
 			// console.log(self.pointsData)
 			self.ctx.closePath();
 		})
@@ -192,7 +211,8 @@ XBoard.prototype.clearAllCanvas = function () {
 	this.ctx.closePath()
 	this.ctx.clearRect(0, 0, this.width, this.height);
 	this.clearData()
-	
+	//TODO:以后加上
+	// this.clearFn()
 }
 
 
@@ -217,7 +237,7 @@ XBoard.prototype.clearAllCanvas = function () {
 
 
 /**
- * 使用橡皮
+ * 使用橡皮 TODO：橡皮的回调函数没写呢
  */
 XBoard.prototype.useEraser = function () {
 	this.isUsingEraser = true
@@ -470,6 +490,37 @@ XBoard.prototype.clearLine = function (points) {
 			points[i].x = points[i].x * this.scaleX
 			points[i].y = points[i].y * this.scaleY
 			
+		}
+	}
+}
+
+/**
+ * 绑定触发回调函数
+ */
+XBoard.prototype.bindCallBack = function (writeFn,clearFn ,eraserFn = ()=>{}) {
+	if(!writeFn||!clearFn){
+		console.error('XB:bindCallBack ERR ---- wrong params')
+		return false
+	}
+	
+	this.writeFn = writeFn
+	this.clearFn = clearFn
+	this.eraserFn = eraserFn
+}
+
+/**
+ * 通过外部传入的坐标数据进行绘制 data:[{cmd:'',data:{ size:'',point:'',color:''}}]
+ */
+
+XBoard.prototype.plotByOutPoints = function (dataArray) {
+	
+	for(let item of dataArray){
+		if(item.cmd == 'draw'){
+			let _data = JSON.parse(item.data)
+			this.drawLine(_data.color,_data.size,_data.point)
+		}
+		if(item.cmd == 'clear'){
+			// TODO: 下个版本加上
 		}
 	}
 }

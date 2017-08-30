@@ -214,6 +214,7 @@
 				}
 				this._clearStatus()
 				if (this.focus) {
+					this._getCourseList(1, 0, 1)
 					this._getCourseList(3, 0, 1)
 				} else {
 					this._getCourseList(2, 1, 1)
@@ -226,6 +227,7 @@
 				}
 				this.focus = 1
 				this._clearStatus()
+				this._getCourseList(1, 0, 1)
 				this._getCourseList(3, 0, 1)
 			},
 			//载入历史课程

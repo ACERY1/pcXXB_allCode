@@ -13,7 +13,7 @@
 		},
 		created(){
 		/*TODO:判断登录还是有问题 ps:现在解决了*/
-			if (getCookie("x_token") == null ||!getStore('name')) {
+			if (getCookie("x_token") == null ||getStore('name')=='请登录') {
 				this.$router.push('/static/login')
 			} else {
 		  /*TODO:根据session 里是否有temp_courseId 来判断是否是从制作课件跳转回来的*/
@@ -129,6 +129,27 @@
 			color: #ffffff !important;
 			font-size: 14px !important;
 		}
+	}
+
+	.el-message-box{
+
+	}
+
+	.el-message-box__headerbtn:focus .el-message-box__close, .el-message-box__headerbtn:hover .el-message-box__close{
+		color: $orange!important;
+	}
+
+	.el-message-box__headerbtn:focus .el-message-box__close, .el-message-box__headerbtn:hover .el-message-box__close{
+		color: #fff;
+		border-color: $orange!important;
+	}
+	.el-button:focus, .el-button:hover{
+		color: $border!important;
+		border-color: $orange!important;
+	}
+	.el-button--primary{
+		background-color:$orange!important;
+		border-color: $border!important;
 	}
 	@media screen  and (min-width: 1000px){
 		.el-dialog--full{

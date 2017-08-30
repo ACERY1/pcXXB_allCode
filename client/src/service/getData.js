@@ -335,7 +335,7 @@ export {
 	getKnowledgeList, onCourse, logout, teacherFinishCourse, teacherConfigure, videoPlatform, getTeacherEvluateNew,
 	getCurrentCourse, saveTeacherEvluateNew, uploadReportImage, teacherReply, resetPassword, sendVerifyCode,
 	makeCourseWare, previewCourseWare, getToken, uploadPic, getLessonToken, insertPage, searchCourseware,
-	syncLessonMessage, searchHistory, startLesson
+	syncLessonMessage, searchHistory, startLesson,sendMessage
 }
 
 

@@ -41,7 +41,9 @@
 </template>
 
 <script>
-	import {getCookie, removeAllStore, setUserInfoInLocal, removeAllSession, delCookie,getStore} from '../../common/scripts/util'
+	import {
+		getCookie, removeAllStore, setUserInfoInLocal, removeAllSession, delCookie, getStore, getSession
+	} from '../../common/scripts/util'
 	import confD from '../../components/dialogs/configDialog.vue'
 	export default {
 		name: "",
@@ -78,7 +80,7 @@
 				if (getCookie("x_token") == null || !getStore('name')) {
 					this.$router.push('/static/login')
 				} else {
-					this.$router.push('/static/main')
+//					this.$router.push('/static/main')
 				}
 			},
 			//设备检测*/
@@ -94,37 +96,51 @@
 			//退出登录*/
 			itemThree(){
 		  /*TODO: 这个地方已经完成了：既在STORE里保存登录状态，又在LocalStorage里面保存了*/
-				this.$store.commit('CLEAR_TEACHER_INFO') // 清除登录信息
-				this.$store.commit('RECORD_IS_LOGOUT') // 标记退出登录
-				setUserInfoInLocal({
-					age: '',
-					avatar: "../../../static/icons/topBar/indexPic.png",
-					gender: '',
-					mobile: "",
-					name: "请登录",
-					star: ''
-				}) //清空数据
 				this.$store.commit('UN_SHOW_MENU')
-				this.$api.logout().then((res) => {
-					let _data = res.data
-					if (_data.status) {
-						this.$message({
-							message: _data.msg,
-							duration: 1500
-						})
-					} else {
-						this.$message({
-							message: "再见！",
-							duration: 1200
-						})
-						setTimeout(() => {
-							removeAllStore()
-							removeAllSession()
-							this.goLogin()
-						}, 1500)
+				let logOut = () => {
+					this.$store.commit('CLEAR_TEACHER_INFO') // 清除登录信息
+					this.$store.commit('RECORD_IS_LOGOUT') // 标记退出登录
+					setUserInfoInLocal({
+						age: '',
+						avatar: "../../../static/icons/topBar/indexPic.png",
+						gender: '',
+						mobile: "",
+						name: "请登录",
+						star: ''
+					}) //清空数据
+					this.$store.commit('UN_SHOW_MENU')
+					this.$api.logout().then((res) => {
+						let _data = res.data
+						if (_data.status) {
+							this.$message({
+								message: _data.msg,
+								duration: 1500
+							})
+						} else {
 
-					}
-				})
+							this.$message({
+								message: "再见！",
+								duration: 1200
+							})
+							setTimeout(() => {
+								removeAllStore()
+								removeAllSession()
+								this.goLogin()
+							}, 1500)
+
+
+						}
+					})
+				}
+				if (this.$store.state.isCountingTime || getSession('courseId_forClass')) {
+					this._showMessageBox('正在上课，是否退出登录？', () => {
+						logOut()
+					}, () => {
+					})
+				} else {
+					logOut()
+				}
+
 			},
 			//显示菜单
 			showMenu(){
@@ -139,7 +155,42 @@
 				this.$ipc.send('maximize')
 			},
 			quit(){
-				this.$ipc.send('quitApp')
+//				console.log(this.$store.state.isCountingTime || getSession('courseId_forClass'))
+				this.$store.commit('UN_SHOW_MENU')
+				if (this.$store.state.isCountingTime || getSession('courseId_forClass')) {
+					this._showMessageBox('正在上课，是否退出学习宝教师端?', () => {
+						this.$message({
+							message: '再见'
+						});
+						setTimeout(() => {
+							this.$ipc.send('quitApp')
+						}, 1500)
+					}, () => {
+					})
+				} else {
+					this._showMessageBox('是否退出学习宝客户端', () => {
+						this.$message('正在上课，是否退出学习宝教师端?', {
+							message: '再见'
+						});
+						setTimeout(() => {
+							this.$ipc.send('quitApp')
+						}, 1500)
+					})
+//					this.$ipc.send('quitApp')
+				}
+
+			},
+			_showMessageBox(word, yesFn, noFn = () => {
+			}){
+				this.$confirm(word, '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
+				}).then(() => {
+					yesFn()
+				}).catch(() => {
+					noFn()
+				});
 			}
 		}
 	}

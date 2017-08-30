@@ -12,7 +12,7 @@
 				<div id="imgBox">
 					<img :src="images[pageCount]" alt="">
 				</div>
-				<div id="mask" v-if="isOnClass">
+				<div id="mask" v-if="!isOnClass">
 					<div class="btn">
 						<basic-btn :title="'上课'" :styles="'orange'" @click.native="onClass"></basic-btn>
 					</div>
@@ -21,9 +21,15 @@
 			<div class="onClass-main-video">
 				<div class="onClass-main-video-item">
 					<div class="videoBox">
-						<div class="videoMask"></div>
-						<video autoplay="autoplay" muted :src="remoteVideoURL" width="238" height="250"></video>
-						<img src="../../../static/icons/live/closeBtn.png" alt="" class="video_clsBtn" @click="closeVideo(0)">
+						<div class="videoMask" v-if="!isShowStudentVideo">
+							<p>已关闭，点击右上角打开</p>
+						</div>
+						<video autoplay="autoplay" :src="remoteVideoURL" width="238" height="250"></video>
+						<img src="../../../static/icons/live/closeBtn.png" alt="" class="video_clsBtn"
+							 @click="closeVideo(0)" v-if="isShowStudentVideo">
+						<img src="../../../static/icons/add_circle.png" alt="" class="video_clsBtn"
+							 @click="closeVideo(-1)" v-if="!isShowStudentVideo">
+						<p class="videoBox-word">无信号</p>
 					</div>
 					<div class="signalBar">
 						<span>{{studentName}}</span>
@@ -37,9 +43,15 @@
 				</div>
 				<div class="onClass-main-video-item">
 					<div class="videoBox">
-						<div class="videoMask"></div>
+						<div class="videoMask" v-if="!isShowTeacherVideo">
+							<p>已关闭，点击右上角打开</p>
+						</div>
 						<video autoplay="autoplay" muted :src="localVideoURL" width="238" height="250"></video>
-						<img src="../../../static/icons/live/closeBtn.png" alt="" class="video_clsBtn" @click="closeVideo(1)">
+						<img src="../../../static/icons/live/closeBtn.png" alt="" class="video_clsBtn"
+							 @click="closeVideo(1)" v-if="isShowTeacherVideo">
+						<img src="../../../static/icons/add_circle.png" alt="" class="video_clsBtn"
+							 @click="closeVideo(2)" v-if="!isShowTeacherVideo">
+						<p class="videoBox-word">无信号</p>
 					</div>
 					<div class="signalBar">
 
@@ -101,8 +113,8 @@
 					signal2: 6,
 					localVideoURL: '',
 					remoteVideoURL: '',
-					localStreamObj: {},
-					remoteStreamObj: {},
+					localStreamObj: null,
+					remoteStreamObj: null,
 					localAudio: {},
 					remoteAudio: {},
 					localCanvas: null,
@@ -112,10 +124,14 @@
 					images: [],
 					imagesObj: [],
 					pageCount: 0,// 图片页数
-					isOnClass: true,
+					isOnClass: false,
 					studentIn: false, // 判断学生是否进来
 					teacherName: getStore('name'),
-					studentName: ''
+					studentName: '',
+					isShowStudentVideo: true,
+					isShowTeacherVideo: true,
+					classDone: false,
+					pageIds: [],
 				}
 			},
 			props: {},
@@ -145,7 +161,7 @@
 
 					},
 					set (data){
-						console.log(data)
+//						console.log(data)
 						this.gapTime2 = data
 					}
 				}
@@ -168,6 +184,8 @@
 				this.localCanvas = new XBoard('localCanvas', $('#localCanvas'))
 				this.remoteCanvas = new XBoard('remoteCanvas', $('#remoteCanvas'))
 
+				// 白板绑定事件
+				this.localCanvas.bindCallBack(this._writeCanvas, this._clearCanvas, this._eraserCanvas)
 				// 当前课程
 				this.$api.getCurrentCourse(this.courseId).then((res) => {
 					let _data = res.data
@@ -187,15 +205,42 @@
 
 						// 获取图片和课件详细信息
 						this.imagesObj = _coursePics.data.pageList
+						// this.imagesObj.id
 						for (let item of this.imagesObj) {
 							this.images.push(item.imageUrl)
+							this.pageIds.push(item.id)
 						}
 
 						// 获取上课token
 						let _courseToken = await this.$api.getLessonToken(this.courseId)
+
 						this.lessonToken = _courseToken.data.result.lessonToken
+
+						// 轮询
+//						this._polling(25000)
+						this._polling()
+
+						// 断点上课
+						let historyData = await this.$api.searchHistory(this.lessonToken)
+						for (let item of this.pageIds) {
+							if (historyData.data.result.pageId == item) {
+								return;
+							}
+							if (historyData.data.result.student.length != 0) {
+								this._reDrawByPage(historyData.data.result.student)
+							} else if (historyData.data.result.teacher.length != 0) {
+								this._reDrawByPage(historyData.data.result.teacher)
+							} else {
+								this._reDrawByPage(historyData.data.result.student, historyData.data.result.teacher)
+							}
+							if (this.pageCount < this.images.length-1) {
+								this.pageCount++
+							}
+
+						}
+
 //						console.log(this.coursewareId, this.images, this.lessonToken)
-						this._polling(25000)
+
 					} catch (err) {
 						console.error(err)
 					}
@@ -213,6 +258,8 @@
 				//
 				this._offClass()
 				this.clearStreams()
+				clearInterval(getSession('interval_id'))
+				removeSession('interval_id')
 			},
 			methods: {
 				_showMtBar(){
@@ -245,16 +292,26 @@
 				// 发送上课请求
 				onClass (){
 //				  console.log(Math.round((this.beginTime - (+new Date())) / 60000))
+
+					// TODO:别注释业务判断
 					if (Math.round((this.beginTime - (+new Date())) / 60000) > 0) {
 						this.$message({message: '还未到上课时间', duration: 1500})
 						return false
 					}
+					if (!this.studentIn) {
+						this.$message({message: '学生还没进入教室', duration: 1500})
+						return false
+					}
+
+
 					console.log('发送上课请求')
 					this.$api.startLesson(this.lessonToken).then((res) => {
 						let _data = res.data
 						if (!_data.status) {
 							// 上课成功
-							this.$store.commit('START_COUNT_TIME')
+							this.isOnClass = true
+							this.$store.commit('START_COUNT_TIME') // 提交上课状态
+
 						} else {
 							this.$message({message: _data.msg, duration: 1500})
 						}
@@ -270,14 +327,47 @@
 				},
 				// 轮询
 				_polling (gapTime){
-					let that = this
-					if (gapTime < 5000 || !this.lessonToken) {
-						return;
-					}
-					let intervalId = setInterval(() => {
-						that.$api.syncLessonMessage(this.lessonToken)
-					}, gapTime)
-					setSession('interval_id', intervalId)
+//					let that = this
+//					if (gapTime < 5000 || !this.lessonToken) {
+//						return;
+//					}
+//					let intervalId = setInterval(() => {
+//						that.$api.syncLessonMessage(this.lessonToken)
+//					}, gapTime)
+//					setSession('interval_id', intervalId)
+					this.$api.syncLessonMessage(this.lessonToken).then((res) => {
+						if (!res.data.status) {
+							if (!res.data.result.msgs) {
+
+							} else {
+								if (res.data.result.msgs[0].cmd == 'draw') {
+//									this._reDrawByPage(res.data.result.msgs[0].data)
+								}
+								if (res.data.result.msgs[0].data == 'studentOut') {
+									this.$message({message: '学生已离开教室', duration: 1500})
+									this.studentIn = false
+								} else {
+									// 真小学生一样的接口
+									if (JSON.parse(res.data.result.msgs[0].data).studentIn) {
+										this.studentIn = true
+										this.$message({message: '学生已进入教室，可以开始上课了', duration: 1500})
+									}
+								}
+							}
+
+
+							this._polling()
+						} else {
+							console.error(res.data.msg)
+							if (res.data.status == '-102') {
+								this.$message({message: res.data.msg, duration: 1500})
+							}
+
+						}
+
+					}).catch((err) => {
+						console.log(err)
+					})
 				},
 				// 上课视频连接
 				mediaConnection () {
@@ -319,6 +409,7 @@
 						})
 						that.localStreamObj = localStreamObj
 						that.localVideoURL = window.URL.createObjectURL(localStreamObj.mediaStream)
+						that.isShowTeacherVideo = true
 					});
 
 					webrtc.on("peer_stream", function (e) {
@@ -334,6 +425,8 @@
 						})
 						that.remoStreamObj = remoteStreamObj
 						that.remoteVideoURL = window.URL.createObjectURL(remoteStreamObj.mediaStream)
+						that.isShowStudentVideo = true
+						that.studentIn = true
 					});
 
 
@@ -420,47 +513,173 @@
 					this.localCanvas.cancelEraser()
 				},
 				clearCanvas (){
-					this.localCanvas.clearAllCanvas()
+					this._clearCanvas().then(() => {
+						this.localCanvas.clearAllCanvas()
+					})
 				},
 				addNewPage (){
 					console.log('添加新页')
 				},
 				offClass () {
 //					console.log('下课')
-					this.$api.teacherFinishCourse(this.courseId)
-					this.$store.commit("UPDATE_COURSE_ID", this.courseId)
-					this.$router.push('/static/classInfo')
+					if (this.isOnClass) {
+						this._showMessageBox('未到下课时间，是否下课？', () => {
+							this.$api.teacherFinishCourse(this.courseId)
+							this.$store.commit("UPDATE_COURSE_ID", this.courseId)
+							removeSession('courseId_forClass')
+							this.$router.push('/static/classInfo')
+						})
+					} else {
+						removeSession('courseId_forClass')
+						this.$store.commit("UPDATE_COURSE_ID", this.courseId)
+						this.$router.push('/static/classInfo')
+					}
+
+//					if (!this.classDone) {
+//						this.$message({message: '未到下课时间', duration: 1500})
+//						return false
+//					}
+
 				},
 				// 上一页
 				backPage (){
-					this.pageCount--
+					let _temp = {
+						page: this.pageIds[this.pageCount - 1].toString(),
+						imageUrl: this.images[this.pageCount - 1]
+
+					}
+					this._sendMessage('page', JSON.stringify(_temp)).then((res) => {
+//						console.log(res.data)
+						if (this.pageCount == 0) {
+							return;
+						}
+//						console.log(res.data.result.pageHistory.teacher)
+//						console.log(res.data.result.pageHistory.student)
+						this._reDrawByPage(res.data.result.pageHistory.student, res.data.result.pageHistory.teacher)
+						this.pageCount--
+					})
+
+
 				},
 				// 下一页
 				forwardPage (){
-					this.pageCount++
+					let _temp = {
+						page: this.pageIds[this.pageCount + 1].toString(),
+						imageUrl: this.images[this.pageCount + 1]
+
+					}
+					this._sendMessage('page', JSON.stringify(_temp)).then((res) => {
+						if (!res.data.status) {
+							if (this.pageCount >= this.images.length) {
+								return;
+							}
+							this._reDrawByPage(res.data.result.pageHistory.student, res.data.result.pageHistory.teacher)
+//							this._reDrawByPage(res.data.result.pageHistory.teacher,res.data.result.pageHistory.student, )
+							this.pageCount++
+						} else {
+							console.error(res.data.msg)
+						}
+
+					})
 				},
 				// 底部栏计时结束
 				timeCountDone (){
 					console.log('计时结束！！')
+					if (!this.studentIn) {
+						this.$message({message: '学生旷课', duration: 1500})
+						this.$store.commit("UPDATE_COURSE_ID", this.courseId)
+						removeSession('courseId_forClass')
+						this.$router.push('/static/classInfo')
+						return false
+					}
+					this.$message({message: '可以下课了', duration: 1500})
+					this.classDone = true
 				},
 				// 清除媒体流
 				clearStreams (){
-					this.localStreamObj.stopAll()
-					this.remoteStreamObj.stopAll()
-					this.localBox.stop()
-					this.remoteBox.stop()
-				},
-			  	// 上课一系列的命令
-			  	_sendMessage (cmd,data) {
-					return this.$api.sendMessage(this.lessonToken,cmd,data)
-				},
-			  	// 关闭视频信号
-			  	closeVideo(code){
-					if(code){
+					if (this.localStreamObj) {
 						this.localStreamObj.stopAll()
-					}else {
-						this.remoStreamObj.stopAll()
 					}
+					if (this.remoteStreamObj) {
+						this.remoteStreamObj.stopAll()
+					}
+					if (this.localBox) {
+						this.localBox.stop()
+					}
+					if (this.remoteBox) {
+						this.remoteBox.stop()
+					}
+
+				},
+				// 上课一系列的命令
+				_sendMessage (cmd, data) {
+					// cmd clear page
+					return this.$api.sendMessage(this.lessonToken, cmd, data)
+
+				},
+				_writeCanvas (data){
+					this._sendMessage('draw', JSON.stringify(data.data))
+				},
+				_clearCanvas () {
+					let _data = {
+						role: 'teacher',
+						line: []
+					}
+					return this._sendMessage('clear', _data.toString())
+				},
+				_eraserCanvas () {
+					console.log('暂时没用')
+				},
+				// 关闭视频信号
+				closeVideo(code){
+					switch (code) {
+						case -1:
+//							if (!this.remoteStreamObj) {
+//								return;
+//							}
+							this.isShowStudentVideo = true;
+							break;
+						case 0:
+							this.isShowStudentVideo = false;
+							break;
+						case 1:
+							this.isShowTeacherVideo = false;
+							break;
+						case 2:
+//							if (!this.localStreamObj) {
+//								return;
+//							}
+							this.isShowTeacherVideo = true;
+							break;
+					}
+				},
+				_showMessageBox(word, yesFn, noFn = () => {
+				}){
+					this.$confirm(word, '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}).then(() => {
+						yesFn()
+					}).catch(() => {
+						noFn()
+					});
+				},
+				// 翻页导致的重绘
+				_reDrawByPage (student = [], teacher = []){
+//					console.log(student, teacher)
+					this.remoteCanvas.recompute($('#remoteCanvas'))
+					this.localCanvas.recompute($('#localCanvas'))
+					this.localCanvas.clearAllCanvas()
+					this.remoteCanvas.clearAllCanvas()
+					if (student.length != 0) {
+						this.remoteCanvas.plotByOutPoints(student)
+					}
+					if (teacher.length != 0) {
+						this.localCanvas.plotByOutPoints(teacher)
+					}
+
+
 				}
 			}
 		}
@@ -517,6 +736,11 @@
 					overflow: hidden;
 					.videoBox {
 						@include wh(100%, 100%);
+						&-word {
+							margin-top: -140px;
+							text-align: center;
+							@include fontSizeColor(12px, $fontClr_2nd)
+						}
 					}
 					.signalBar {
 						padding-top: 3px;
@@ -594,6 +818,7 @@
 
 	#imgBox {
 		top: 0;
+		z-index: -1;
 		position: absolute;
 		@include wh(100%, 100%);
 		img {
@@ -613,9 +838,12 @@
 			z-index: 2;
 		}
 	}
-	.videoMask{
+
+	.videoMask {
 		position: absolute;
-		@include wh(100%,100%);
-		background: #00a2d4;
+		@include wh(100%, 100%);
+		background: $bg_gry;
+		@include allMidBox();
+		@include fontSizeColor(12px, $fontClr_2nd)
 	}
 </style>

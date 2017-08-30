@@ -51,7 +51,7 @@
 		<div class="toolsBar-addPaper" @click="addNewPage">
 			<img src="../../../static/icons/live/addNew.png" alt="">
 		</div>
-		<p v-if="false">{{counting}}</p>
+		<p v-show="false">{{counting}}</p>
 	</div>
 </template>
 
@@ -93,16 +93,10 @@
 		computed: {
 			counting: {
 				get (){
-					console.log('get??')
 					if (this.$store.state.isCountingTime) {
 						this.countTime()
 					}
-				},
-				set (){
-					console.log('get??')
-					if (this.$store.state.isCountingTime) {
-						this.countTime()
-					}
+					return this.$store.state.isCountingTime
 				}
 			}
 		},

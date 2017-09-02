@@ -246,6 +246,7 @@
 			},
 			loadFn(){
 				if (this.focus) {
+					this._getCourseList(1, 0, 1)
 					this._getCourseList(3, 0, 1)
 				} else {
 					this._getCourseList(2, 1, 1)

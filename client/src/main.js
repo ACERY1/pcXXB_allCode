@@ -39,7 +39,7 @@ Vue.use(ElementUI)
 
 //配置路由
 const router = new VueRouter({
-	mode:'history',
+	// mode:'history',
 	routes
 })
 

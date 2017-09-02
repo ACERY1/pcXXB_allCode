@@ -33,7 +33,7 @@ function createWindow() {
 	mainWindow = new BrowserWindow(mainParams);
 	// mainWindow.setTitle("test")
 	// if (process.env.NODE_ENV === 'development') {
-	mainWindow.loadURL('http://localhost:2048/static/main');
+	mainWindow.loadURL('http://localhost:2048/static');
 	// mainWindow.webContents.openDevTools();
 	
 	// } else {

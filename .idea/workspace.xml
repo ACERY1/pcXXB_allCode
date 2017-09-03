@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4c2acc04-3018-4f83-9771-05818d63d65d" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/src/pages/class/onClass.vue" afterPath="$PROJECT_DIR$/client/src/pages/class/onClass.vue" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/src/pages/homepage.vue" afterPath="$PROJECT_DIR$/client/src/pages/homepage.vue" />
-    </list>
+    <list default="true" id="4c2acc04-3018-4f83-9771-05818d63d65d" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
     <ignored path="$PROJECT_DIR$/tmp/" />
@@ -38,7 +35,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="homepage.vue" pinned="false" current-in-tab="true">
+      <file leaf-file-name="homepage.vue" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/src/pages/homepage.vue">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="168">
@@ -55,6 +52,16 @@
                 <element signature="e#5393#5475#0" expanded="false" />
                 <element signature="e#5643#5820#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="topBar.vue" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/../pc_build_elec/client/src/components/bars/topBar.vue">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="514">
+              <caret line="173" column="27" lean-forward="false" selection-start-line="173" selection-start-column="27" selection-end-line="173" selection-end-column="27" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -110,6 +117,7 @@
       <find>focus</find>
       <find>poll</find>
       <find>loadCourse</find>
+      <find>confirm</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -129,6 +137,7 @@
         <option value="$PROJECT_DIR$/client/src/pages/class/onClass.vue" />
         <option value="$PROJECT_DIR$/../pc_build_elec/client/src/pages/class/onClass.vue" />
         <option value="$PROJECT_DIR$/../pc_build_elec/client/src/pages/homepage.vue" />
+        <option value="$PROJECT_DIR$/../pc_build_elec/client/src/components/bars/topBar.vue" />
       </list>
     </option>
   </component>
@@ -406,6 +415,62 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="XXB" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="XXB" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="pc_build_elec" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="components" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="XXB" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="XXB" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="pc_build_elec" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="components" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bars" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
       <pane id="Scope" />
@@ -490,12 +555,12 @@
       <option name="presentableId" value="Default" />
       <updated>1501745323074</updated>
       <workItem from="1501745325261" duration="2000" />
-      <workItem from="1504340353230" duration="7162000" />
+      <workItem from="1504340353230" duration="7417000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="7164000" />
+    <option name="totallyTimeSpent" value="7419000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="0" />
@@ -693,6 +758,14 @@
             <element signature="e#5393#5475#0" expanded="false" />
             <element signature="e#5643#5820#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../pc_build_elec/client/src/components/bars/topBar.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="514">
+          <caret line="173" column="27" lean-forward="false" selection-start-line="173" selection-start-column="27" selection-end-line="173" selection-end-column="27" />
+          <folding />
         </state>
       </provider>
     </entry>

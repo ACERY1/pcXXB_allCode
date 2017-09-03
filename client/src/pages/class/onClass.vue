@@ -326,7 +326,7 @@
 					console.log('下课')
 				},
 				// 轮询
-				_polling (gapTime){
+				_polling (){
 //					let that = this
 //					if (gapTime < 5000 || !this.lessonToken) {
 //						return;
@@ -335,17 +335,24 @@
 //						that.$api.syncLessonMessage(this.lessonToken)
 //					}, gapTime)
 //					setSession('interval_id', intervalId)
+				  	if(!getSession('courseId_forClass')){
+				  		// 停止轮询的标志
+				  		console.log('你已离开教室')
+				  		return false
+					}
+
 					this.$api.syncLessonMessage(this.lessonToken).then((res) => {
 						if (!res.data.status) {
 							if (!res.data.result.msgs) {
-
 							} else {
 								if (res.data.result.msgs[0].cmd == 'draw') {
+								  // 学生画画
 //									this._reDrawByPage(res.data.result.msgs[0].data)
 								}
 								if (res.data.result.msgs[0].data == 'studentOut') {
 									this.$message({message: '学生已离开教室', duration: 1500})
 									this.studentIn = false
+								  	return false
 								} else {
 									// 真小学生一样的接口
 									if (JSON.parse(res.data.result.msgs[0].data).studentIn) {
@@ -354,13 +361,12 @@
 									}
 								}
 							}
-
-
 							this._polling()
 						} else {
 							console.error(res.data.msg)
 							if (res.data.status == '-102') {
 								this.$message({message: res.data.msg, duration: 1500})
+							  	return false
 							}
 
 						}

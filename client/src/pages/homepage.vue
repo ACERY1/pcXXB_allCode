@@ -22,28 +22,19 @@
 	import classItem from '../components/items/classItem.vue'
 	import {loadMore, removeSession} from '../common/scripts/util'
 	export default {
-		name: "",
+		name: "homepage",
 		components: {
 			chooseBar,
 			classItem,
 		},
 		data () {
 			return {
-//				courseInfo: [],
 				busy: false, // 是否正在加载   动画显示处理
 				isQuery: false, // 是否正在请求 加锁处理
-
 				currentPageSize: 5, //当前页容量
 				historyPageSize: 6, //历史页容量
-
-
-//				currentPageIndex: 0,// 当前页索引
-//				historyPageIndex: 0,// 历史页索引
-
 				leftNone: false,// 没有更多了
 				loadingIcon: true, //显示loading
-
-//				focus: 1 // 1代表choose待上课程 0代表历史课程
 			}
 		},
 		props: {},
@@ -207,15 +198,20 @@
 				this.currentPageIndex = 0
 				this.historyPageIndex = 0
 			},
+			// 查询未上课程和正在上的课程
+			_queryCurrentCourse (){
+				this._getCourseList(1, 0, 1)
+				this._getCourseList(3, 0, 1)
+			},
 			// 刷新按钮事件
 			reFresh(){
+				// 1,0,1 : 正在上的课  3，0，1：待上课程 2，0，1
 				if (this.isQuery) {
 					return false
 				}
 				this._clearStatus()
 				if (this.focus) {
-					this._getCourseList(1, 0, 1)
-					this._getCourseList(3, 0, 1)
+					this._queryCurrentCourse()
 				} else {
 					this._getCourseList(2, 1, 1)
 				}
@@ -227,8 +223,7 @@
 				}
 				this.focus = 1
 				this._clearStatus()
-				this._getCourseList(1, 0, 1)
-				this._getCourseList(3, 0, 1)
+				this._queryCurrentCourse()
 			},
 			//载入历史课程
 			historyCourse(){
@@ -237,14 +232,15 @@
 				this._getCourseList(2, 1, 1)
 			},
 			//载入待上课程
-			loadCourse(){
-				this._getCourseList(3, 0, 1)
-			},
-			loadHistoryCourse(){
-				console.log(this.focus)
-				this._getCourseList(2, 1, 1)
-			},
+//			loadCourse(){
+//				this._getCourseList(3, 0, 1)
+//			},
+//			loadHistoryCourse(){
+//				this._getCourseList(2, 1, 1)
+//			},
+			// 懒加载函数
 			loadFn(){
+				// this.focus为1 为查询待上课程
 				if (this.focus) {
 					this._getCourseList(1, 0, 1)
 					this._getCourseList(3, 0, 1)

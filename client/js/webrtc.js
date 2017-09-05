@@ -13,6 +13,7 @@ var WebRTC = function(role) {
 
     // websocketServer = "ws://" + window.sessionStorage.getItem('temp_host') + "/media/websocket/ws",
     websocketServer = "ws://localhost:2048/media/websocket/ws",
+    // websocketServer = "ws://124.251.0.199:10002/media/websocket/ws",
 
     packetSize = 100,
     

@@ -24,7 +24,7 @@
 						<div class="videoMask" v-if="!isShowStudentVideo">
 							<p>已关闭，点击右上角打开</p>
 						</div>
-						<video autoplay="autoplay" :src="remoteVideoURL" width="238" height="250"></video>
+						<video autoplay="autoplay" :src="remoteVideoURL" width="238" height="250" id="remoteVideoURL"></video>
 						<img src="../../../static/icons/live/closeBtn.png" alt="" class="video_clsBtn"
 							 @click="closeVideo(0)" v-if="isShowStudentVideo">
 						<img src="../../../static/icons/add_circle.png" alt="" class="video_clsBtn"
@@ -46,7 +46,7 @@
 						<div class="videoMask" v-if="!isShowTeacherVideo">
 							<p>已关闭，点击右上角打开</p>
 						</div>
-						<video autoplay="autoplay" muted :src="localVideoURL" width="238" height="250"></video>
+						<video autoplay="autoplay" muted :src="localVideoURL" width="238" height="250" id="localVideo"></video>
 						<img src="../../../static/icons/live/closeBtn.png" alt="" class="video_clsBtn"
 							 @click="closeVideo(1)" v-if="isShowTeacherVideo">
 						<img src="../../../static/icons/add_circle.png" alt="" class="video_clsBtn"
@@ -250,7 +250,7 @@
 				getData()
 
 
-				this.mediaConnection()
+							this.mediaConnection()
 
 
 			},
@@ -335,10 +335,10 @@
 //						that.$api.syncLessonMessage(this.lessonToken)
 //					}, gapTime)
 //					setSession('interval_id', intervalId)
-				  	if(!getSession('courseId_forClass')){
-				  		// 停止轮询的标志
-				  		console.log('你已离开教室')
-				  		return false
+					if(!getSession('courseId_forClass')){
+						// 停止轮询的标志
+						console.log('你已离开教室')
+						return false
 					}
 
 					this.$api.syncLessonMessage(this.lessonToken).then((res) => {
@@ -346,13 +346,13 @@
 							if (!res.data.result.msgs) {
 							} else {
 								if (res.data.result.msgs[0].cmd == 'draw') {
-								  // 学生画画
+									// 学生画画
 //									this._reDrawByPage(res.data.result.msgs[0].data)
 								}
 								if (res.data.result.msgs[0].data == 'studentOut') {
 									this.$message({message: '学生已离开教室', duration: 1500})
 									this.studentIn = false
-								  	return false
+									return false
 								} else {
 									// 真小学生一样的接口
 									if (JSON.parse(res.data.result.msgs[0].data).studentIn) {
@@ -366,7 +366,7 @@
 							console.error(res.data.msg)
 							if (res.data.status == '-102') {
 								this.$message({message: res.data.msg, duration: 1500})
-							  	return false
+								return false
 							}
 
 						}
@@ -410,11 +410,12 @@
 						that.localBox.initBox()
 						that.localBox.loadStream(e.stream)
 						that.localBox.createDataArray(32)
-						that.localBox.outputData(() => {
+						that.localBox.outputData(()=>{
 							that.signal2 = computeVolume(that.localBox.dataArray, 300)
 						})
 						that.localStreamObj = localStreamObj
-						that.localVideoURL = window.URL.createObjectURL(localStreamObj.mediaStream)
+					  	console.log(localStreamObj.mediaStream)
+						document.getElementById('localVideo').srcObject =localStreamObj.mediaStream
 						that.isShowTeacherVideo = true
 					});
 
@@ -430,7 +431,7 @@
 							that.signal1 = computeVolume(that.remoteBox.dataArray, 300)
 						})
 						that.remoStreamObj = remoteStreamObj
-						that.remoteVideoURL = window.URL.createObjectURL(remoteStreamObj.mediaStream)
+					  	document.getElementById('remoteVideo').srcObject = remoteStreamObj.mediaStream
 						that.isShowStudentVideo = true
 						that.studentIn = true
 					});

@@ -7,9 +7,11 @@ module.exports = {
   entry: './src/main.js',
   output: {
     path: path.resolve(__dirname, './dist'),
-    publicPath: isPro ?
-			path.resolve(__dirname, './dist') : //发布引用路径
-			'/dist/',
+    // publicPath: isPro ?
+			// path.resolve(__dirname, './dist') : //发布引用路径
+			// '/dist/',
+		// publicPath: path.resolve(__dirname, './dist/'),
+		publicPath: isPro? './dist/' : '/dist/',
 		filename: 'build.js'
   },
   module: {
@@ -37,7 +39,7 @@ module.exports = {
         test: /\.(png|jpg|gif|svg)$/,
         loader: 'file-loader',
         options: {
-          name: '[name].[ext]?[hash]'
+          name: '[name].[ext]'
         }
       },
 			{

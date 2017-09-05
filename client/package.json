@@ -2,7 +2,7 @@
   "name": "xxb",
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server --inline --hot --port 2333",
-    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
+    "build": "NODE_ENV=production webpack  --progress "
   },
   "dependencies": {
     "axios": "^0.16.2",

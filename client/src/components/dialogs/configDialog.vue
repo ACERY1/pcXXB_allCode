@@ -23,14 +23,10 @@
 				<div class="setting-mic-choose">
 					<el-dropdown trigger="click">
       				<span class="el-dropdown-link">
-        				无麦克风设备<i class="el-icon-caret-bottom el-icon--right"></i>
+        				{{audioDevices[0]}}<i class="el-icon-caret-bottom el-icon--right"></i>
      				 </span>
 						<el-dropdown-menu>
-							<el-dropdown-item>黄金糕</el-dropdown-item>
-							<el-dropdown-item>狮子头</el-dropdown-item>
-							<el-dropdown-item>螺蛳粉</el-dropdown-item>
-							<el-dropdown-item>双皮奶</el-dropdown-item>
-							<el-dropdown-item>蚵仔煎</el-dropdown-item>
+							<el-dropdown-item v-for="i in audioDevices" key="i">{{i}}</el-dropdown-item>
 						</el-dropdown-menu>
 					</el-dropdown>
 				</div>
@@ -51,16 +47,12 @@
 					<el-slider v-model="voiceVal" class="slider"></el-slider>
 				</div>
 				<div class="setting-mic-choose">
-					<el-dropdown trigger="click">
+					<el-dropdown trigger="click" @command="changeVideo">
       				<span class="el-dropdown-link">
-        				无扬声器设备<i class="el-icon-caret-bottom el-icon--right"></i>
+        				默认<i class="el-icon-caret-bottom el-icon--right"></i>
      				 </span>
 						<el-dropdown-menu>
-							<el-dropdown-item>黄金糕</el-dropdown-item>
-							<el-dropdown-item>狮子头</el-dropdown-item>
-							<el-dropdown-item>螺蛳粉</el-dropdown-item>
-							<el-dropdown-item>双皮奶</el-dropdown-item>
-							<el-dropdown-item>蚵仔煎</el-dropdown-item>
+							<el-dropdown-item>默认</el-dropdown-item>
 						</el-dropdown-menu>
 					</el-dropdown>
 				</div>
@@ -69,19 +61,15 @@
 			<div class="setting-camera" v-if="focusItem === 'camera'">
 				<div class="videoBox">
 					<p>预览</p>
-					<video class="videoScreen" autoplay="autoplay" muted :src="videoURL"></video>
+					<video class="videoScreen" autoplay="autoplay" muted :src="videoURL" id="localVideo"></video>
 				</div>
 				<div class="setting-mic-choose">
-					<el-dropdown trigger="click">
+					<el-dropdown trigger="click" @command="changeVideo">
       				<span class="el-dropdown-link">
-        				无视频设备<i class="el-icon-caret-bottom el-icon--right"></i>
+        				{{videoDevices[0]}}<i class="el-icon-caret-bottom el-icon--right"></i>
      				 </span>
 						<el-dropdown-menu>
-							<el-dropdown-item>黄金糕</el-dropdown-item>
-							<el-dropdown-item>狮子头</el-dropdown-item>
-							<el-dropdown-item>螺蛳粉</el-dropdown-item>
-							<el-dropdown-item>双皮奶</el-dropdown-item>
-							<el-dropdown-item>蚵仔煎</el-dropdown-item>
+							<el-dropdown-item v-for="i in videoDevices" key="i">{{i}}</el-dropdown-item>
 						</el-dropdown-menu>
 					</el-dropdown>
 				</div>
@@ -122,7 +110,9 @@
 				audioContexts: [], //保存生成的音频盒子 用于最后清楚
 				animationId: '',
 				gainNode: '',
-				openCount: 0 //用于计数，防止多次setStream造成消耗
+				openCount: 0, //用于计数，防止多次setStream造成消耗
+				audioDevices: [], // 音频设备列表
+				videoDevices: [] // 视频设备列表
 			}
 		},
 		props: {
@@ -252,7 +242,15 @@
 				}
 				this._closeStream()
 				setMediaStream(false, true).then((stream) => {
-					this.videoURL = window.URL.createObjectURL(stream)
+//					this.videoURL = window.URL.createObjectURL(stream) // 注意： 该api已经废置
+					document.getElementById('localVideo').srcObject = stream
+					// 获取设备列表
+					this.videoDevices = []
+					for (let i of stream.getTracks()) {
+						if (i.kind == 'video') {
+							this.videoDevices.push(i.label)
+						}
+					}
 					this.videoStream = stream
 					this.mediaStreams.push(stream)
 					this.openCount++
@@ -267,7 +265,16 @@
 				this._closeStream()
 				setMediaStream(true, false).then((stream) => {
 					this.audioStream = stream
-					this.audioURL = window.URL.createObjectURL(stream)
+//					this.audioURL = window.URL.createObjectURL(stream) 注意：该api废置
+					document.getElementById('micAudio').srcObject = stream
+
+					// 获取设备列表
+					this.audioDevices = []
+					for (let i of stream.getTracks()) {
+						if (i.kind == 'audio') {
+							this.audioDevices.push(i.label)
+						}
+					}
 					this.mediaStreams.push(stream)
 					let audio = outputAudioData(stream, 32)
 
@@ -299,6 +306,16 @@
 				this._closeStream()
 				console.log()
 				this.openCount++
+			},
+			// 更换视频设备
+			changeVideo (){
+				// 接口没写
+				console.log('更换视频')
+			},
+			// 更换音频设备
+			changeAudio (){
+				// 接口没写
+				console.log('更换音频')
 			}
 		}
 	}

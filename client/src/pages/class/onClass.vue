@@ -10,7 +10,7 @@
 				<canvas id="localCanvas"></canvas>
 				<canvas id="remoteCanvas"></canvas>
 				<div id="imgBox">
-					<img :src="images[pageCount]" alt="">
+					<img :src="images[pageCount-1]" alt="">
 				</div>
 				<div id="mask" v-if="!isOnClass">
 					<div class="btn">
@@ -24,7 +24,8 @@
 						<div class="videoMask" v-if="!isShowStudentVideo">
 							<p>已关闭，点击右上角打开</p>
 						</div>
-						<video autoplay="autoplay" :src="remoteVideoURL" width="238" height="250" id="remoteVideoURL"></video>
+						<video autoplay="autoplay" :src="remoteVideoURL" width="238" height="250"
+							   id="remoteVideoURL"></video>
 						<img src="../../../static/icons/live/closeBtn.png" alt="" class="video_clsBtn"
 							 @click="closeVideo(0)" v-if="isShowStudentVideo">
 						<img src="../../../static/icons/add_circle.png" alt="" class="video_clsBtn"
@@ -46,7 +47,8 @@
 						<div class="videoMask" v-if="!isShowTeacherVideo">
 							<p>已关闭，点击右上角打开</p>
 						</div>
-						<video autoplay="autoplay" muted :src="localVideoURL" width="238" height="250" id="localVideo"></video>
+						<video autoplay="autoplay" muted :src="localVideoURL" width="238" height="250"
+							   id="localVideo"></video>
 						<img src="../../../static/icons/live/closeBtn.png" alt="" class="video_clsBtn"
 							 @click="closeVideo(1)" v-if="isShowTeacherVideo">
 						<img src="../../../static/icons/add_circle.png" alt="" class="video_clsBtn"
@@ -123,7 +125,7 @@
 					remoteBox: null,
 					images: [],
 					imagesObj: [],
-					pageCount: 0,// 图片页数
+					pageCount: 1,// 图片页数
 					isOnClass: false,
 					studentIn: false, // 判断学生是否进来
 					teacherName: getStore('name'),
@@ -140,7 +142,7 @@
 					return this.images.length
 				},
 				nowPage (){
-					return this.pageCount + 1
+					return this.pageCount
 				},
 				gapTime: {
 					get (){
@@ -233,7 +235,7 @@
 							} else {
 								this._reDrawByPage(historyData.data.result.student, historyData.data.result.teacher)
 							}
-							if (this.pageCount < this.images.length-1) {
+							if (this.pageCount < this.images.length) {
 								this.pageCount++
 							}
 
@@ -250,7 +252,7 @@
 				getData()
 
 
-							this.mediaConnection()
+				this.mediaConnection()
 
 
 			},
@@ -258,6 +260,8 @@
 				//
 				this._offClass()
 				this.clearStreams()
+//				this.localBox.stop()
+//				this.remoteBox.stop()
 				clearInterval(getSession('interval_id'))
 				removeSession('interval_id')
 			},
@@ -335,7 +339,7 @@
 //						that.$api.syncLessonMessage(this.lessonToken)
 //					}, gapTime)
 //					setSession('interval_id', intervalId)
-					if(!getSession('courseId_forClass')){
+					if (!getSession('courseId_forClass')) {
 						// 停止轮询的标志
 						console.log('你已离开教室')
 						return false
@@ -410,12 +414,12 @@
 						that.localBox.initBox()
 						that.localBox.loadStream(e.stream)
 						that.localBox.createDataArray(32)
-						that.localBox.outputData(()=>{
+						that.localBox.outputData(() => {
 							that.signal2 = computeVolume(that.localBox.dataArray, 300)
 						})
 						that.localStreamObj = localStreamObj
-					  	console.log(localStreamObj.mediaStream)
-						document.getElementById('localVideo').srcObject =localStreamObj.mediaStream
+						console.log(localStreamObj.mediaStream)
+						document.getElementById('localVideo').srcObject = localStreamObj.mediaStream
 						that.isShowTeacherVideo = true
 					});
 
@@ -431,7 +435,7 @@
 							that.signal1 = computeVolume(that.remoteBox.dataArray, 300)
 						})
 						that.remoStreamObj = remoteStreamObj
-					  	document.getElementById('remoteVideo').srcObject = remoteStreamObj.mediaStream
+						document.getElementById('remoteVideoURL').srcObject = remoteStreamObj.mediaStream
 						that.isShowStudentVideo = true
 						that.studentIn = true
 					});
@@ -557,7 +561,7 @@
 					}
 					this._sendMessage('page', JSON.stringify(_temp)).then((res) => {
 //						console.log(res.data)
-						if (this.pageCount == 0) {
+						if (this.pageCount == 1) {
 							return;
 						}
 //						console.log(res.data.result.pageHistory.teacher)
@@ -571,8 +575,8 @@
 				// 下一页
 				forwardPage (){
 					let _temp = {
-						page: this.pageIds[this.pageCount + 1].toString(),
-						imageUrl: this.images[this.pageCount + 1]
+						page: this.pageIds[this.pageCount].toString(),
+						imageUrl: this.images[this.pageCount]
 
 					}
 					this._sendMessage('page', JSON.stringify(_temp)).then((res) => {

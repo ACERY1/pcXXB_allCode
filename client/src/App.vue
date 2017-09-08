@@ -76,6 +76,13 @@
 		height: 500px;
 	}
 
+	.el-loading-spinner .path{
+		stroke:$orange!important;
+	}
+	.el-loading-spinner .el-loading-text{
+		color: $orange!important;
+	}
+
 	#app {
 		height: 100%;
 	}

@@ -142,7 +142,7 @@
 					}
 				},
 				courseWareText(){
-					if (this.courseInfo.courseware_id == '0' && this.courseInfo.status != 1 && this.courseInfo.status != 0) {
+					if (this.courseInfo.courseware_id == '0' && (this.courseInfo.status == 1 || this.courseInfo.status == 3)) {
 						return "(课件未制作)"
 					}
 				}

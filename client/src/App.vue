@@ -12,12 +12,30 @@
 			return {}
 		},
 		created(){
+
+
+
+			// 判断客户端
+			if (navigator.userAgent.indexOf("Electron") != -1) {
+				// for Electron
+				this.$store.commit("UPDATE_USER_AGENT", "native")
+			} else {
+				// for web
+				this.$store.commit("UPDATE_USER_AGENT", "web")
+			}
+
+			let usrAgent = this.$store.state.userAgent
+
+		  	console.log('nowAgent: '+usrAgent+"\n")
+
+
 		/*TODO:判断登录还是有问题 ps:现在解决了*/
-			if (getCookie("x_token") == null || getStore('name') == '请登录') {
+			if ((getStore('x_token') == null && usrAgent == "native") || (getCookie("x_token") == null && usrAgent == "web") || getStore('name') == '请登录') {
 				this.$router.push('/static/login')
 			} else {
 		  /*TODO:根据session 里是否有temp_courseId 来判断是否是从制作课件跳转回来的*/
 				if (getSession("temp_courseId") != null) {
+					console.log('get')
 					this.$router.push('/static/classInfo')
 					return;
 				}
@@ -32,6 +50,8 @@
 				}
 
 			}
+
+
 			window.onkeydown = (e) => {
 				if (e.code == 'Escape') {
 					this.$ipc.send('esc')

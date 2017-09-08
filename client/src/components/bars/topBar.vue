@@ -42,7 +42,7 @@
 
 <script>
 	import {
-		getCookie, removeAllStore, setUserInfoInLocal, removeAllSession, delCookie, getStore, getSession
+		getCookie, removeAllStore, setUserInfoInLocal, removeAllSession, delCookie, getStore, getSession, removeStore
 	} from '../../common/scripts/util'
 	import confD from '../../components/dialogs/configDialog.vue'
 	export default {
@@ -102,12 +102,16 @@
 					this.$store.commit('RECORD_IS_LOGOUT') // 标记退出登录
 					setUserInfoInLocal({
 						age: '',
-						avatar: "../../../static/icons/topBar/indexPic.png",
+						avatar: "./dist/indexPic.png",
 						gender: '',
 						mobile: "",
 						name: "请登录",
 						star: ''
 					}) //清空数据
+					if (this.$store.state.userAgent == 'native') {
+					  	// 客户端清除token store
+						removeStore("x_token")
+					}
 					this.$store.commit('UN_SHOW_MENU')
 					this.$api.logout().then((res) => {
 						let _data = res.data

@@ -15,7 +15,8 @@ import {
 	STORE_COURSE_LIST,
 	UPDATE_X_TOKEN,
 	UPDATE_COURSE_INFO,
-	START_COUNT_TIME
+	START_COUNT_TIME,
+	UPDATE_USER_AGENT
 } from './mutation_types'
 
 export default {
@@ -96,5 +97,9 @@ export default {
 	/*开始计时*/
 	[START_COUNT_TIME](state){
 		state.isCountingTime= true
+	},
+	/*更新用户客户端型号*/
+	[UPDATE_USER_AGENT](state,userAgent){
+		state.userAgent = userAgent
 	}
 }

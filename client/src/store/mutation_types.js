@@ -15,3 +15,4 @@ export const STORE_COURSE_LIST = 'STORE_COURSE_LIST' // 保存加载过的清单
 export const UPDATE_X_TOKEN = 'UPDATE_X_TOKEN' // 存Token
 export const UPDATE_COURSE_INFO = 'UPDATE_COURSE_INFO' // 存课程信息（填写报告页面）
 export const START_COUNT_TIME = 'START_COUNT_TIME' // 开始计时
+export const UPDATE_USER_AGENT = 'UPDATE_USER_AGENT' // 更新客户端型号

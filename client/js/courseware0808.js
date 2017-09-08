@@ -1798,7 +1798,7 @@ $("#ppt-content").load(function () {
 					}
 					else {
 						/*TODO:跳转*/
-						history.go(-1);
+						window.history.go(-1);
 					}
 					// location.reload();
 					// window.location.replace('/index.html#/courseMessage/List/1');
@@ -1991,7 +1991,7 @@ $("#ppt-content").load(function () {
 						var data = JSON.parse(data);
 						if (data.status == 0) {
 							if (!async) {
-								history.go(-1);
+							window.history.go(-1);
 							}
 						}
 					}

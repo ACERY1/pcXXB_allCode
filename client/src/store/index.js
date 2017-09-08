@@ -43,7 +43,8 @@ const state = {
 		subjectName:null,
 		avatar:null
 	},
-	isCountingTime:false
+	isCountingTime:false, // 判断是否几十
+	userAgent:null
 }
 export default new Vuex.Store({
 	state,

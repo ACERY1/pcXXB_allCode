@@ -92,12 +92,16 @@
 				}
 
 				this.$api.login(this.userTel, this.password).then((res) => {
-					console.log(`Login Request code ${res.status}`)
+//					console.log(`Login Request code ${res.status}`)
 					let _data = res.data
 					if (_data.status == '0') {
 						//登录成功*/
 						//教师端 15711370918 123456
 						setUserInfoInLocal(_data.teacherInfo) // 在本地保存用户数据
+						if (this.$store.state.userAgent == 'native') {
+						  	// 客户端存储store
+							setStore('x_token', _data.x_token)
+						}
 						this.$store.commit('RECORD_TEACHER_INFO', _data.teacherInfo) // 保存数据
 						this.$store.commit('UPDATE_X_TOKEN', _data.x_token); // 保存x_token
 						this.$store.commit('RECORD_IS_LOGIN') // 提交登录状态
@@ -137,7 +141,7 @@
 					let _data = res.data
 					if (_data.status == 0) {
 						this.$message({message: "重置成功", type: 'error', duration: 1000})
-					  	this.switchToGetPwd = !this.switchToGetPwd
+						this.switchToGetPwd = !this.switchToGetPwd
 					} else {
 						this.$message({message: _data.msg, type: 'error', duration: 1000})
 					}

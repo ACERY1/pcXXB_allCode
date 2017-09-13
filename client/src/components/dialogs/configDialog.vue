@@ -98,7 +98,7 @@
 				videoStream: '', // 保存视频流对象
 				audioURL: '', // 麦克风音频流入口
 				audioStream: '', //麦克风音频流对象
-				voiceURL: '../../../static/audios/demo.mov', // 样本音频路径
+				voiceURL: './dist/demo.mov', // 样本音频路径
 				audioObj: null, // 用于保存扬声器设置下建立的音频对象
 				isPlayVoice: false, //是否正在播放音频
 				temp_micVal: 0, // 麦克风音量进度条(0-100) 中间数据

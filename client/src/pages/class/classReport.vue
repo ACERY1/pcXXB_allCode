@@ -434,6 +434,7 @@
 					return;
 				}
 				fr.readAsDataURL(file)
+
 				fr.onload = (e) => {
 					// 拿到base64字符串
 					let base64 = e.target.result.split(',')[1];

@@ -1,3 +1,5 @@
+import {wsURL} from '../src/config/baseURL'
+
 var WebRTC = function(role) {
     var PeerConnection = (window.PeerConnection || window.webkitPeerConnection00 || window.webkitRTCPeerConnection || window.mozRTCPeerConnection),
 
@@ -10,10 +12,8 @@ var WebRTC = function(role) {
     nativeRTCSessionDescription = (window.mozRTCSessionDescription || window.RTCSessionDescription), // order is very important: "RTCSessionDescription" defined in Nighly but useless
 
     moz = !!navigator.mozGetUserMedia,
-
-    // websocketServer = "ws://" + window.sessionStorage.getItem('temp_host') + "/media/websocket/ws",
-    websocketServer = "ws://localhost:2048/media/websocket/ws",
-    // websocketServer = "ws://124.251.0.199:10002/media/websocket/ws",
+      
+    websocketServer = `${wsURL}/media/websocket/ws`, // 正式环境域名版
 
     packetSize = 100,
     

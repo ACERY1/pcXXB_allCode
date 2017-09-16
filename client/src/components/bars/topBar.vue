@@ -109,7 +109,7 @@
 						star: ''
 					}) //清空数据
 					if (this.$store.state.userAgent == 'native') {
-					  	// 客户端清除token store
+						// 客户端清除token store
 						removeStore("x_token")
 					}
 					this.$store.commit('UN_SHOW_MENU')
@@ -173,9 +173,7 @@
 					})
 				} else {
 					this._showMessageBox('是否退出学习宝客户端', () => {
-						this.$message('正在上课，是否退出学习宝教师端?', {
-							message: '再见'
-						});
+						this.$message("再见");
 						setTimeout(() => {
 							this.$ipc.send('quitApp')
 						}, 1500)

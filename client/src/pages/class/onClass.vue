@@ -24,7 +24,8 @@
 						<div class="videoMask" v-if="!isShowStudentVideo">
 							<p>已关闭，点击右上角打开</p>
 						</div>
-						<video autoplay="autoplay" :src="remoteVideoURL" width="238" height="250" id="remoteVideoURL"></video>
+						<video autoplay="autoplay" :src="remoteVideoURL" width="238" height="250"
+							   id="remoteVideoURL"></video>
 						<img src="../../../static/icons/live/closeBtn.png" alt="" class="video_clsBtn"
 							 @click="closeVideo(0)" v-if="isShowStudentVideo">
 						<img src="../../../static/icons/add_circle.png" alt="" class="video_clsBtn"
@@ -46,7 +47,8 @@
 						<div class="videoMask" v-if="!isShowTeacherVideo">
 							<p>已关闭，点击右上角打开</p>
 						</div>
-						<video autoplay="autoplay" muted :src="localVideoURL" width="238" height="250" id="localVideo"></video>
+						<video autoplay="autoplay" muted :src="localVideoURL" width="238" height="250"
+							   id="localVideo"></video>
 						<img src="../../../static/icons/live/closeBtn.png" alt="" class="video_clsBtn"
 							 @click="closeVideo(1)" v-if="isShowTeacherVideo">
 						<img src="../../../static/icons/add_circle.png" alt="" class="video_clsBtn"
@@ -69,7 +71,7 @@
 		<tool-bar class="toolBar" @changeSize="changeSize" @changeColor="changeColor" @useEraser="useEraser"
 				  @cancelEraser="cancelEraser" @clearCanvas="clearCanvas" @addNewPage="addNewPage"
 				  @offClass="offClass" :nowPage="nowPage" :allPage="pageNum" @backPage="backPage"
-				  @forwardPage="forwardPage" @timeUp="timeCountDone" ></tool-bar>
+				  @forwardPage="forwardPage" @timeUp="timeCountDone"></tool-bar>
 	</div>
 </template>
 
@@ -140,6 +142,7 @@
 					return this.images.length
 				},
 				nowPage (){
+//					console.log("计算自增")
 					return this.pageCount + 1
 				},
 				gapTime: {
@@ -223,6 +226,10 @@
 						// 断点上课
 						let historyData = await this.$api.searchHistory(this.lessonToken)
 						for (let item of this.pageIds) {
+							if (this.pageCount < this.images.length&&historyData.data.result.pageId!=undefined&&historyData.data.result.pageId != item) {
+//								console.log("断点上课自增")
+								this.pageCount++
+							}
 							if (historyData.data.result.pageId == item) {
 								return;
 							}
@@ -233,10 +240,8 @@
 							} else {
 								this._reDrawByPage(historyData.data.result.student, historyData.data.result.teacher)
 							}
-							if (this.pageCount < this.images.length ) {
-								this.pageCount++
-							}
-
+//							console.log(historyData.data)
+//							console.log(this.images)
 						}
 
 //						console.log(this.coursewareId, this.images, this.lessonToken)
@@ -250,7 +255,7 @@
 				getData()
 
 
-							this.mediaConnection()
+				this.mediaConnection()
 
 
 			},
@@ -286,7 +291,7 @@
 				},
 				// 发送上课命令
 				_onClass (){
-					console.log('上课')
+//					console.log('上课')
 					this.$ipc.send("onClass", true)
 				},
 				// 发送上课请求
@@ -335,7 +340,7 @@
 //						that.$api.syncLessonMessage(this.lessonToken)
 //					}, gapTime)
 //					setSession('interval_id', intervalId)
-					if(!getSession('courseId_forClass')){
+					if (!getSession('courseId_forClass')) {
 						// 停止轮询的标志
 						console.log('你已离开教室')
 						return false
@@ -407,12 +412,12 @@
 						that.localBox.initBox()
 						that.localBox.loadStream(e.stream)
 						that.localBox.createDataArray(32)
-						that.localBox.outputData(()=>{
+						that.localBox.outputData(() => {
 							that.signal2 = computeVolume(that.localBox.dataArray, 300)
 						})
 						that.localStreamObj = localStreamObj
-					  	console.log(localStreamObj.mediaStream)
-						document.getElementById('localVideo').srcObject =localStreamObj.mediaStream
+						console.log(localStreamObj.mediaStream)
+						document.getElementById('localVideo').srcObject = localStreamObj.mediaStream
 						that.isShowTeacherVideo = true
 					});
 					webrtc.on("peer_stream", function (e) {
@@ -427,7 +432,7 @@
 							that.signal1 = computeVolume(that.remoteBox.dataArray, 300)
 						})
 						that.remoStreamObj = remoteStreamObj
-					  	document.getElementById('remoteVideoURL').srcObject = remoteStreamObj.mediaStream
+						document.getElementById('remoteVideoURL').srcObject = remoteStreamObj.mediaStream
 						that.isShowStudentVideo = true
 						that.studentIn = true
 					});
@@ -519,7 +524,7 @@
 					})
 				},
 				addNewPage (){
-					this.$message({message:"暂时未开放的功能",duration:1500})
+					this.$message({message: "暂时未开放的功能", duration: 1500})
 					console.log('添加新页')
 				},
 				offClass () {
@@ -578,6 +583,7 @@
 							this._reDrawByPage(res.data.result.pageHistory.student, res.data.result.pageHistory.teacher)
 //							this._reDrawByPage(res.data.result.pageHistory.teacher,res.data.result.pageHistory.student, )
 							this.pageCount++
+							console.log("下一页自增")
 						} else {
 							console.error(res.data.msg)
 						}

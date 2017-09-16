@@ -5,7 +5,7 @@
 </template>
 
 <script>
-	import {getCookie, getSession, getStore} from './common/scripts/util'
+	import {getCookie, getSession, getStore,setStore} from './common/scripts/util'
 	export default {
 		name: 'app',
 		data () {
@@ -13,7 +13,8 @@
 		},
 		created(){
 
-
+			console.log("file URL:"+window.location.href.split('#')[0])
+		  	setStore("filePath",window.location.href.split('#')[0])
 
 			// 判断客户端
 			if (navigator.userAgent.indexOf("Electron") != -1) {

@@ -31,6 +31,9 @@ Vue.use({
 		//添加实例方法
 		Vue.prototype.$ipc = global.ipcRenderer || {}; // emit event to .ipcMain
 		Vue.prototype.$remoteApi = global.remoteApi;
+		Vue.prototype.$desktopCapturer=global.desktopCapturer
+		Vue.prototype.$fs=global.fs
+		Vue.prototype.$ffmpeg=global.ffmpeg
 	}
 });
 

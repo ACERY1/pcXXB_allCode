@@ -110,27 +110,3 @@ $pre2:#e4e4e4;
 @mixin fullBorder($px,$color) {
   border: $px solid $color;
 }
-
-// 图片镜头动画
-@mixin scaleAnimation() {
-  -webkit-animation: picScale 1s ease-out backwards, picScale 15s ease-in-out infinite alternate;
-  animation: picScale 1s ease-out backwards, picScale 15s ease-in-out infinite alternate
-}
-
-@keyframes picScale {
-  0% {
-    -webkit-transform: scale(1.01);
-    -moz-transform: scale(1.01);
-    -ms-transform: scale(1.01);
-    -o-transform: scale(1.01);
-    transform: scale(1.01);
-  }
-  100% {
-    -webkit-transform: scale(1.15);
-    -moz-transform: scale(1.15);
-    -ms-transform: scale(1.15);
-    -o-transform: scale(1.15);
-    transform: scale(1.15);
-    opacity: .86;
-  }
-}

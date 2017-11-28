@@ -8,7 +8,7 @@
 			<div class="topBar-usr-pic" @click="goLogin">
 				<img :src="avatar" alt="">
 			</div>
-			<p>{{name}}</p>
+			<p @click="goLogin">{{name}}</p>
 			<div class="topBar-usr-drop" @click="showMenu">
 				<img src="../../../static/icons/topBar/pullDown.png" alt="">
 			</div>
@@ -76,10 +76,11 @@
 		},
 		methods: {
 			goLogin(){
-		  /*TODO:这个判断有问题 ps:现在解决了*/
+		  /*DONE:这个判断有问题 ps:现在解决了*/
 				if (getCookie("x_token") == null || !getStore('name')) {
 					this.$router.push('/static/login')
 				} else {
+					this.showMenu()
 //					this.$router.push('/static/main')
 				}
 			},
@@ -198,7 +199,7 @@
 	}
 </script>
 
-<style lang="scss" rel="stylesheet/scss" scoped>
+<style lang="scss" type="text/scss" scoped>
 	@import "../../common/styles/mixin";
 
 	.fade-enter-active, .fade-leave-active {

@@ -181,7 +181,7 @@
 		}
 </script>
 
-<style lang="scss" rel="stylesheet/scss" scoped>
+<style lang="scss" type="text/scss" scoped>
 	@import "../../common/styles/mixin";
 
 	.clickArea {

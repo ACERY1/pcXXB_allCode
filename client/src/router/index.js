@@ -1,7 +1,7 @@
 /**
  * Created by Acery on 2017/8/3.
  */
-const test= r => require.ensure([], () => r(require('../pages/class/classReport.vue')), 'test'); // 上课
+const test= r => require.ensure([], () => r(require('../pages/test.vue')), 'test'); // 上课
 
 
 const home = r => require.ensure([], () => r(require('../pages/homepage.vue')), 'home'); // 首页

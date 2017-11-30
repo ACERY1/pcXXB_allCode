@@ -567,7 +567,7 @@
 	}
 </script>
 
-<style lang="scss" rel="stylesheet/scss">
+<style lang="scss" type="text/scss">
 	@import "../../common/styles/mixin";
 
 	.midBox {

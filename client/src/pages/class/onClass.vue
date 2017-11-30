@@ -170,6 +170,7 @@
 				}
 			},
 			created () {
+//							this.isOnClass = true
 			},
 			mounted () {
 				// clear the interval
@@ -299,6 +300,7 @@
 //				  console.log(Math.round((this.beginTime - (+new Date())) / 60000))
 
 					// TODO:别注释业务判断
+					console.log(Math.round((this.beginTime - (+new Date())) / 60000))
 					if (Math.round((this.beginTime - (+new Date())) / 60000) > 0) {
 						this.$message({message: '还未到上课时间', duration: 1500})
 						return false
@@ -693,7 +695,7 @@
 		}
 </script>
 
-<style lang="scss" rel="stylesheet/scss" scoped>
+<style lang="scss" type="text/scss" scoped>
 	@import "../../common/styles/mixin";
 
 	.onClass {

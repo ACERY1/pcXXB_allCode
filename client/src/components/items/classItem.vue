@@ -167,7 +167,7 @@
 						return;
 					}
 //					console.log(Math.round((this.courseInfo.begin_time - (+new Date())) / 60000))
-					if (Math.round((this.courseInfo.begin_time - (+new Date())) / 60000) > 15) {
+					if (Math.round((this.courseInfo.begin_time - +new Date())) > 900000 ) {
 						this.$message({message: '请在开课前15分钟再进入课堂', duration: 1500})
 						return;
 					}

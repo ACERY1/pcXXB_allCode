@@ -119,12 +119,13 @@
 	import {courseStatus} from '../../common/scripts/filters'
 	import fetch from '../../common/scripts/fetch'
 	import bBtn from '../../components/buttons/basicButtons.vue'
+
 	export default {
 		name: "classInfo",
 		components: {
 			bBtn
 		},
-		data () {
+		data() {
 			return {
 				noted: false, // 是否写备注
 				messaged: false, // 是否留言了
@@ -171,23 +172,23 @@
 		},
 		props: {},
 		computed: {
-			hasNote(){
+			hasNote() {
 				if (this.info.note.note === undefined) {
 					return "您暂时还没有添加上课备注哦~"
 				} else {
 					return this.info.note.note
 				}
 			},
-			hasMessage(){
+			hasMessage() {
 				if (this.info.message.note === undefined) {
 				} else {
 					return this.info.message.note
 				}
 			},
-			courseSt(){
+			courseSt() {
 				return courseStatus(this.info.courseStatus)
 			},
-			stuDate(){
+			stuDate() {
 				if (judgeTime(this.info.time.end) == 0) {
 					return "今天"
 				}
@@ -198,22 +199,23 @@
 					return `${_tempDate.getMonth() + 1}月${_tempDate.getDate()}日`
 				}
 			},
-			stuTime(){
+			stuTime() {
 				return parseTime(this.info.time.begin)
 			},
-			endTime(){
+			endTime() {
 				return parseTime(this.info.time.end)
 			},
-			isSatisfy(){
+			isSatisfy() {
 				return this.note.length > 1 // 备注所填长度是否满足要求
 			},
-			isOnClass(){
+			isOnClass() {
 //				console.log(this.info)
-				return (this.info.time.begin <= +new Date() && this.info.time.end >= +new Date()) ? 1 : 0
+				/*15min前就显示*/
+				return (this.info.time.begin - ( +new Date()) <= 900000 && this.info.time.end >= +new Date()) ? 1 : 0
 			}
 
 		},
-		created () {
+		created() {
 			if (getSession("temp_courseId") != null) {
 				// 如果session里有 就从session里取 这里是从编辑课件跳转回来
 				this.$store.commit("UPDATE_COURSE_ID", getSession("temp_courseId"))
@@ -260,7 +262,7 @@
 			})
 
 		},
-		mounted () {
+		mounted() {
 			removeSession('didPPT')
 			removeSession('temp_courseId')
 			removeSession('temp_courseWareId')
@@ -268,9 +270,9 @@
 
 		methods: {
 			//检查并判断数据*/
-			_checkData(){
-				this.info.message.note === {} ? this.messaged = false : this.messaged = true
-				this.info.note === {} ? this.noted = false : this.noted = true
+			_checkData() {
+				Object.keys(this.info.message).length === 0 ? this.messaged = false : this.messaged = true
+				Object.keys(this.info.note).length === 0 ? this.noted = false : this.noted = true
 				if (this.info.courseware_id != 0) {
 					this.ware = true
 				}
@@ -279,12 +281,12 @@
 				}
 			},
 			//去首页
-			goMain(){
+			goMain() {
 				this.$store.commit('UN_SHOW_MENU')
 				this.$router.push('main')
 			},
 			//发送备注至后台
-			setNote(){
+			setNote() {
 				this.$api.setNote(this.$store.state.courseId, this.note, '').then((res) => {
 					this.info.note = {note: this.note}
 					this.isShowTextArea = false
@@ -308,11 +310,11 @@
 				})
 			},
 			//添加备注
-			addNote(){
+			addNote() {
 				this.isShowTextArea = !this.isShowTextArea
 			},
 			// 跳转至课件制作
-			goPPTPage(){
+			goPPTPage() {
 				this.$api.makeCourseWare(this.$store.state.courseId).then((res) => {
 					let _data = res.data
 					if (_data.status) {
@@ -339,23 +341,23 @@
 				})
 			},
 			// 上课报告
-			goReportPage(){
+			goReportPage() {
 				setSession("temp_courseId", this.$store.state.courseId)
 				this.$router.push("/static/classreport")
 //				this.$ipc.send("maximize")
 				this.$ipc.send("fullScreen")
 			},
 			// 知识点查看
-			checkPoint(){
+			checkPoint() {
 				this.$store.commit('UN_SHOW_MENU')
 				this.$api.getKnowledgeList(11, 1)
 			},
 			// 跳转到上课页面
-			goClass(){
+			goClass() {
 				this.$router.push('/static/onclass')
 			},
 			// 查看课件
-			checkPPT(){
+			checkPPT() {
 				this.isShowCourseWare = true
 				this.courseWareImages = []
 				let self = this
@@ -375,20 +377,20 @@
 				// 打开弹框（too many fucking dialog!!）
 			},
 			// 滑到顶部
-			scrollToTop(){
+			scrollToTop() {
 				$('#previewBox').scrollTop(0)
 				this.temp_scrollTop = 0
 			},
 			// 查看报告
-			checkReport(){
+			checkReport() {
 				setSession("temp_courseId", this.$store.state.courseId)
 				setSession("didPPT", true);
-		  /**/
+				/**/
 				this.$ipc.send("report")
 				this.$ipc.send("fullScreen")
 			},
-			onClass(){
-		  /*TODO:测试*/
+			onClass() {
+				/*TODO:测试*/
 				console.log('保存session！')
 				setSession('courseId_forClass', this.$store.state.courseId)
 				this.$store.commit('UN_SHOW_MENU')
@@ -400,7 +402,7 @@
 	}
 </script>
 
-<style lang="scss" rel="stylesheet/scss" scoped>
+<style lang="scss" type="text/scss" scoped>
 	@import "../../common/styles/mixin";
 
 	#previewBox {

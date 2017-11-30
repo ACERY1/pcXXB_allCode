@@ -12,7 +12,7 @@ function XAudioBox() {
 	this.isInit = false // judge init
 	this.dataArray = null // store ouputArray
 	this.audioObj = null // for Audio object
-	this.animationId =null // store annimatino id to clear
+	this.animationId = null // store annimatino id to clear
 }
 
 XAudioBox.boxCount = 0; // static
@@ -44,7 +44,7 @@ XAudioBox.prototype.createDataArray = function (arrLength) {
 			this.streamSource.connect(this.analyser)
 			this.analyser.fftSize = arrLength
 			this.dataArray = new Uint8Array(this.analyser.frequencyBinCount)
-		}else {
+		} else {
 			console.error("audioCtx has been defined, please create new audioCtx")
 		}
 	} else {
@@ -54,14 +54,14 @@ XAudioBox.prototype.createDataArray = function (arrLength) {
 
 // 实时捕获并输出数据
 XAudioBox.prototype.outputData = function (fn) {
-	if(!this.animationId){
+	if (!this.animationId) {
 		let _ani = () => {
 			this.analyser.getByteFrequencyData(this.dataArray)
 			fn();
 			requestAnimationFrame(_ani)
 		}
-		this.animationId=requestAnimationFrame(_ani)
-	}else {
+		this.animationId = requestAnimationFrame(_ani)
+	} else {
 		console.error("animation has been defined, please stop it")
 	}
 	
@@ -97,6 +97,12 @@ XAudioBox.prototype.playSrc = function (volume) {
 XAudioBox.prototype.stop = function () {
 	// this.audioObj.pause()
 	this.audioCtx.close()
+		// .then((res) => {
+		// 	console.log(res)
+		// })
+		// .catch((err) => {
+		// 	console.log(err)
+		// })
 	window.cancelAnimationFrame(this.animationId)
 }
 

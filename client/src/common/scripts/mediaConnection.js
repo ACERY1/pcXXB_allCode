@@ -39,8 +39,8 @@ let mediaConnection = () => {
 	webrtc.on("peer_stream", function (e) {
 		// 来自对方
 		var stream = e.stream;
-		console.log(stream.getAudioTracks());
-		console.log(stream.getVideoTracks());
+		// console.log(stream.getAudioTracks());
+		// console.log(stream.getVideoTracks());
 	});
 	
 	

@@ -45,12 +45,13 @@
 		getCookie, removeAllStore, setUserInfoInLocal, removeAllSession, delCookie, getStore, getSession, removeStore
 	} from '../../common/scripts/util'
 	import confD from '../../components/dialogs/configDialog.vue'
+
 	export default {
 		name: "",
 		components: {},
-		data () {
+		data() {
 			return {
-		  /*显示下拉菜单*/
+				/*显示下拉菜单*/
 
 			}
 		},
@@ -66,17 +67,17 @@
 //			}
 		},
 		computed: {
-			isShowMenu(){
+			isShowMenu() {
 				return this.$store.state.showMenu
 			}
 		},
-		created () {
+		created() {
 		},
-		mounted () {
+		mounted() {
 		},
 		methods: {
-			goLogin(){
-		  /*DONE:这个判断有问题 ps:现在解决了*/
+			goLogin() {
+				/*DONE:这个判断有问题 ps:现在解决了*/
 				if (getCookie("x_token") == null || !getStore('name')) {
 					this.$router.push('/static/login')
 				} else {
@@ -85,18 +86,18 @@
 				}
 			},
 			//设备检测*/
-			itemOne(){
+			itemOne() {
 				this.$store.commit('UN_SHOW_MENU')
 				this.$store.commit('UPDATE_SHOW_SETTING')
 			},
 			//关于我们*/
-			itemTwo(){
+			itemTwo() {
 				this.$store.commit('UN_SHOW_MENU')
 				this.$store.commit('UPDATE_SHOW_ABOUT')
 			},
 			//退出登录*/
-			itemThree(){
-		  /*TODO: 这个地方已经完成了：既在STORE里保存登录状态，又在LocalStorage里面保存了*/
+			itemThree() {
+				/*TODO: 这个地方已经完成了：既在STORE里保存登录状态，又在LocalStorage里面保存了*/
 				this.$store.commit('UN_SHOW_MENU')
 				let logOut = () => {
 					this.$store.commit('CLEAR_TEACHER_INFO') // 清除登录信息
@@ -148,28 +149,24 @@
 
 			},
 			//显示菜单
-			showMenu(){
+			showMenu() {
 				this.$store.state.showSetting = false
 				this.$store.state.showAbout = false
 				this.$store.commit('UPDATE_SHOW_MENU')
 			},
-			minimize(){
+			minimize() {
 				this.$ipc.send('minimize')
 			},
-			maximize(){
+			maximize() {
 				this.$ipc.send('maximize')
 			},
-			quit(){
+			quit() {
 //				console.log(this.$store.state.isCountingTime || getSession('courseId_forClass'))
 				this.$store.commit('UN_SHOW_MENU')
 				if (this.$store.state.isCountingTime || getSession('courseId_forClass')) {
-					this._showMessageBox('正在上课，是否退出学习宝教师端?', () => {
-						this.$message({
-							message: '再见'
-						});
-						setTimeout(() => {
-							this.$ipc.send('quitApp')
-						}, 1500)
+					this._showMessageBox('正在上课，是否退出至主菜单?', () => {
+						this.$router.push('/static/classInfo')
+						removeSession('courseId_forClass')
 					}, () => {
 					})
 				} else {
@@ -184,7 +181,7 @@
 
 			},
 			_showMessageBox(word, yesFn, noFn = () => {
-			}){
+			}) {
 				this.$confirm(word, '提示', {
 					confirmButtonText: '确定',
 					cancelButtonText: '取消',

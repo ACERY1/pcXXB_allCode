@@ -268,6 +268,10 @@
 			removeSession('temp_courseWareId')
 		},
 
+		beforeDestory() {
+
+		},
+
 		methods: {
 			//检查并判断数据*/
 			_checkData() {
@@ -354,6 +358,18 @@
 			},
 			// 跳转到上课页面
 			goClass() {
+				if (!this.isOnClass) {
+					this.$message({message: '请在开课前15分钟再进入课堂', duration: 1500})
+					return;
+				}
+
+				if (!this.info.courseware) {
+					this.$message({message: '你还未制作课件，请先制作课件', duration: 1500})
+					return;
+				}
+				console.log('保存session！')
+				setSession('courseId_forClass', this.$store.state.courseId)
+				this.$store.commit('UN_SHOW_MENU')
 				this.$router.push('/static/onclass')
 			},
 			// 查看课件
@@ -391,7 +407,7 @@
 			},
 			onClass() {
 				/*TODO:测试*/
-				console.log('保存session！')
+				console.log('保存session！') // 下面的代码记得删掉
 				setSession('courseId_forClass', this.$store.state.courseId)
 				this.$store.commit('UN_SHOW_MENU')
 				this.$router.push('/static/onclass')

@@ -87,7 +87,7 @@
 				<p class="course-stu-item-title">学生留言：</p>
 				<p class="course-stu-item-txt">{{hasMessage}}</p>
 			</div>
-			<div class="course-stu-item">
+			<div class="course-stu-item" v-loading="note__loading" element-loading-text="上传中">
 				<p class="course-stu-item-title">上课备注：</p>
 				<p class="course-stu-item-txt" v-if="!isShowTextArea" v-text="hasNote">{{hasNote}}</p>
 				<p class="add" v-show="!noted" @click="addNote">添加</p>
@@ -167,7 +167,8 @@
 				},
 				isShowCourseWare: false,
 				courseWareImages: [], // 课件预览图片
-				temp_scrollTop: 0 // 用于计算弹窗内容滚动高度
+				temp_scrollTop: 0, // 用于计算弹窗内容滚动高度
+				note__loading: false // 备注请求过程的过渡动画
 			}
 		},
 		props: {},
@@ -291,10 +292,13 @@
 			},
 			//发送备注至后台
 			setNote() {
+				this.note__loading = true
 				this.$api.setNote(this.$store.state.courseId, this.note, '').then((res) => {
 					this.info.note = {note: this.note}
 					this.isShowTextArea = false
+					this.note__loading = false
 				}).catch((err) => {
+					this.note__loading = false
 					if (err.toString().indexOf('403') != -1) {
 						this.$message({
 							message: "没有认证！",

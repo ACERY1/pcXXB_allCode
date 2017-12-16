@@ -1823,8 +1823,6 @@ $("#ppt-content").load(function () {
 		var index = parseInt($('.ppt_page').val()) - 1;
 		savePage(index);
 		window.open('./preview.html?' + $('.hid-cid').val(), '_blank');
-		
-		
 	})
 	//关闭刷新前保存
 	window.onbeforeunload = function () {

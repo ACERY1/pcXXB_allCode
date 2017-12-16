@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>预览</title>
+	<link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="css/message.css">
+
+	<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+
+	<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+	<!--<script type="text/javascript" src="./js/jquery.actual.min.js"></script>-->
+	<!--<script type="text/javascript" src="./js/html2canvas.js"></script>-->
+	<!--<script type="text/javascript" src="./js/jquery.treemenu.js"></script>-->
+	<!--<script type="text/javascript" src="./js/cookie.js"></script>-->
+	<!--<script type="text/javascript" src="./js/iziModal.min.js"></script>-->
+	<!--<script type="text/javascript" src="./js/webuploader.js"></script>-->
+	<script type="text/x-mathjax-config">
+      MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+
+
+
+	</script>
+	<script type="text/javascript" async="async"
+			src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+	</script>
+	<style type="text/css">
+		.ppt-page-body {
+			border: 1px solid #dcdcdc;
+			margin-bottom: 15px;
+			height: 768px;
+		}
+
+		#close {
+			position: fixed;
+			bottom: 20px;
+			right: 40px;
+			z-index: 1024;
+			height: 60px;
+			width: 60px;
+			font-size: 16px;
+			color: #FFFFFF;
+			background: #f4a100;
+			border: none;
+			border-radius: 100%;
+			box-shadow: 4px 4px 6px #929292;
+			cursor: pointer;
+		}
+	</style>
+</head>
+<body>
+<div class="content" style="width:1024px;margin:0 auto;">
+	<button id="close">关闭</button>
+</div>
+</body>
+<script type="text/javascript" src="js/html2canvas.js"></script>
+<script type="text/javascript" src="js/jquery.treemenu.js"></script>
+<script type="text/javascript" src="js/courseware.js"></script>
+<script type="text/javascript" src="js/iziModal.min.js"></script>
+<script type="text/javascript">
+	$(function () {
+		$.ajax({
+			url: '/courseware/api/listPage',
+			type: 'post',
+			datatype: 'json',
+			async: false,
+			data: {
+				coursewareId: window.location.search.substring(1)
+			},
+			success: function (data) {
+				var data = JSON.parse(data);
+
+				console.log(data);
+				for (var i = 0; i < data.pageList.length; i++) {
+					var html = '<div class="ppt-page-body" data-type="' + data.pageList[i].pageType + '" data-id="' + data.pageList[i].id + '" style="display:none;">';
+					html += data.pageList[i].htmlContent;
+					html += '</div>';
+					$('.content').append(html);
+				}
+				$('.ppt-page-body').show();
+			}
+		})
+
+		$('#close').on('click', function () {
+			window.close()
+		})
+	})
+</script>
+</html>

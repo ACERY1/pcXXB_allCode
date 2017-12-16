@@ -12,7 +12,6 @@ let loadingParams = {
 	frame: false,
 	show: false,
 	transparent: false,
-	
 }
 
 let mainParams = {

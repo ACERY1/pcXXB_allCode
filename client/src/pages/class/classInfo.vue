@@ -297,6 +297,7 @@
 					this.info.note = {note: this.note}
 					this.isShowTextArea = false
 					this.note__loading = false
+				  	this.noted = true
 				}).catch((err) => {
 					this.note__loading = false
 					if (err.toString().indexOf('403') != -1) {

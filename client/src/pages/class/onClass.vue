@@ -57,7 +57,7 @@
 					</div>
 					<div class="signalBar">
 
-						<span >{{teacherName}}</span>
+						<span>{{teacherName}}</span>
 						<img src="../../../static/icons/live/s1.png" alt="" v-if="signal2 === 1 ||signal2 === 0">
 						<img src="../../../static/icons/live/s2.png" alt="" v-if="signal2 === 2">
 						<img src="../../../static/icons/live/s3.png" alt="" v-if="signal2 === 3">
@@ -71,7 +71,7 @@
 		<tool-bar class="toolBar" @changeSize="changeSize" @changeColor="changeColor" @useEraser="useEraser"
 				  @cancelEraser="cancelEraser" @clearCanvas="clearCanvas" @addNewPage="addNewPage"
 				  @offClass="offClass" :nowPage="nowPage" :allPage="pageNum" @backPage="backPage"
-				  @forwardPage="forwardPage" @timeUp="timeCountDone"></tool-bar>
+				  @forwardPage="forwardPage" @timeUp="timeCountDone" v-loading="toolBar__loading"></tool-bar>
 	</div>
 </template>
 
@@ -135,6 +135,7 @@
 				isShowTeacherVideo: true,
 				classDone: false,//课程是否结束
 				pageIds: [],
+				toolBar__loading: false
 			}
 		},
 		props: {},
@@ -521,7 +522,7 @@
 					/*还没有上课点击下课的情况*/
 					return null; // 测试时注释掉
 
-				  	//	下面是测试代码
+					//	下面是测试代码
 					removeSession('courseId_forClass')
 					this.$store.commit("UPDATE_COURSE_ID", this.courseId)
 					this.$router.push('/static/classInfo')
@@ -538,6 +539,7 @@
 			},
 			// 上一页
 			backPage() {
+				this.toolBar__loading = true
 				let _temp = {
 					page: this.pageIds[this.pageCount - 1].toString(),
 					imageUrl: this.images[this.pageCount - 1]
@@ -546,18 +548,21 @@
 				this._sendMessage('page', JSON.stringify(_temp)).then((res) => {
 //						console.log(res.data)
 					if (this.pageCount == 0) {
+						this.toolBar__loading = false
 						return;
 					}
 //						console.log(res.data.result.pageHistory.teacher)
 //						console.log(res.data.result.pageHistory.student)
 					this._reDrawByPage(res.data.result.pageHistory.student, res.data.result.pageHistory.teacher)
 					this.pageCount--
+					this.toolBar__loading = false
 				})
 
 
 			},
 			// 下一页
 			forwardPage() {
+				this.toolBar__loading = true
 				let _temp = {
 					page: this.pageIds[this.pageCount + 1].toString(),
 					imageUrl: this.images[this.pageCount + 1]
@@ -566,13 +571,16 @@
 				this._sendMessage('page', JSON.stringify(_temp)).then((res) => {
 					if (!res.data.status) {
 						if (this.pageCount >= this.images.length) {
+							this.toolBar__loading = false
 							return;
 						}
 						this._reDrawByPage(res.data.result.pageHistory.student, res.data.result.pageHistory.teacher)
 //							this._reDrawByPage(res.data.result.pageHistory.teacher,res.data.result.pageHistory.student, )
 						this.pageCount++
+						this.toolBar__loading = false
 						console.log("下一页自增")
 					} else {
+						this.toolBar__loading = false
 						console.error(res.data.msg)
 					}
 

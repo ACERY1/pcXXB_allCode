@@ -78,10 +78,11 @@
 		methods: {
 			goLogin() {
 				/*DONE:这个判断有问题 ps:现在解决了*/
-				if (getCookie("x_token") == null || !getStore('name')) {
-					this.$router.push('/static/login')
+				if (getCookie("x_token") || getStore('name')) {
+					this.showMenu();
 				} else {
-					this.showMenu()
+					console.log('NO LOGIN')
+					this.$router.push('/static/login')
 //					this.$router.push('/static/main')
 				}
 			},

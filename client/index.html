@@ -6,9 +6,31 @@
 </head>
 <body>
 <!--用于可拖动的顶部栏-->
-<header style="width: 100%;height: 60px; -webkit-app-region:drag;position: absolute"></header>
+<header style="width: 76vw;height: 60px; -webkit-app-region:drag;position: absolute;z-index:2049;"
+		id="basic_navbar"></header>
 <div id="app"></div>
+<script>
+//为了解决顶部栏无效的历史代码
+//		let navBar = document.getElementById('basic_navbar');
+//		console.log(navBar)
+//
+//		navBar.onclick = function () {
+//		  navBar.style.cssText = "z-index:2049;"
+//		}
+//
+//		navBar.onmousedown = () => {
+//		  navBar.style.cssText = "-webkit-app-region:none;z-index:2047;"
+//			navBar.onmousemove = () => {
+//				console.log('get move')
+//			}
+//		}
+//		navBar.onmouseup = ()=>{
+//		  navBar.style.cssText = "z-index:2049;"
+//		}
+</script>
 <script src="/dist/renderer.js"></script>
 <script src="/dist/build.js"></script>
+
 </body>
+
 </html>

@@ -408,11 +408,9 @@
 			onClass() {
 				/*TODO:测试*/
 				console.log('保存session！') // 下面的代码记得删掉
-				setSession('courseId_forClass', this.$store.state.courseId)
-				this.$store.commit('UN_SHOW_MENU')
-				this.$router.push('/static/onclass')
-//				setSession("temp_courseId", this.$store.state.courseId)
-//				setSession('temp_host', window.location.host)
+//				setSession('courseId_forClass', this.$store.state.courseId)
+//				this.$store.commit('UN_SHOW_MENU')
+//				this.$router.push('/static/onclass')
 			}
 		}
 	}

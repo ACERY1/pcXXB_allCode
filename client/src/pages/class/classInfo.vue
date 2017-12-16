@@ -346,6 +346,14 @@
 			},
 			// 上课报告
 			goReportPage() {
+
+				// 2017年12月16日10:27:02 新加未下课不能填写报告功能
+				if (this.info.courseStatus === 3) {
+					this.$message({message: '未上课，暂时不能填写报告', duration: 1500})
+					return;
+				}
+
+
 				setSession("temp_courseId", this.$store.state.courseId)
 				this.$router.push("/static/classreport")
 //				this.$ipc.send("maximize")
@@ -390,7 +398,6 @@
 					console.log(err)
 				})
 
-				// 打开弹框（too many fucking dialog!!）
 			},
 			// 滑到顶部
 			scrollToTop() {

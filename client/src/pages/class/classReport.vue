@@ -109,6 +109,11 @@
 
 
 			<div class="classReport-btn" v-if="!nowSteps">
+				<!--新增回退按钮-->
+				<b-btn :styles="'grey'" :height="30" :width="100" :size="14" :title="'退出'"
+					   @click.native="backToClassInfo" v-if="nowSteps==0"></b-btn>
+				&nbsp;&nbsp;&nbsp;&nbsp;
+
 				<b-btn :styles="'orange'" :height="30" :width="100" :size="14" :title="'下一步'"
 					   @click.native="nowSteps=1"></b-btn>
 			</div>
@@ -562,6 +567,10 @@
 					return;
 				}
 				this.isShowAcquire = true
+			},
+		  	// 退出按钮事件
+		  	backToClassInfo(){
+			  this.$router.push('/static/classInfo')
 			}
 		}
 	}

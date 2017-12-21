@@ -167,7 +167,7 @@
 				if (this.$store.state.isCountingTime || getSession('courseId_forClass')) {
 					this._showMessageBox('正在上课，是否退出至主菜单?', () => {
 						this.$router.push('/static/classInfo')
-						removeSession('courseId_forClass')
+//						removeSession('courseId_forClass')
 					}, () => {
 					})
 				} else {

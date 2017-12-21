@@ -509,6 +509,8 @@
 			// 下课
 			offClass() {
 				// 上课了，但是未到下课时间
+				console.log(this.isOnClass)
+				console.log(this.classDone)
 				if (this.isOnClass && !this.classDone) {
 					this._showMessageBox('未到下课时间，是否下课？', () => {
 						this.$api.teacherFinishCourse(this.courseId)
@@ -520,6 +522,7 @@
 				// 没有上课
 				if (!this.isOnClass && !this.classDone) {
 					/*还没有上课点击下课的情况*/
+
 					return null; // 测试时注释掉
 
 					//	下面是测试代码
@@ -623,6 +626,7 @@
 			},
 			// 传点坐标绘制canvas
 			_writeCanvas(data) {
+				this._convertPoint(data.data.point)
 				this._sendMessage('draw', JSON.stringify(data.data))
 			},
 			// 清除命令
@@ -690,6 +694,13 @@
 
 
 			},
+			// 坐标数据转换 为了适应其他端 1024 768
+			_convertPoint(dataPoints) {
+				for (let item of dataPoints) {
+					item.x = (item.x/this.localCanvas.width)*1024
+					item.y = (item.y/this.localCanvas.height)*768
+				}
+			}
 		}
 	}
 </script>

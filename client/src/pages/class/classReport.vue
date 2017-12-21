@@ -33,18 +33,27 @@
 				</div>
 				<title-bar :title="'课堂表现'"></title-bar>
 				<div class="classReport-info-selector">
-					<el-form label-width="138px">
-						<el-form-item label="学生课堂表现：">
-							<el-select v-model="classroomPerformance" placeholder="未选择">
-								<el-option label="优秀，能够及时与老师互动，对所学习的知识有自己的观点和思考。"
-										   value="优秀，能够及时与老师互动，对所学习的知识有自己的观点和思考。"></el-option>
-								<el-option label="良好，上课注意力集中，能按要求完成学习任务。" value="良好，上课注意力集中，能按要求完成学习任务。"></el-option>
-								<el-option label="一般，一定程度上能保障课堂效率，偶尔出现分心情况。"
-										   value="一般，一定程度上能保障课堂效率，偶尔出现分心情况。"></el-option>
-								<el-option label="其它" value="其它"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-form>
+					<!--<el-form label-width="138px">-->
+						<!--<el-form-item label="学生课堂表现：">-->
+
+							<!--<el-select v-model="classroomPerformance" placeholder="未选择">-->
+								<!--<el-option label="优秀，能够及时与老师互动，对所学习的知识有自己的观点和思考。"-->
+										   <!--value="优秀，能够及时与老师互动，对所学习的知识有自己的观点和思考。"></el-option>-->
+								<!--<el-option label="良好，上课注意力集中，能按要求完成学习任务。" value="良好，上课注意力集中，能按要求完成学习任务。"></el-option>-->
+								<!--<el-option label="一般，一定程度上能保障课堂效率，偶尔出现分心情况。"-->
+										   <!--value="一般，一定程度上能保障课堂效率，偶尔出现分心情况。"></el-option>-->
+								<!--<el-option label="其它" value="其它"></el-option>-->
+							<!--</el-select>-->
+
+							<el-input
+									type="text"
+									:rows="2"
+									placeholder="请输入学生课堂表现，最多200字"
+									v-model="classroomPerformance"
+									:maxlength=200>
+							</el-input>
+						<!--</el-form-item>-->
+					<!--</el-form>-->
 				</div>
 			</div>
 			<!--知识点评价-->
@@ -152,7 +161,7 @@
 					</li>
 				</transition-group>
 			</ul>
-			<div class="toolBox" v-if="nowSteps">
+			<div class="toolBox" v-if="nowSteps" v-loading="isUploading" element-loading-text="上传中">
 				<div class="uploader-item-title">
 					<p>题目{{homework.length+1}}</p>
 				</div>
@@ -221,13 +230,14 @@
 	import titleBar from '../../components/bars/titleBar.vue'
 	import {getCookie, getSession} from '../../common/scripts/util'
 	import bBtn from '../../components/buttons/basicButtons.vue'
+
 	export default {
 		name: "classReport",
 		components: {
 			titleBar,
 			bBtn
 		},
-		data () {
+		data() {
 			return {
 				// 课堂表现
 				classroomPerformance: null,
@@ -260,12 +270,14 @@
 				// 控制页面转换
 				nowSteps: 0,
 				// 上传图片的token
-				uploadToken: null
+				uploadToken: null,
+				// 判断上传图片的loading状态
+				isUploading: false
 			}
 		},
 		props: {},
 		computed: {
-			level(number){
+			level(number) {
 				switch (number) {
 					case 1:
 						return '不会';
@@ -285,20 +297,20 @@
 				}
 			},
 			classInfo: {
-				get (){
+				get() {
 					return this.$store.state.courseInfo || getSession('courseInfo')
 				}
 
 			}
 		},
-		created () {
+		created() {
 		},
-		mounted () {
+		mounted() {
 			this._getToken();
 		},
 		methods: {
 			// 获取图片上传token
-			_getToken(){
+			_getToken() {
 				let _x_token
 				// 判断x_token来源
 				if (this.$store.state.x_token == null) {
@@ -325,7 +337,7 @@
 					})
 			},
 			// 上传图片URL获得
-			_putB64(base64){
+			_putB64(base64) {
 				let str = 'qiniuUpload/' + new Date().getTime() + (Math.random(1000000) + '').substring(2, 10);
 				let key = window.btoa(str);
 				let qiniuUploadUrl;
@@ -336,17 +348,17 @@
 				}
 			},
 			// 添加知识点
-			addPoint(){
+			addPoint() {
 				this.isShowPoint = true
 				// 1.填写知识点
 			},
 			// 退出弹窗
-			cancelAdd(){
+			cancelAdd() {
 				this.isShowPoint = false
 				this.tempPoint = ''
 			},
 			// 弹窗确认选择
-			selectAdd(){
+			selectAdd() {
 				let _temp = {
 					"knowleageName": "", // 知识点
 					"masterDegree": null, // 掌握程度
@@ -363,22 +375,22 @@
 				this.cancelAdd()
 			},
 			// 删除知识点
-			deletePoint(index){
+			deletePoint(index) {
 				this.knowleageEvl.splice(index, 1)
 			},
 			// 选择掌握程度
-			chooseLevel(index){
+			chooseLevel(index) {
 				this.isShowLevel = true
 				this.tempIndex = index
 			},
 			// 退出掌握程度弹框
-			cancelLevel(){
+			cancelLevel() {
 				this.tempLevel = ''
 				this.isShowLevel = false
 				this.tempIndex = 0
 			},
 			// 掌握程度弹框确认按钮
-			selectLevel(){
+			selectLevel() {
 				let filer = (level) => {
 					switch (level) {
 						case '不会':
@@ -402,7 +414,7 @@
 				this.cancelLevel()
 			},
 			// 数据转换
-			filter(number){
+			filter(number) {
 				switch (number) {
 					case 1:
 						return '不会';
@@ -422,11 +434,12 @@
 				}
 			},
 			// 取消题目按钮
-			cancelWork(index){
+			cancelWork(index) {
 				this.homework.splice(index, 1);
 			},
 			// 上传图片
-			handleUpload(e){
+			handleUpload(e) {
+				this.isUploading = true
 				let file = e.target.files[0]
 				let fr = new FileReader()
 				let self = this
@@ -445,8 +458,9 @@
 					let base64 = e.target.result.split(',')[1];
 					// 拿到上传URL
 					let url = this._putB64(base64);
-					let staticURL = 'http://fs.91xuexibao.com/'
+					let staticURL = 'http://fs.xuexibao.cn/'
 					this.$api.uploadPic(url, base64, this.uploadToken).then((res) => {
+						this.isUploading = false
 						if (this.tempPicPos == this.homework.length + 1) {
 							let _temp = {type: 1, url: []}
 							_temp.url.push(staticURL + res.data.key)
@@ -457,6 +471,7 @@
 
 						this.clearPicPos()
 					}).catch((err) => {
+						this.isUploading = false
 						console.log(err)
 						this.$message({message: "上传失败，请重试！", duration: 1500})
 					})
@@ -467,15 +482,15 @@
 				//	调取上传接口
 			},
 			// 获取图片的插入数据位置
-			getPicPos(index){
+			getPicPos(index) {
 				this.tempPicPos = index
 			},
 			// 清除图片的插入数据位置
-			clearPicPos(){
+			clearPicPos() {
 				this.tempPicPos = null
 			},
 			// 添加文字
-			addText(){
+			addText() {
 				let _temp = {
 					type: '2',
 					data: ''
@@ -483,7 +498,7 @@
 				this.homework.push(_temp)
 			},
 			// 添加图片
-			addPic(){
+			addPic() {
 				// 该方法废弃
 				// 在这里会上传一张图片，然后创建一个新的题目
 				let _temp = {
@@ -492,14 +507,14 @@
 				}
 			},
 			// 删除图片
-			delPic(index, num){
+			delPic(index, num) {
 				this.homework[index].url.splice(num, 1)
 				if (this.homework[index].url.length == 0) {
 					this.homework.splice(index, 1)
 				}
 			},
 			// 提交表单
-			commitForm(){
+			commitForm() {
 				// 在这里发送请求提交表单
 				if (getSession('temp_courseId') == null) {
 					this.$message({message: "课程id有误！请重新登录", duration: 1500})
@@ -515,7 +530,7 @@
 							return false;
 						} else {
 							this.$message({message: "上传成功！", duration: 1500})
-						  	this.cancelConfirm()
+							this.cancelConfirm()
 							setTimeout(() => {
 								this.$router.push('/static/classInfo')
 								this.$ipc.send("maximize")
@@ -527,10 +542,10 @@
 					})
 			},
 			// 确认框
-			cancelConfirm(){
+			cancelConfirm() {
 				this.isShowAcquire = false
 			},
-			confirm (){
+			confirm() {
 				// 在这里验证字段
 				if (this.classroomPerformance == null) {
 					this.$message({message: "课堂表现不能为空", duration: 1500})
@@ -568,9 +583,9 @@
 				}
 				this.isShowAcquire = true
 			},
-		  	// 退出按钮事件
-		  	backToClassInfo(){
-			  this.$router.push('/static/classInfo')
+			// 退出按钮事件
+			backToClassInfo() {
+				this.$router.push('/static/classInfo')
 			}
 		}
 	}

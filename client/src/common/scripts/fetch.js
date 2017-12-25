@@ -62,7 +62,7 @@ export default async(type = 'GET', url = '', data = {}, config = {}) => {
 		}
 		else {
 			return axios.post(url, data, {
-				header: {
+				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded',
 				}
 			});

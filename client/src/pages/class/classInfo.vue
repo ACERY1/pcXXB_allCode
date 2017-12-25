@@ -115,7 +115,7 @@
 </template>
 
 <script>
-	import {judgeTime, parseTime, setSession, getSession, removeSession} from '../../common/scripts/util'
+	import {judgeTime, parseTime, setSession, getSession, removeSession, removeStore} from '../../common/scripts/util'
 	import {courseStatus} from '../../common/scripts/filters'
 	import fetch from '../../common/scripts/fetch'
 	import bBtn from '../../components/buttons/basicButtons.vue'
@@ -268,6 +268,7 @@
 			removeSession('temp_courseId')
 			removeSession('temp_courseWareId')
 			removeSession('courseId_forClass') // 删除topbar判断用的session
+			removeStore('isAlreadyOnClass')
 		},
 
 		beforeDestory() {

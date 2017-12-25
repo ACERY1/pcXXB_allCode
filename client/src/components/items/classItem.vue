@@ -49,43 +49,44 @@
 	 * 接口详情
 	 * 1.courseInfo (Object)
 	 * */
-		import myBtn from '../../components/buttons/basicButtons.vue'
-		import {judgeTime, parseTime, setSession} from '../../common/scripts/util'
-		export default {
-			name: "",
-			components: {
-				myBtn
-			},
-			data () {
-				return {
-					isOnClass: (this.courseInfo.begin_time <= +new Date() && this.courseInfo.end_time >= +new Date()) ? 1 : 0
-				}
-			},
-			props: {
-				courseInfo: {
-					type: Object,
-					default: () => {
-						return {
-							"courseware_id": 36,
-							"gender": 2,
-							"edu_grade": "高三",
-							"subject": "数学",
-							"end_time": 1485820500000,
-							"student_id": "540ab33670616000000000e7",
-							"begin_time": 1485817200000,
-							"profile_image_url": "http://simg.91xuexibao.com/public/user_data/images/20150228/profile/1668966142!",
-							"message": 0,
-							"courseName": "一对一直播课",
-							"edu_school": "扎赉特旗音德尔第一中学",
-							"price": "88",
-							"grade": "六年级",
-							"name": "小燕子",
-							"courseId": "11346",
-							"courseware": 0,
-							"status": 1
-						}
+	import myBtn from '../../components/buttons/basicButtons.vue'
+	import {judgeTime, parseTime, setSession} from '../../common/scripts/util'
+
+	export default {
+		name: "",
+		components: {
+			myBtn
+		},
+		data() {
+			return {
+//				isOnClass: (this.courseInfo.begin_time <= +new Date() && this.courseInfo.end_time >= +new Date()) ? 1 : 0
+			}
+		},
+		props: {
+			courseInfo: {
+				type: Object,
+				default: () => {
+					return {
+						"courseware_id": 36,
+						"gender": 2,
+						"edu_grade": "高三",
+						"subject": "数学",
+						"end_time": 1485820500000,
+						"student_id": "540ab33670616000000000e7",
+						"begin_time": 1485817200000,
+						"profile_image_url": "http://simg.91xuexibao.com/public/user_data/images/20150228/profile/1668966142!",
+						"message": 0,
+						"courseName": "一对一直播课",
+						"edu_school": "扎赉特旗音德尔第一中学",
+						"price": "88",
+						"grade": "六年级",
+						"name": "小燕子",
+						"courseId": "11346",
+						"courseware": 0,
+						"status": 1
 					}
 				}
+			}
 //		"courseware_id": 36,
 //			"gender": 2,
 //			"edu_grade": "高三",
@@ -103,82 +104,89 @@
 //			"courseId": "11346",
 //			"courseware": 0,
 //			"status": 7
-			},
-			computed: {
-				stuDate(){
-					if (judgeTime(this.courseInfo.end_time) == 0) {
-						return "今天"
-					}
-					if (judgeTime(this.courseInfo.end_time) === 1) {
-						return "明天"
-					} else {
-						let _tempDate = new Date(this.courseInfo.end_time);
-						return `${_tempDate.getMonth() + 1}月${_tempDate.getDate()}日`
-					}
-				},
-				stuTime(){
-					return parseTime(this.courseInfo.begin_time)
-				},
-				endTime(){
-					return parseTime(this.courseInfo.end_time)
-				},
-				statusText(){
-					switch (this.courseInfo.status) {
-						case 2:
-							return "已结束";
-							break;
-						case 4:
-							return "教师旷课";
-							break;
-						case 5:
-							return "已取消";
-							break;
-						case 6:
-							return "学生旷课";
-							break;
-						case 7:
-							return "教师和学生均旷课";
-							break;
-					}
-				},
-				courseWareText(){
-					if (this.courseInfo.courseware_id == '0' && (this.courseInfo.status == 1 || this.courseInfo.status == 3)) {
-						return "(课件未制作)"
-					}
+		},
+		computed: {
+			stuDate() {
+				if (judgeTime(this.courseInfo.end_time) == 0) {
+					return "今天"
+				}
+				if (judgeTime(this.courseInfo.end_time) === 1) {
+					return "明天"
+				} else {
+					let _tempDate = new Date(this.courseInfo.end_time);
+					return `${_tempDate.getMonth() + 1}月${_tempDate.getDate()}日`
 				}
 			},
-			created () {
-//		  console.log(this.courseInfo.begin_time+'****'+ +new Date())
-//		  console.log(this.courseInfo.begin_time <= +new Date() && this.courseInfo.end_time >= +new Date())
+			stuTime() {
+				return parseTime(this.courseInfo.begin_time)
 			},
-			mounted () {
+			endTime() {
+				return parseTime(this.courseInfo.end_time)
 			},
-			methods: {
-				goInfo(){
-			/*保存课程ID*/
-					this.$store.commit('UN_SHOW_MENU')
-					this.$store.commit("UPDATE_COURSE_ID", this.courseInfo.courseId)
-					this.$router.push('/static/classInfo')
-
-				},
-				goClass(){
-					if (!this.courseInfo.courseware) {
-						this.$message({message: '你还未制作课件，请先制作课件', duration: 1500})
-						return;
-					}
-//					console.log(Math.round((this.courseInfo.begin_time - (+new Date())) / 60000))
-					if (Math.round((this.courseInfo.begin_time - +new Date())) > 900000 ) {
-						this.$message({message: '请在开课前15分钟再进入课堂', duration: 1500})
-						return;
-					}
-					this.$store.commit('UN_SHOW_MENU')
-					this.$router.push('/static/onclass')
-					// ***** 这里有session！ ****
-					setSession('courseId_forClass', this.courseInfo.courseId)
-					//****************************
+			statusText() {
+				switch (this.courseInfo.status) {
+					case 2:
+						return "已结束";
+						break;
+					case 4:
+						return "教师旷课";
+						break;
+					case 5:
+						return "已取消";
+						break;
+					case 6:
+						return "学生旷课";
+						break;
+					case 7:
+						return "教师和学生均旷课";
+						break;
+				}
+			},
+			courseWareText() {
+				if (this.courseInfo.courseware_id == '0' && (this.courseInfo.status == 1 || this.courseInfo.status == 3)) {
+					return "(课件未制作)"
+				}
+			},
+			isOnClass() {
+				if (this.courseInfo.status == 1) {
+					return true
+				} else {
+					return (this.courseInfo.begin_time <= +new Date() && this.courseInfo.end_time >= +new Date()) ? 1 : 0
 				}
 			}
+		},
+		created() {
+//		  console.log(this.courseInfo.begin_time+'****'+ +new Date())
+//		  console.log(this.courseInfo.begin_time <= +new Date() && this.courseInfo.end_time >= +new Date())
+		},
+		mounted() {
+		},
+		methods: {
+			goInfo() {
+				/*保存课程ID*/
+				this.$store.commit('UN_SHOW_MENU')
+				this.$store.commit("UPDATE_COURSE_ID", this.courseInfo.courseId)
+				this.$router.push('/static/classInfo')
+
+			},
+			goClass() {
+				if (!this.courseInfo.courseware) {
+					this.$message({message: '你还未制作课件，请先制作课件', duration: 1500})
+					return;
+				}
+//					console.log(Math.round((this.courseInfo.begin_time - (+new Date())) / 60000))
+				if (Math.round((this.courseInfo.begin_time - +new Date())) > 900000) {
+					this.$message({message: '请在开课前15分钟再进入课堂', duration: 1500})
+					return;
+				}
+				this.$store.commit('UN_SHOW_MENU')
+				this.$router.push('/static/onclass')
+				// ***** 这里有session！ ****
+				setSession('courseId_forClass', this.courseInfo.courseId)
+				//****************************
+			}
 		}
+	}
 </script>
 
 <style lang="scss" type="text/scss" scoped>

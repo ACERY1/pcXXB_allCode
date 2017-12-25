@@ -33,3 +33,5 @@ EventEmitter.prototype.emit = function(eventName, _) {
 		delete this.onceEvents[eventName];
 	}
 } // 发射事件
+
+export default EventEmitter;

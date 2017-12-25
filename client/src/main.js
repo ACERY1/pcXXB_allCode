@@ -12,6 +12,7 @@ import infiniteScroll from 'vue-infinite-scroll'
 import Loadmore from 'vue-loadmore';
 
 
+
 Vue.use(infiniteScroll)
 Vue.component('loadmore', Loadmore);
 // register vueRouter
@@ -45,6 +46,9 @@ const router = new VueRouter({
 	// mode:'history',
 	routes
 })
+
+
+
 
 
 

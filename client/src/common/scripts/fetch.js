@@ -16,6 +16,10 @@ axios.interceptors.response.use(function (response) {
 	if (error.response) {
 		// The request was made and the server responded with a status code
 		// that falls out of the range of 2xx
+		if (error.response.status ==403){
+			console.log('get')
+			window.AJAXGuard.emit('403')
+		}
 		return Promise.reject({
 			error: error.response.data.msg,
 			status: error.response.status,

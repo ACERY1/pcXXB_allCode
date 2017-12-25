@@ -22,7 +22,7 @@
 </template>
 
 <script>
-	import {countFn, setUserInfoInLocal, setCookie, setStore} from '../../common/scripts/util'
+	import {countFn, setUserInfoInLocal, setCookie, setStore, getStore} from '../../common/scripts/util'
 	import myBtn from '../../components/buttons/basicButtons.vue'
 
 	export default {
@@ -30,7 +30,7 @@
 		components: {
 			myBtn
 		},
-		data () {
+		data() {
 			return {
 				switchToGetPwd: false,
 				isQueryCode: false, // 做防抖使用，防止多次请求
@@ -39,24 +39,34 @@
 				verifyCode: '',
 
 				//用户名密码
-				userTel: '15711370918',
-				password: '123456'
+//				userTel: '15711370918',
+//				password: '123456'
+
+			  	userTel:getStore('userTel') || '',
+			  	password:getStore('password') || ''
 			}
 		},
 		props: {},
-		computed: {},
-		created () {
+		computed: {
+//			userTel() {
+//				return getStore('userTel') || ''
+//			},
+//			password() {
+//				return getStore('password') || ''
+//			}
 		},
-		mounted () {
+		created() {
+		},
+		mounted() {
 		},
 		methods: {
 			//切换到找回密码页面*/
-			switchPwd(){
+			switchPwd() {
 				this.switchToGetPwd = !this.switchToGetPwd
 				this.password = ''
 			},
 			//请求验证码*/
-			queryCode(){
+			queryCode() {
 				this.time = 60;
 				this.isQueryCode = true
 				this.$api.sendVerifyCode(this.userTel).then((res) => {
@@ -75,12 +85,12 @@
 
 			},
 			//请求验证码60秒之后的回调函数*/
-			_queryDone(){
+			_queryDone() {
 				this.isQueryCode = false
 				this.time = "获取验证码"
 			},
 			//登录*/
-			login(){
+			login() {
 				if (this.busy) {
 					return false
 				}
@@ -99,12 +109,13 @@
 						//教师端 15711370918 123456
 						setUserInfoInLocal(_data.teacherInfo) // 在本地保存用户数据
 						if (this.$store.state.userAgent == 'native') {
-						  	// 客户端存储store
+							// 客户端存储store
 							setStore('x_token', _data.x_token)
 						}
 						this.$store.commit('RECORD_TEACHER_INFO', _data.teacherInfo) // 保存数据
 						this.$store.commit('UPDATE_X_TOKEN', _data.x_token); // 保存x_token
 						this.$store.commit('RECORD_IS_LOGIN') // 提交登录状态
+					  	this.storeInfo(this.userTel,this.password)
 						this.$message({message: "登录成功！", type: 'success', duration: 1000})
 						setTimeout(() => {
 							this.$router.push('main')
@@ -120,7 +131,8 @@
 					this.busy = false
 				})
 			},
-			resetPwd(){
+			// 重置密码
+			resetPwd() {
 				if (this.verifyCode == '') {
 					this.$message({
 						message: '验证码不能为空',
@@ -155,12 +167,19 @@
 					this.busy = false
 				})
 				console.log('reset!')
+			},
+
+			// 缓存登录后的账户和密码
+			storeInfo(userTel, password) {
+				setStore('userTel', userTel)
+			  	setStore('password',password)
 			}
+
 		}
 	}
 </script>
 
-<style lang="scss" rel="stylesheet/scss" scoped>
+<style lang="scss" rel="stylesheet/scss" type="text/scss" scoped>
 	@import "../../common/styles/mixin";
 
 	.isGetPwd {

@@ -5,17 +5,24 @@
 </template>
 
 <script>
-	import {getCookie, getSession, getStore,setStore} from './common/scripts/util'
+	import {getCookie, getSession, getStore, setStore} from './common/scripts/util'
+	import EventEmitter from './common/scripts/XEventEmitter'
+
 	export default {
 		name: 'app',
-		data () {
+		data() {
 			return {}
 		},
-		created(){
+		created() {
 
-			console.log("file URL:"+window.location.href.split('#')[0])
-		  	setStore("filePath",window.location.href.split('#')[0])
+			console.log("file URL:" + window.location.href.split('#')[0])
+			setStore("filePath", window.location.href.split('#')[0])
 
+			window.AJAXGuard = new EventEmitter();
+			window.AJAXGuard.on('403', () => {
+				console.log('get2')
+				this.$router.push('/static/login')
+			})
 			// 判断客户端
 			if (navigator.userAgent.indexOf("Electron") != -1) {
 				// for Electron
@@ -27,16 +34,16 @@
 
 			let usrAgent = this.$store.state.userAgent
 
-		  	console.log('nowAgent: '+usrAgent+"\n")
+			console.log('nowAgent: ' + usrAgent + "\n")
 
 
-		/*TODO:判断登录还是有问题 ps:现在解决了*/
+			/*TODO:判断登录还是有问题 ps:现在解决了*/
 			if ((getStore('x_token') == null && usrAgent == "native") || (getCookie("x_token") == null && usrAgent == "web") || getStore('name') == '请登录') {
 				this.$router.push('/static/login')
 			} else {
-		  /*TODO:根据session 里是否有temp_courseId 来判断是否是从制作课件跳转回来的*/
+				/*TODO:根据session 里是否有temp_courseId 来判断是否是从制作课件跳转回来的*/
 				if (getSession("temp_courseId") != null) {
-					console.log('get')
+
 					this.$router.push('/static/classInfo')
 					return;
 				}
@@ -63,7 +70,7 @@
 
 </script>
 
-<style lang="scss" rel="stylesheet/scss">
+<style lang="scss" rel="stylesheet/scss " type="text/scss">
 	@import "./common/styles/common.scss";
 	@import "./common/styles/mixin.scss";
 
@@ -77,11 +84,12 @@
 		height: 500px;
 	}
 
-	.el-loading-spinner .path{
-		stroke:$orange!important;
+	.el-loading-spinner .path {
+		stroke: $orange !important;
 	}
-	.el-loading-spinner .el-loading-text{
-		color: $orange!important;
+
+	.el-loading-spinner .el-loading-text {
+		color: $orange !important;
 	}
 
 	#app {
